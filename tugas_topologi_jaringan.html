@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tugas Video — Topologi Jaringan Kelas XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0d0d;
+  --surface:  #161616;
+  --surface2: #1e1e1e;
+  --border:   #2a2a2a;
+  --border2:  #333;
+
+  --cyan:   #00e5ff;
+  --amber:  #ffb700;
+  --green:  #00e676;
+  --rose:   #ff4d6d;
+  --violet: #b388ff;
+  --warm:   #ff8a65;
+
+  --text:   #e8e8e8;
+  --muted:  #666;
+  --soft:   #999;
+
+  --cyan-bg:   rgba(0,229,255,0.06);
+  --amber-bg:  rgba(255,183,0,0.07);
+  --green-bg:  rgba(0,230,118,0.06);
+  --rose-bg:   rgba(255,77,109,0.07);
+  --violet-bg: rgba(179,136,255,0.07);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Lora', serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── GRID BG ── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* ── GLOW ORBS ── */
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 50% 40% at 10% 10%, rgba(0,229,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 90% 85%, rgba(255,183,0,0.05) 0%, transparent 60%);
+}
+
+/* ── WRAPPER ── */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 56px 24px 100px;
+  position: relative; z-index: 1;
+}
+
+/* ══════════════════════
+   HEADER
+══════════════════════ */
+.header {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.header-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.eyebrow-line {
+  height: 1px;
+  flex:1;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+}
+
+.eyebrow-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  white-space: nowrap;
+}
+
+.header-title-block {
+  margin-bottom: 28px;
+}
+
+.kelas-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--amber);
+  border: 1px solid rgba(255,183,0,0.3);
+  background: var(--amber-bg);
+  padding: 5px 12px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+
+.main-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 10vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.main-title .accent { color: var(--cyan); }
+.main-title .accent2 { color: var(--amber); }
+
+.header-tagline {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--soft);
+  line-height: 1.8;
+  max-width: 520px;
+  margin-top: 14px;
+}
+
+/* META STRIP */
+.meta-strip {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.meta-cell {
+  flex: 1;
+  padding: 14px 18px;
+  border-right: 1px solid var(--border2);
+  background: var(--surface);
+}
+
+.meta-cell:last-child { border-right: none; }
+
+.meta-cell-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.meta-cell-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+
+@media (max-width:560px) {
+  .meta-strip { flex-wrap: wrap; }
+  .meta-cell { flex: 1 1 45%; border-right: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
+}
+
+/* ══════════════════════
+   SECTION LABEL
+══════════════════════ */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 44px 0 20px;
+}
+
+.sl-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  color: var(--border2);
+  flex-shrink: 0;
+  min-width: 44px;
+}
+
+.sl-right {}
+
+.sl-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.sl-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  letter-spacing: 1.5px;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+/* ══════════════════════
+   CALLOUT BOX
+══════════════════════ */
+.callout {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--cyan);
+  border-radius: 0 6px 6px 0;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+.callout-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+
+.callout p {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--soft);
+}
+
+.callout p strong { color: var(--text); }
+
+/* ══════════════════════
+   BLOOM INDICATOR
+══════════════════════ */
+.bloom-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.bloom-label-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bloom-pip {
+  width: 24px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border2);
+}
+
+.bloom-pip.on-l4 { background: #00e5ff; }
+.bloom-pip.on-l5 { background: #ffb700; }
+.bloom-pip.on-l6 { background: #b388ff; }
+
+.bloom-level-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+/* ══════════════════════
+   DEEP LEARNING BADGES
+══════════════════════ */
+.dl-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.dl-badge {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 10px 16px 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.dl-badge-icon { font-size: 18px; flex-shrink: 0; }
+
+.dl-badge-content {}
+
+.dl-badge-type {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3px;
+  display: block;
+}
+
+.dl-badge-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ══════════════════════
+   QUESTION CARDS
+══════════════════════ */
+.q-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.25s;
+}
+
+.q-card:hover { border-color: #444; }
+
+/* Accent borders */
+.q-card.cyan-card   { border-top: 3px solid var(--cyan); }
+.q-card.amber-card  { border-top: 3px solid var(--amber); }
+.q-card.violet-card { border-top: 3px solid var(--violet); }
+
+/* Header */
+.qc-head {
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.qc-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 40px;
+  margin-top: -4px;
+}
+
+.cyan-card  .qc-num { color: var(--cyan); }
+.amber-card .qc-num { color: var(--amber); }
+.violet-card .qc-num { color: var(--violet); }
+
+.qc-meta {}
+
+.qc-domain {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.cyan-card   .qc-domain { color: var(--cyan); }
+.amber-card  .qc-domain { color: var(--amber); }
+.violet-card .qc-domain { color: var(--violet); }
+
+.qc-question {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* Body */
+.qc-body {
+  padding: 16px 24px 22px;
+}
+
+.qc-scenario {
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--soft);
+  font-style: italic;
+  border-left: 2px solid var(--border2);
+}
+
+.qc-scenario strong { font-style: normal; color: var(--text); }
+
+.qc-checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.qc-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--soft);
+  line-height: 1.75;
+}
+
+.qc-checklist li strong {
+  display: inline;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.qc-checklist li > span:last-child {
+  flex: 1;
+  display: block;
+}
+
+.qc-arrow {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.cyan-card   .qc-arrow { color: var(--cyan); }
+.amber-card  .qc-arrow { color: var(--amber); }
+.violet-card .qc-arrow { color: var(--violet); }
+
+.qc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+}
+
+.ai-shield {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rose);
+  background: var(--rose-bg);
+  border: 1px solid rgba(255,77,109,0.18);
+  border-radius: 3px;
+  padding: 4px 9px;
+}
+
+/* ══════════════════════
+   PILIHAN TOPOLOGI GRID
+══════════════════════ */
+.topo-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+@media (max-width:560px) {
+  .topo-pick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.topo-pick-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 14px 14px 12px;
+  cursor: default;
+  transition: border-color 0.2s;
+}
+
+.topo-pick-card:hover { border-color: #444; }
+
+.tpc-emoji { font-size: 20px; margin-bottom: 7px; display: block; }
+
+.tpc-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tpc-context {
+  font-size: 12px;
+  color: var(--soft);
+  line-height: 1.6;
+}
+
+/* ══════════════════════
+   KETENTUAN GRID
+══════════════════════ */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%,200px), 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.rule-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 16px 16px 14px;
+}
+
+.rule-icon { font-size: 22px; margin-bottom: 9px; display: block; }
+
+.rule-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin-bottom: 5px;
+}
+
+.rule-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.rule-desc strong { color: var(--soft); }
+
+/* ══════════════════════
+   VIDEO TIMELINE
+══════════════════════ */
+.timeline {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.timeline-head {
+  background: var(--surface2);
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeline-head::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.tl-row {
+  display: grid;
+  grid-template-columns: 46px 94px 1fr;
+  border-bottom: 1px solid rgba(42,42,42,0.6);
+}
+
+.tl-row:last-child { border-bottom: none; }
+
+.tl-step {
+  background: var(--surface2);
+  border-right: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--border2);
+}
+
+.tl-time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  padding: 14px 12px;
+  border-right: 1px solid rgba(42,42,42,0.6);
+  display: flex;
+  align-items: center;
+  line-height: 1.4;
+}
+
+.tl-content {
+  padding: 14px 18px;
+}
+
+.tl-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.tl-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ══════════════════════
+   RUBRIK TABLE
+══════════════════════ */
+.rubrik-wrap {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.rubrik-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rubrik-table th {
+  background: var(--surface2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+
+.rubrik-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(42,42,42,0.5);
+  vertical-align: top;
+  line-height: 1.7;
+  color: var(--soft);
+}
+
+.rubrik-table tr:last-child td { border-bottom: none; }
+.rubrik-table tr:hover td { background: rgba(255,255,255,0.01); }
+
+.score-block { display: block; }
+
+.score-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.score-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.s-cyan   .score-num { color: var(--cyan); }
+.s-amber  .score-num { color: var(--amber); }
+.s-violet .score-num { color: var(--violet); }
+.s-green  .score-num { color: var(--green); }
+.s-rose   .score-num { color: var(--rose); }
+
+/* ══════════════════════
+   AI PROOF SECTION
+══════════════════════ */
+.ai-proof-box {
+  background: var(--rose-bg);
+  border: 1px solid rgba(255,77,109,0.2);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.ai-proof-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-proof-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ai-proof-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--soft);
+  line-height: 1.7;
+}
+
+.ai-proof-list li::before {
+  content: '✕';
+  color: var(--rose);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: block;
+  min-width: 14px;
+}
+
+.ai-proof-list li > span {
+  flex: 1;
+}
+
+/* ══════════════════════
+   SUBMIT BOX
+══════════════════════ */
+.submit-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 26px 28px;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.submit-tag {
+  position: absolute;
+  top: -11px;
+  left: 22px;
+  background: var(--bg);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 0 10px;
+  border: 1px solid rgba(0,230,118,0.25);
+  border-radius: 2px;
+}
+
+.submit-channels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width:540px) {
+  .submit-channels { grid-template-columns: 1fr; }
+}
+
+.submit-channel {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.sc-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sc-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.sc-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.sc-desc strong { color: var(--soft); }
+
+.submit-note {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.submit-note strong { color: var(--soft); }
+
+code {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--amber);
+}
+
+/* ══════════════════════
+   DIVIDER
+══════════════════════ */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0;
+}
+
+.div-line {
+  flex:1;
+  height:1px;
+  background: var(--border);
+}
+
+.div-sym {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--border2);
+}
+
+/* ══════════════════════
+   FOOTER
+══════════════════════ */
+.footer {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border2);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-quote {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  max-width: 380px;
+  line-height: 1.75;
+}
+
+.footer-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.9;
+}
+
+@media (max-width:560px) {
+  .footer { flex-direction: column; }
+  .footer-meta { text-align: left; }
+}
+
+/* ══════════════════════
+   TOPOLOGI SPECIAL BADGE
+══════════════════════ */
+.topo-badge-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.topo-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.tb-bus    { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.07); }
+.tb-star   { color: var(--cyan); border-color: rgba(0,229,255,0.3); background: var(--cyan-bg); }
+.tb-ring   { color: var(--amber); border-color: rgba(255,183,0,0.3); background: var(--amber-bg); }
+.tb-mesh   { color: var(--violet); border-color: rgba(179,136,255,0.3); background: var(--violet-bg); }
+.tb-tree   { color: var(--green); border-color: rgba(0,230,118,0.3); background: var(--green-bg); }
+.tb-hybrid { color: var(--warm); border-color: rgba(255,138,101,0.3); background: rgba(255,138,101,0.07); }
+
+/* ══════════════════════
+   HIGHLIGHT TEXT UTIL
+══════════════════════ */
+.hl-cyan   { color: var(--cyan); font-weight: 600; }
+.hl-amber  { color: var(--amber); font-weight: 600; }
+.hl-violet { color: var(--violet); font-weight: 600; }
+.hl-green  { color: var(--green); font-weight: 600; }
+
+@media (max-width:600px) {
+  .qc-head { gap: 10px; }
+  .qc-body { padding: 14px 18px 18px; }
+  .tl-row { grid-template-columns: 36px 70px 1fr; }
+  .rubrik-table th, .rubrik-table td { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="header-eyebrow">
+      <div class="eyebrow-text">MAN 2 Bogor · Informatika · Kelas XI · Tugas Proyek</div>
+      <div class="eyebrow-line"></div>
+    </div>
+
+    <div class="header-title-block">
+      <div class="kelas-tag">MAN 2 Bogor · Kelas XI · Semester Genap</div>
+      <div class="main-title">
+        RANCANG,<br>
+        <span class="accent">ANALISIS,</span><br>
+        <span class="accent2">PERTAHANKAN.</span>
+      </div>
+      <p class="header-tagline">
+        Tugas video berbasis <em>deep learning</em> untuk materi Topologi Jaringan kamu tidak cukup hanya tahu nama-namanya. Kamu harus bisa memilih, menganalisis, dan mempertahankan keputusanmu.
+      </p>
+    </div>
+
+    <div class="meta-strip">
+      <div class="meta-cell">
+        <div class="meta-cell-label">Jenis Tugas</div>
+        <div class="meta-cell-val">Proyek Video</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Durasi Video</div>
+        <div class="meta-cell-val">4–6 Menit</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Pilih Pertanyaan</div>
+        <div class="meta-cell-val">1 dari 3</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Pengiriman</div>
+        <div class="meta-cell-val">Drive / WA</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TUJUAN ══ -->
+  <div class="callout">
+    <div class="callout-label">📡 Konteks Tugas</div>
+    <p>Kelas 11 sudah harus berpikir lebih dari sekadar "apa itu topologi bus." Tugas ini memintamu untuk <strong>berpikir seperti seorang network engineer</strong> — menghadapi skenario nyata, memilih solusi, dan <strong>mempertahankan alasanmu</strong>. Tidak ada jawaban tunggal yang benar; yang dinilai adalah kualitas penalaranmu.</p>
+  </div>
+
+  <!-- ══ DEEP LEARNING FRAMEWORK ══ -->
+  <div class="section-label">
+    <div class="sl-num">01</div>
+    <div class="sl-right">
+      <div class="sl-tag">Kerangka Berpikir</div>
+      <div class="sl-title">Level Deep Learning yang Dilatih</div>
+    </div>
+  </div>
+
+  <div class="dl-badges">
+    <div class="dl-badge">
+      <span class="dl-badge-icon">🔍</span>
+      <div class="dl-badge-content">
+        <span class="dl-badge-type">L4 — Menganalisis</span>
+        <div class="dl-badge-name">Memecah kasus menjadi komponen teknis</div>
+      </div>
+    </div>
+    <div class="dl-badge">
+      <span class="dl-badge-icon">⚖️</span>
+      <div class="dl-badge-content">
+        <span class="dl-badge-type">L5 — Mengevaluasi</span>
+        <div class="dl-badge-name">Memilih & mempertahankan keputusan dengan data</div>
+      </div>
+    </div>
+    <div class="dl-badge">
+      <span class="dl-badge-icon">🏗️</span>
+      <div class="dl-badge-content">
+        <span class="dl-badge-type">L6 — Mencipta</span>
+        <div class="dl-badge-name">Merancang solusi jaringan untuk konteks spesifik</div>
+      </div>
+    </div>
+    <div class="dl-badge">
+      <span class="dl-badge-icon">🔗</span>
+      <div class="dl-badge-content">
+        <span class="dl-badge-type">Transfer</span>
+        <div class="dl-badge-name">Menghubungkan teori ke dunia nyata secara langsung</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PERTANYAAN ══ -->
+  <div class="section-label">
+    <div class="sl-num">02</div>
+    <div class="sl-right">
+      <div class="sl-tag">Inti Tugas</div>
+      <div class="sl-title">Pilih Satu (1) dari Tiga Pertanyaan Berikut</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">⚠️ Penting Sebelum Mulai</div>
+    <p>Rekam dirimu <strong>berbicara dan berpikir dengan suara keras</strong> — bukan membaca teks. Setiap pertanyaan punya skenario spesifik; tidak ada yang bisa dijawab hanya dengan hafalan. Kamu <strong>boleh menggambar di kertas</strong>, menunjuk diagram di layar, atau mengilustrasikan dengan benda di sekitarmu.</p>
+  </div>
+
+  <div class="q-stack">
+
+    <!-- ══ PERTANYAAN 1 ══ -->
+    <div class="q-card cyan-card">
+      <div class="qc-head">
+        <div class="qc-num">1</div>
+        <div class="qc-meta">
+          <div class="qc-domain">🏗️ Perancangan Jaringan</div>
+          <div class="qc-question">Kamu ditunjuk sebagai konsultan IT untuk merancang jaringan sebuah <em>warnet baru</em> dengan 20 komputer dan budget terbatas. Topologi mana yang kamu pilih — dan bagaimana kamu meyakinkan pemiliknya bahwa itu keputusan terbaik?</div>
+        </div>
+      </div>
+      <div class="qc-body">
+        <div class="qc-scenario">
+          <strong>Skenario:</strong> Pak Budi membuka warnet di kompleks perumahan. Modal terbatas. Dia ingin jaringan yang stabil untuk gaming online, tapi kalau satu komputer rusak, komputernya yang lain tidak boleh ikut mati. Dia memintamu untuk presentasi singkat sebelum dia memutuskan beli perangkat.
+        </div>
+
+        <div class="topo-badge-row">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px;">Topologi relevan:</span>
+          <span class="topo-badge tb-star">⭐ Star</span>
+          <span class="topo-badge tb-bus">🚌 Bus</span>
+          <span class="topo-badge tb-mesh">🕸️ Mesh</span>
+          <span class="topo-badge tb-tree">🌳 Tree</span>
+        </div>
+
+        <ul class="qc-checklist">
+          <li><span class="qc-arrow">→</span><span>Jelaskan topologi yang kamu pilih dan <strong>alasan teknis spesifik</strong> yang cocok untuk skenario warnet (bukan sekadar "mudah dipasang")</span></li>
+          <li><span class="qc-arrow">→</span><span>Bandingkan dengan <strong>minimal 2 topologi lain</strong> — apa kelemahan mereka untuk kasus ini? Gunakan logika nyata, bukan sekadar daftar kelebihan-kekurangan</span></li>
+          <li><span class="qc-arrow">→</span><span>Gambar atau tunjukkan <strong>sketsa topologimu</strong> di kamera (boleh di kertas, papan tulis, atau aplikasi di HP/laptop)</span></li>
+          <li><span class="qc-arrow">→</span><span>Hitung estimasi kasar kebutuhan kabel dan perangkat — tunjukkan kamu benar-benar memikirkan implementasinya</span></li>
+          <li><span class="qc-arrow">→</span><span>Apa yang akan terjadi jika switch utama mati? Bagaimana kamu mengantisipasi ini dalam rancanganmu?</span></li>
+        </ul>
+
+        <div class="qc-footer">
+          <div class="bloom-bar">
+            <span class="bloom-label-text">Bloom:</span>
+            <div class="bloom-pip on-l4"></div>
+            <div class="bloom-pip on-l4"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l6"></div>
+            <div class="bloom-pip on-l6"></div>
+            <span class="bloom-level-text">L4–L6 · Analisis + Evaluasi + Rancang</span>
+          </div>
+          <div class="ai-shield">🛡 Butuh Sketsa Tangan & Argumentasi Orisinal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PERTANYAAN 2 ══ -->
+    <div class="q-card amber-card">
+      <div class="qc-head">
+        <div class="qc-num">2</div>
+        <div class="qc-meta">
+          <div class="qc-domain">🔎 Diagnosa & Pemecahan Masalah</div>
+          <div class="qc-question">Sekolahmu baru pasang jaringan baru, tapi tiap jam istirahat koneksi internet semua kelas mendadak lambat dan sering putus. Sebagai siswa yang belajar topologi jaringan, apa analisismu? Topologi apa yang kemungkinan dipakai dan apa yang salah?</div>
+        </div>
+      </div>
+      <div class="qc-body">
+        <div class="qc-scenario">
+          <strong>Skenario:</strong> Lab komputer Kelas X dan XI masing-masing punya 30 komputer. Semua terhubung ke satu router di ruang TU. Masalah muncul setiap hari pas jam 10 dan jam 12 — tepat saat break time dan jam makan siang. Kepala sekolah bingung dan minta penjelasan dari siswanya yang baru belajar topologi.
+        </div>
+
+        <div class="topo-badge-row">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px;">Topologi relevan:</span>
+          <span class="topo-badge tb-star">⭐ Star</span>
+          <span class="topo-badge tb-tree">🌳 Tree</span>
+          <span class="topo-badge tb-bus">🚌 Bus</span>
+          <span class="topo-badge tb-hybrid">🔀 Hybrid</span>
+        </div>
+
+        <ul class="qc-checklist">
+          <li><span class="qc-arrow">→</span><span>Berdasarkan deskripsi (satu router, banyak komputer, masalah saat banyak pengguna aktif), identifikasi <strong>topologi yang paling mungkin</strong> digunakan — dan jelaskan tanda-tandanya</span></li>
+          <li><span class="qc-arrow">→</span><span>Diagnosis: apakah masalahnya di topologi, perangkat, atau keduanya? Gunakan pengetahuanmu tentang <strong>bandwidth, collision, dan bottleneck</strong></span></li>
+          <li><span class="qc-arrow">→</span><span>Buat <strong>dua skenario solusi</strong>: solusi murah (tanpa ganti infrastruktur besar) dan solusi ideal (ganti topologi/upgrade). Jelaskan trade-off keduanya</span></li>
+          <li><span class="qc-arrow">→</span><span>Hubungkan dengan konsep <strong>CSMA/CD atau token passing</strong> — mana yang relevan di sini dan mengapa?</span></li>
+          <li><span class="qc-arrow">→</span><span>Kalau kamu jadi kepala sekolahnya, <strong>keputusan mana yang kamu ambil</strong> dan mengapa? Pertimbangkan biaya, waktu, dan dampak belajar siswa</span></li>
+        </ul>
+
+        <div class="qc-footer">
+          <div class="bloom-bar">
+            <span class="bloom-label-text">Bloom:</span>
+            <div class="bloom-pip on-l4"></div>
+            <div class="bloom-pip on-l4"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l6"></div>
+            <span class="bloom-level-text">L4–L6 · Diagnosa + Multi-skenario + Keputusan</span>
+          </div>
+          <div class="ai-shield">🛡 Butuh Skenario Kontekstual & Keputusan Personal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PERTANYAAN 3 ══ -->
+    <div class="q-card violet-card">
+      <div class="qc-head">
+        <div class="qc-num">3</div>
+        <div class="qc-meta">
+          <div class="qc-domain">🌍 Analisis Dunia Nyata</div>
+          <div class="qc-question">Pilih <em>satu tempat yang kamu kenal</em> — bisa rumahmu, sekolah, warung kopi, atau tempat lain yang punya jaringan WiFi. Investigasi topologinya, lalu buat "laporan audit jaringan" singkat dalam format video.</div>
+        </div>
+      </div>
+      <div class="qc-body">
+        <div class="qc-scenario">
+          <strong>Skenario:</strong> Kamu adalah junior network analyst yang baru magang. Tugasmu adalah mengaudit jaringan di suatu tempat — memahami infrastrukturnya, mengidentifikasi potensi masalah, dan memberikan rekomendasi. Tidak perlu akses ke perangkat secara fisik; cukup observasi dan deduksi dari apa yang bisa kamu lihat dan rasakan.
+        </div>
+
+        <div class="topo-badge-row">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px;">Topologi yang mungkin:</span>
+          <span class="topo-badge tb-star">⭐ Star</span>
+          <span class="topo-badge tb-mesh">🕸️ Mesh</span>
+          <span class="topo-badge tb-tree">🌳 Tree</span>
+          <span class="topo-badge tb-hybrid">🔀 Hybrid</span>
+        </div>
+
+        <ul class="qc-checklist">
+          <li><span class="qc-arrow">→</span><span>Perkenalkan tempat yang kamu pilih dan <strong>rekam atau tunjukkan lingkungannya</strong> sekilas (bisa dari jendela, foto, atau cerita deskriptif sambil gestur)</span></li>
+          <li><span class="qc-arrow">→</span><span>Deduksi topologi yang kemungkinan besar digunakan dari clue apa? (jumlah router/access point yang kelihatan, jangkauan sinyal, jumlah pengguna, dll)</span></li>
+          <li><span class="qc-arrow">→</span><span>Identifikasi <strong>minimal 2 potensi masalah</strong> yang mungkin ada di jaringan tempat itu berdasarkan topologinya — dan jelaskan mengapa</span></li>
+          <li><span class="qc-arrow">→</span><span>Kalau kamu bisa merancang ulang jaringannya, <strong>topologi apa yang akan kamu rekomendasikan</strong> dan perangkat apa saja yang dibutuhkan?</span></li>
+          <li><span class="qc-arrow">→</span><span>Refleksi: apa yang kamu pelajari dari mengobservasi jaringan nyata yang tidak bisa kamu pelajari hanya dari buku teks?</span></li>
+        </ul>
+
+        <div class="qc-footer">
+          <div class="bloom-bar">
+            <span class="bloom-label-text">Bloom:</span>
+            <div class="bloom-pip on-l4"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l5"></div>
+            <div class="bloom-pip on-l6"></div>
+            <div class="bloom-pip on-l6"></div>
+            <div class="bloom-pip on-l6"></div>
+            <span class="bloom-level-text">L4–L6 · Investigasi Nyata + Rancang Ulang</span>
+          </div>
+          <div class="ai-shield">🛡 Harus Ada Observasi Tempat Nyata Yang Dipilih Sendiri</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-sym">// //</div><div class="div-line"></div></div>
+
+  <!-- ══ KETENTUAN ══ -->
+  <div class="section-label">
+    <div class="sl-num">03</div>
+    <div class="sl-right">
+      <div class="sl-tag">Teknis</div>
+      <div class="sl-title">Ketentuan Pembuatan Video</div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <span class="rule-icon">⏱️</span>
+      <div class="rule-title">Durasi</div>
+      <div class="rule-desc"><strong>4 hingga 6 menit</strong>. Tidak lebih singkat, tidak lebih panjang. Sisakan waktu untuk penjelasan mendalam.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🎙️</span>
+      <div class="rule-title">Tampilan Diri</div>
+      <div class="rule-desc">Wajah terlihat <strong>minimal di pembuka dan penutup</strong>. Suara harus terdengar jelas dan tidak terpotong.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">✏️</span>
+      <div class="rule-title">Visual Pendukung</div>
+      <div class="rule-desc">Wajib ada <strong>minimal satu sketsa atau diagram</strong> buatanmu sendiri — di kertas, papan, atau aplikasi.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🗣️</span>
+      <div class="rule-title">Cara Bicara</div>
+      <div class="rule-desc">Bicara dengan kata-katamu sendiri. <strong>Tidak boleh membaca dari teks</strong> yang disiapkan sebelumnya.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">📁</span>
+      <div class="rule-title">Format File</div>
+      <div class="rule-desc">MP4 atau MOV</strong>. Nama file: <code>Nama_Kelas.mp4</code></div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🚫</span>
+      <div class="rule-title">Dilarang</div>
+      <div class="rule-desc">Slide PowerPoint saja, teks berjalan tanpa wajah, atau menjawab soal lain yang tidak dipilih.</div>
+    </div>
+  </div>
+
+  <!-- ══ STRUKTUR VIDEO ══ -->
+  <div class="section-label">
+    <div class="sl-num">04</div>
+    <div class="sl-right">
+      <div class="sl-tag">Panduan Konten</div>
+      <div class="sl-title">Alur Video yang Disarankan</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-head">REKAMAN BERJALAN — ALUR YANG DISARANKAN (~5 MENIT)</div>
+    <div class="tl-row">
+      <div class="tl-step">1</div>
+      <div class="tl-time">0:00–0:30</div>
+      <div class="tl-content">
+        <div class="tl-name">Pembukaan & Pemilihan Pertanyaan</div>
+        <div class="tl-desc">Sebut nama, kelas, dan pertanyaan yang dipilih. Nyatakan posisimu atau hipotesis awalmu dalam satu kalimat tegas.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-step">2</div>
+      <div class="tl-time">0:30–1:30</div>
+      <div class="tl-content">
+        <div class="tl-name">Pembacaan Skenario & Identifikasi Masalah</div>
+        <div class="tl-desc">Jelaskan konteks skenario dengan bahasamu sendiri. Identifikasi poin-poin kritis yang perlu dijawab.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-step">3</div>
+      <div class="tl-time">1:30–3:30</div>
+      <div class="tl-content">
+        <div class="tl-name">Analisis Mendalam + Sketsa / Visual</div>
+        <div class="tl-desc">Ini bagian inti — tunjukkan diagram atau sketsa sambil menjelaskan. Bandingkan opsi, evaluasi trade-off, gunakan istilah teknis dengan benar.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-step">4</div>
+      <div class="tl-time">3:30–4:30</div>
+      <div class="tl-content">
+        <div class="tl-name">Keputusan & Pertahanan Argumen</div>
+        <div class="tl-desc">Nyatakan keputusanmu dengan tegas. Antisipasi pertanyaan balik: "Kenapa bukan topologi X?" — dan jawab sebelum ditanya.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-step">5</div>
+      <div class="tl-time">4:30–5:00</div>
+      <div class="tl-content">
+        <div class="tl-name">Refleksi & Penutup</div>
+        <div class="tl-desc">Apa yang kamu pelajari dari mengerjakan ini? Apa yang masih ingin kamu eksplorasi? Tutup dengan satu kalimat kuat.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RUBRIK ══ -->
+  <div class="section-label">
+    <div class="sl-num">05</div>
+    <div class="sl-right">
+      <div class="sl-tag">Penilaian</div>
+      <div class="sl-title">Rubrik Evaluasi</div>
+    </div>
+  </div>
+
+  <div class="rubrik-wrap">
+    <table class="rubrik-table">
+      <thead>
+        <tr>
+          <th>Kriteria</th>
+          <th>Skor</th>
+          <th>Deskripsi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ketepatan Analisis Teknis</strong></td>
+          <td>
+            <span class="score-block s-cyan">
+              <span class="score-num">25</span>
+              <span class="score-tag">poin</span>
+            </span>
+          </td>
+          <td>Konsep topologi digunakan dengan benar dan spesifik. Perbandingan antar topologi akurat dan kontekstual, bukan sekadar daftar generik dari buku.</td>
+        </tr>
+        <tr>
+          <td><strong>Kualitas Argumen & Keputusan</strong></td>
+          <td>
+            <span class="score-block s-amber">
+              <span class="score-num">25</span>
+              <span class="score-tag">poin</span>
+            </span>
+          </td>
+          <td>Siswa mampu memilih solusi dan mempertahankannya dengan logika yang solid. Mempertimbangkan trade-off nyata, bukan hanya memilih "yang terbaik" secara umum.</td>
+        </tr>
+        <tr>
+          <td><strong>Visual / Sketsa Diagram</strong></td>
+          <td>
+            <span class="score-block s-violet">
+              <span class="score-num">20</span>
+              <span class="score-tag">poin</span>
+            </span>
+          </td>
+          <td>Ada diagram atau sketsa orisinal yang relevan. Visual membantu penjelasan dan menunjukkan pemahaman struktural, bukan sekadar gambar ulang dari buku.</td>
+        </tr>
+        <tr>
+          <td><strong>Kontektualisasi & Orisinalitas</strong></td>
+          <td>
+            <span class="score-block s-green">
+              <span class="score-num">20</span>
+              <span class="score-tag">poin</span>
+            </span>
+          </td>
+          <td>Menggunakan contoh, pengalaman, atau observasi yang spesifik dan personal. Tidak bisa direproduksi oleh AI. Ada koneksi ke dunia nyata yang autentik.</td>
+        </tr>
+        <tr>
+          <td><strong>Presentasi & Kejelasan Komunikasi</strong></td>
+          <td>
+            <span class="score-block s-rose">
+              <span class="score-num">10</span>
+              <span class="score-tag">poin</span>
+            </span>
+          </td>
+          <td>Penjelasan terstruktur, suara jelas, alur logis. Tidak membaca teks. Penonton bisa mengikuti argumen dari awal hingga akhir.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <!-- ══ PENGIRIMAN ══ -->
+  <div class="section-label">
+    <div class="sl-num">06</div>
+    <div class="sl-right">
+      <div class="sl-tag">Pengumpulan</div>
+      <div class="sl-title">Cara Mengumpulkan Tugas</div>
+    </div>
+  </div>
+
+  <div class="submit-box">
+    <div class="submit-tag">✦ METODE PENGIRIMAN</div>
+    <div class="submit-channels">
+      <div class="submit-channel">
+        <span class="sc-icon">📁</span>
+        <div>
+          <div class="sc-title">Google Drive</div>
+          <div class="sc-desc">Upload video ke Google Drive → ubah akses jadi <strong>"Siapa saja yang punya tautan"</strong> → kirim link ke guru via email, atau WA.</div>
+        </div>
+      </div>
+      <div class="submit-channel">
+        <span class="sc-icon">💬</span>
+        <div>
+          <div class="sc-title">WhatsApp</div>
+          <div class="sc-desc">Kirim file langsung ke <strong>nomor guru</strong>. Sertakan pesan singkat berisi nama, kelas, dan nomor soal yang dikerjakan.</div>
+        </div>
+      </div>
+    </div>
+    <div class="submit-note">
+      <strong>Nama file:</strong> <code>NamaLengkap_Kelass.mp4</code> — contoh: <code>MamadSuramad_XI-T.mp4</code><br>
+      <strong>Pesan wajib saat kirim:</strong> Nama · Kelas · Pertanyaan yang dipilih · Satu kalimat kesimpulan dari videomu
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-sym">END //</div><div class="div-line"></div></div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="footer">
+    <div class="footer-quote">
+      "Belajar bukan tentang memenuhi ingatan, tapi menyalakan pemahaman. Saat kata-kata itu bisa kamu jelaskan dengan sederhana, di situlah ilmu benar-benar hidup dalam dirimu."
+    </div>
+    <div class="footer-meta">
+      MAN 2 Bogor · Informatika · Kelas XI<br>
+      Topologi Jaringan<br>
+      Tugas Proyek Video · Deep Learning
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
