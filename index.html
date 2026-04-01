@@ -724,17 +724,41 @@
       <p>10 soal pilihan ganda seputar topologi jaringan. Baca dengan teliti ya!</p>
     </div>
 
-    <div id="quiz-container">
+    <!-- FORM IDENTITAS -->
+    <div id="identity-form">
+      <div class="q-card" style="max-width:480px;margin:0 auto 24px">
+        <div class="q-num">Isi Identitasmu Dulu</div>
+        <div class="q-text" style="font-size:1rem;margin-bottom:20px">Sebelum mulai, masukkan nama dan kelasmu ya! 📋</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Nama Lengkap</label>
+            <input id="inputNama" type="text" placeholder="Contoh: Ahmad Fauzi"
+              style="width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.3s"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <label style="display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Kelas</label>
+            <input id="inputKelas" type="text" placeholder="Contoh: XI-I"
+              style="width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.3s"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div id="identity-error" style="display:none;color:#fca5a5;font-size:0.85rem">⚠️ Nama dan kelas wajib diisi!</div>
+          <button class="btn btn-primary" onclick="startQuiz()" style="margin-top:4px;width:100%">Mulai Kuis →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-container" style="display:none">
       <!-- Soal 1 -->
       <div class="quiz-q active" id="q1">
         <div class="q-card">
           <div class="q-num">Soal 1 dari 10</div>
           <div class="q-text">Apa yang dimaksud dengan "topologi jaringan"?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Topologi adalah tentang kecepatan internet, bukan pola hubungan.')">Kecepatan transfer data dalam jaringan</button>
-            <button class="opt" onclick="answer(this,true,'Betul! Topologi jaringan adalah pola atau cara bagaimana perangkat-perangkat dalam jaringan saling terhubung satu sama lain.')">Pola/cara perangkat dalam jaringan saling terhubung</button>
-            <button class="opt" onclick="answer(this,false,'Protokol adalah aturan komunikasi, bukan gambaran susunan jaringan.')">Protokol komunikasi antar komputer</button>
-            <button class="opt" onclick="answer(this,false,'IP Address adalah identitas unik perangkat dalam jaringan, bukan topologi.')">Alamat IP setiap komputer dalam jaringan</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi adalah tentang kecepatan internet, bukan pola hubungan.">Kecepatan transfer data dalam jaringan</button>
+            <button class="opt" data-correct="true" data-feedback="Betul! Topologi jaringan adalah pola atau cara bagaimana perangkat-perangkat dalam jaringan saling terhubung satu sama lain.">Pola/cara perangkat dalam jaringan saling terhubung</button>
+            <button class="opt" data-correct="false" data-feedback="Protokol adalah aturan komunikasi, bukan gambaran susunan jaringan.">Protokol komunikasi antar komputer</button>
+            <button class="opt" data-correct="false" data-feedback="IP Address adalah identitas unik perangkat dalam jaringan, bukan topologi.">Alamat IP setiap komputer dalam jaringan</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -750,10 +774,10 @@
           <div class="q-num">Soal 2 dari 10</div>
           <div class="q-text">Topologi manakah yang menggunakan satu kabel utama (backbone) tempat semua komputer terhubung?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Topologi star menggunakan switch/hub sebagai pusat, bukan satu kabel utama.')">Star</button>
-            <button class="opt" onclick="answer(this,true,'Tepat! Topologi Bus menggunakan satu kabel utama bernama backbone. Semua komputer tersambung ke kabel ini.')">Bus</button>
-            <button class="opt" onclick="answer(this,false,'Topologi ring membentuk lingkaran, bukan garis lurus.')">Ring</button>
-            <button class="opt" onclick="answer(this,false,'Topologi mesh menghubungkan semua ke semua, bukan ke satu kabel utama.')">Mesh</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi star menggunakan switch/hub sebagai pusat, bukan satu kabel utama.">Star</button>
+            <button class="opt" data-correct="true" data-feedback="Tepat! Topologi Bus menggunakan satu kabel utama bernama backbone. Semua komputer tersambung ke kabel ini.">Bus</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi ring membentuk lingkaran, bukan garis lurus.">Ring</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi mesh menghubungkan semua ke semua, bukan ke satu kabel utama.">Mesh</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -770,10 +794,10 @@
           <div class="q-num">Soal 3 dari 10</div>
           <div class="q-text">Topologi Star menggunakan perangkat pusat untuk menghubungkan semua komputer. Perangkat apa yang biasanya digunakan sebagai pusat tersebut?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Router bisa berperan, tapi perangkat khusus untuk penghubung di topologi star adalah switch/hub.')">Router</button>
-            <button class="opt" onclick="answer(this,false,'Modem berfungsi mengubah sinyal internet, bukan menghubungkan komputer di LAN.')">Modem</button>
-            <button class="opt" onclick="answer(this,true,'Benar! Switch (atau hub) adalah perangkat pusat di topologi Star. Switch lebih pintar karena bisa mengirim data hanya ke tujuan yang tepat.')">Switch atau Hub</button>
-            <button class="opt" onclick="answer(this,false,'Terminator digunakan di topologi Bus untuk menutup ujung kabel, bukan sebagai pusat.')">Terminator</button>
+            <button class="opt" data-correct="false" data-feedback="Router bisa berperan, tapi perangkat khusus untuk penghubung di topologi star adalah switch/hub.">Router</button>
+            <button class="opt" data-correct="false" data-feedback="Modem berfungsi mengubah sinyal internet, bukan menghubungkan komputer di LAN.">Modem</button>
+            <button class="opt" data-correct="true" data-feedback="Benar! Switch (atau hub) adalah perangkat pusat di topologi Star. Switch lebih pintar karena bisa mengirim data hanya ke tujuan yang tepat.">Switch atau Hub</button>
+            <button class="opt" data-correct="false" data-feedback="Terminator digunakan di topologi Bus untuk menutup ujung kabel, bukan sebagai pusat.">Terminator</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -790,10 +814,10 @@
           <div class="q-num">Soal 4 dari 10</div>
           <div class="q-text">Pada topologi Ring, metode apa yang digunakan untuk mengatur giliran pengiriman data agar tidak terjadi tabrakan?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'CSMA/CD digunakan di Ethernet (bus), bukan ring.')">CSMA/CD</button>
-            <button class="opt" onclick="answer(this,true,'Tepat! Token Passing adalah metode di Ring di mana hanya perangkat yang memegang "token" (semacam tiket giliran) yang boleh mengirim data.')">Token Passing</button>
-            <button class="opt" onclick="answer(this,false,'Broadcast adalah cara mengirim ke semua, bukan metode pengaturan giliran.')">Broadcasting</button>
-            <button class="opt" onclick="answer(this,false,'Routing adalah proses menentukan jalur terbaik untuk data, bukan mengatur giliran.')">Routing</button>
+            <button class="opt" data-correct="false" data-feedback="CSMA/CD digunakan di Ethernet (bus), bukan ring.">CSMA/CD</button>
+            <button class="opt" data-correct="true" data-feedback="Tepat! Token Passing adalah metode di Ring — hanya perangkat yang memegang token (tiket giliran) yang boleh mengirim data.">Token Passing</button>
+            <button class="opt" data-correct="false" data-feedback="Broadcast adalah cara mengirim ke semua, bukan metode pengaturan giliran.">Broadcasting</button>
+            <button class="opt" data-correct="false" data-feedback="Routing adalah proses menentukan jalur terbaik untuk data, bukan mengatur giliran.">Routing</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -810,10 +834,10 @@
           <div class="q-num">Soal 5 dari 10</div>
           <div class="q-text">Jika jaringan kantor kamu menggunakan topologi Star dan kabel dari komputer A ke switch putus, apa yang terjadi?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Bukan, di topologi Star kerusakan satu kabel tidak mematikan seluruh jaringan.')">Seluruh jaringan mati</button>
-            <button class="opt" onclick="answer(this,true,'Betul! Di topologi Star, setiap komputer punya jalur sendiri ke switch. Kalau satu putus, hanya komputer itu yang terputus dari jaringan.')">Hanya komputer A yang tidak bisa terhubung ke jaringan</button>
-            <button class="opt" onclick="answer(this,false,'Data tidak bisa otomatis berpindah jalur di topologi Star seperti di Mesh.')">Data otomatis berpindah ke jalur lain</button>
-            <button class="opt" onclick="answer(this,false,'Switch tidak akan mati hanya karena satu kabel putus.')">Switch ikut mati</button>
+            <button class="opt" data-correct="false" data-feedback="Bukan, di topologi Star kerusakan satu kabel tidak mematikan seluruh jaringan.">Seluruh jaringan mati</button>
+            <button class="opt" data-correct="true" data-feedback="Betul! Di topologi Star, setiap komputer punya jalur sendiri ke switch. Kalau satu putus, hanya komputer itu yang terputus dari jaringan.">Hanya komputer A yang tidak bisa terhubung ke jaringan</button>
+            <button class="opt" data-correct="false" data-feedback="Data tidak bisa otomatis berpindah jalur di topologi Star seperti di Mesh.">Data otomatis berpindah ke jalur lain</button>
+            <button class="opt" data-correct="false" data-feedback="Switch tidak akan mati hanya karena satu kabel putus.">Switch ikut mati</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -830,10 +854,10 @@
           <div class="q-num">Soal 6 dari 10</div>
           <div class="q-text">Topologi Mesh dengan 5 node membutuhkan berapa jalur koneksi? (Rumus: n(n-1)/2)</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'5 adalah jumlah node, bukan jumlah koneksi.')">5 koneksi</button>
-            <button class="opt" onclick="answer(this,false,'8 bukan hasil dari rumus n(n-1)/2 dengan n=5.')">8 koneksi</button>
-            <button class="opt" onclick="answer(this,true,'Benar! Dengan n=5: 5×(5-1)/2 = 5×4/2 = 20/2 = 10 koneksi. Makanya topologi Mesh sangat mahal untuk jaringan besar!')">10 koneksi</button>
-            <button class="opt" onclick="answer(this,false,'20 adalah hasil n×(n-1) sebelum dibagi 2.')">20 koneksi</button>
+            <button class="opt" data-correct="false" data-feedback="5 adalah jumlah node, bukan jumlah koneksi.">5 koneksi</button>
+            <button class="opt" data-correct="false" data-feedback="8 bukan hasil dari rumus n(n-1)/2 dengan n=5.">8 koneksi</button>
+            <button class="opt" data-correct="true" data-feedback="Benar! Dengan n=5: 5×(5-1)/2 = 5×4/2 = 20/2 = 10 koneksi. Makanya topologi Mesh sangat mahal untuk jaringan besar!">10 koneksi</button>
+            <button class="opt" data-correct="false" data-feedback="20 adalah hasil n×(n-1) sebelum dibagi 2.">20 koneksi</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -850,10 +874,10 @@
           <div class="q-num">Soal 7 dari 10</div>
           <div class="q-text">Topologi manakah yang paling cocok untuk jaringan perusahaan besar yang memiliki banyak divisi dan departemen?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Bus kurang cocok untuk jaringan besar karena kapasitas terbatas dan keandalan rendah.')">Bus</button>
-            <button class="opt" onclick="answer(this,false,'Ring sulit dikembangkan dan kurang cocok untuk struktur besar yang kompleks.')">Ring</button>
-            <button class="opt" onclick="answer(this,true,'Tepat! Tree (pohon) cocok karena strukturnya hierarkis — ada cabang-cabang yang bisa mewakili tiap divisi/departemen, dan mudah dikembangkan.')">Tree</button>
-            <button class="opt" onclick="answer(this,false,'Bus adalah topologi paling sederhana dan tidak cocok untuk perusahaan besar.')">Bus sederhana</button>
+            <button class="opt" data-correct="false" data-feedback="Bus kurang cocok untuk jaringan besar karena kapasitas terbatas dan keandalan rendah.">Bus</button>
+            <button class="opt" data-correct="false" data-feedback="Ring sulit dikembangkan dan kurang cocok untuk struktur besar yang kompleks.">Ring</button>
+            <button class="opt" data-correct="true" data-feedback="Tepat! Tree (pohon) cocok karena strukturnya hierarkis — ada cabang-cabang yang bisa mewakili tiap divisi/departemen, dan mudah dikembangkan.">Tree</button>
+            <button class="opt" data-correct="false" data-feedback="Bus adalah topologi paling sederhana dan tidak cocok untuk perusahaan besar.">Bus sederhana</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -870,10 +894,10 @@
           <div class="q-num">Soal 8 dari 10</div>
           <div class="q-text">Apa perbedaan utama antara Hub dan Switch dalam topologi Star?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,true,'Benar! Hub meneruskan data ke SEMUA perangkat (broadcast), sedangkan Switch lebih cerdas — hanya mengirim ke perangkat tujuan saja, sehingga lebih efisien.')">Hub meneruskan data ke semua perangkat, Switch hanya ke tujuan</button>
-            <button class="opt" onclick="answer(this,false,'Ini terbalik. Switch justru lebih canggih dan umumnya lebih mahal dari Hub.')">Hub lebih canggih dari Switch</button>
-            <button class="opt" onclick="answer(this,false,'Switch tidak pakai kabel nirkabel — WiFi Access Point yang nirkabel, bukan switch.')">Switch menggunakan koneksi nirkabel, Hub menggunakan kabel</button>
-            <button class="opt" onclick="answer(this,false,'Tidak ada perbedaan pasti soal jumlah port — keduanya tersedia dalam berbagai jumlah port.')">Hub memiliki lebih banyak port dibanding Switch</button>
+            <button class="opt" data-correct="true" data-feedback="Benar! Hub meneruskan data ke SEMUA perangkat (broadcast), sedangkan Switch lebih cerdas — hanya mengirim ke perangkat tujuan saja, sehingga lebih efisien.">Hub meneruskan data ke semua perangkat, Switch hanya ke tujuan</button>
+            <button class="opt" data-correct="false" data-feedback="Ini terbalik. Switch justru lebih canggih dan umumnya lebih mahal dari Hub.">Hub lebih canggih dari Switch</button>
+            <button class="opt" data-correct="false" data-feedback="Switch tidak pakai kabel nirkabel — WiFi Access Point yang nirkabel, bukan switch.">Switch menggunakan koneksi nirkabel, Hub menggunakan kabel</button>
+            <button class="opt" data-correct="false" data-feedback="Tidak ada perbedaan pasti soal jumlah port — keduanya tersedia dalam berbagai jumlah port.">Hub memiliki lebih banyak port dibanding Switch</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -890,10 +914,10 @@
           <div class="q-num">Soal 9 dari 10</div>
           <div class="q-text">Topologi Hybrid adalah...</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Topologi Bus yang disempurnakan tetap disebut Bus, bukan Hybrid.')">Topologi Bus yang sudah disempurnakan</button>
-            <button class="opt" onclick="answer(this,false,'Topologi khusus untuk WiFi bukan definisi Hybrid — itu lebih ke topologi Wireless.')">Topologi khusus untuk jaringan WiFi</button>
-            <button class="opt" onclick="answer(this,true,'Benar! Hybrid adalah gabungan dua atau lebih jenis topologi berbeda, yang dirancang untuk memenuhi kebutuhan jaringan yang kompleks.')">Gabungan dua atau lebih jenis topologi yang berbeda</button>
-            <button class="opt" onclick="answer(this,false,'Topologi dengan hanya dua komputer disebut Point-to-Point, bukan Hybrid.')">Topologi dengan hanya dua komputer yang terhubung</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi Bus yang disempurnakan tetap disebut Bus, bukan Hybrid.">Topologi Bus yang sudah disempurnakan</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi khusus untuk WiFi bukan definisi Hybrid — itu lebih ke topologi Wireless.">Topologi khusus untuk jaringan WiFi</button>
+            <button class="opt" data-correct="true" data-feedback="Benar! Hybrid adalah gabungan dua atau lebih jenis topologi berbeda, yang dirancang untuk memenuhi kebutuhan jaringan yang kompleks.">Gabungan dua atau lebih jenis topologi yang berbeda</button>
+            <button class="opt" data-correct="false" data-feedback="Topologi dengan hanya dua komputer disebut Point-to-Point, bukan Hybrid.">Topologi dengan hanya dua komputer yang terhubung</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -910,10 +934,10 @@
           <div class="q-num">Soal 10 dari 10</div>
           <div class="q-text">Internet yang kita gunakan sehari-hari menggunakan prinsip topologi apa untuk ketahanan jaringan antarnegara?</div>
           <div class="options">
-            <button class="opt" onclick="answer(this,false,'Bus terlalu sederhana dan tidak andal untuk infrastruktur sekompleks Internet.')">Bus</button>
-            <button class="opt" onclick="answer(this,false,'Ring tidak cocok untuk Internet karena sangat rentan — satu putus, semua terganggu.')">Ring</button>
-            <button class="opt" onclick="answer(this,false,'Star cocok untuk LAN lokal tapi tidak cukup andal untuk jaringan berskala Internet.')">Star</button>
-            <button class="opt" onclick="answer(this,true,'Tepat! Internet menggunakan prinsip Mesh — ada banyak jalur alternatif antar negara/server. Kalau satu jalur putus, data tetap bisa sampai lewat jalur lain.')">Mesh</button>
+            <button class="opt" data-correct="false" data-feedback="Bus terlalu sederhana dan tidak andal untuk infrastruktur sekompleks Internet.">Bus</button>
+            <button class="opt" data-correct="false" data-feedback="Ring tidak cocok untuk Internet karena sangat rentan — satu putus, semua terganggu.">Ring</button>
+            <button class="opt" data-correct="false" data-feedback="Star cocok untuk LAN lokal tapi tidak cukup andal untuk jaringan berskala Internet.">Star</button>
+            <button class="opt" data-correct="true" data-feedback="Tepat! Internet menggunakan prinsip Mesh — ada banyak jalur alternatif antar negara/server. Kalau satu jalur putus, data tetap bisa sampai lewat jalur lain.">Mesh</button>
           </div>
           <div class="q-feedback"></div>
         </div>
@@ -927,14 +951,23 @@
 
     <!-- SCORE SCREEN -->
     <div id="score-screen">
+      <div id="score-identity" style="margin-bottom:20px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:inline-block"></div>
       <div class="score-ring" id="scoreRing">
         <div class="score-num" id="scoreNum">0</div>
       </div>
       <div class="score-label" id="scoreLabel"></div>
       <div class="score-msg" id="scoreMsg"></div>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
         <button class="btn btn-ghost" onclick="restartQuiz()">🔄 Ulangi Kuis</button>
         <button class="btn btn-primary" onclick="switchTab(0)">🏠 Kembali ke Awal</button>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">💾 Simpan Hasil</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="saveResult('json')" style="font-size:0.85rem;padding:10px 18px">📄 JSON</button>
+          <button class="btn btn-ghost" onclick="saveResult('txt')" style="font-size:0.85rem;padding:10px 18px">📝 TXT</button>
+          <button class="btn btn-ghost" onclick="saveResult('xlsx')" style="font-size:0.85rem;padding:10px 18px">📊 Excel (XLSX)</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1190,9 +1223,23 @@ let currentQ = 1;
 const totalQ = 10;
 let score = 0;
 let answered = new Array(totalQ+1).fill(false);
+let studentName = '';
+let studentKelas = '';
+let quizAnswers = []; // store detail per soal
 
-function answer(btn, correct, feedback){
-  const qNum = parseInt(btn.closest('.quiz-q').id.replace('q',''));
+// Event delegation for all .opt buttons (fix for token passing bug)
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.opt');
+  if(!btn) return;
+  const qEl = btn.closest('.quiz-q');
+  if(!qEl) return;
+  const qNum = parseInt(qEl.id.replace('q',''));
+  const correct = btn.dataset.correct === 'true';
+  const feedback = btn.dataset.feedback || '';
+  answer(btn, correct, feedback, qNum);
+});
+
+function answer(btn, correct, feedback, qNum){
   if(answered[qNum]) return;
   answered[qNum] = true;
   const opts = btn.closest('.options').querySelectorAll('.opt');
@@ -1208,6 +1255,12 @@ function answer(btn, correct, feedback){
     fb.className = 'q-feedback show-wrong';
     fb.innerHTML = '❌ ' + feedback;
   }
+  // Store answer detail
+  quizAnswers[qNum] = {
+    soal: btn.closest('.q-card').querySelector('.q-text').textContent.trim(),
+    jawaban: btn.textContent.trim(),
+    benar: correct
+  };
   document.getElementById('next'+qNum).style.display = 'inline-block';
 }
 
@@ -1225,6 +1278,20 @@ function prevQ(from){
   document.getElementById('q'+(from-1)).classList.add('active');
 }
 
+function startQuiz(){
+  const nama = document.getElementById('inputNama').value.trim();
+  const kelas = document.getElementById('inputKelas').value.trim();
+  if(!nama || !kelas){
+    document.getElementById('identity-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('identity-error').style.display = 'none';
+  studentName = nama;
+  studentKelas = kelas;
+  document.getElementById('identity-form').style.display = 'none';
+  document.getElementById('quiz-container').style.display = 'block';
+}
+
 function showScore(){
   document.getElementById('quiz-container').style.display='none';
   const ss = document.getElementById('score-screen');
@@ -1233,6 +1300,10 @@ function showScore(){
   const ring = document.getElementById('scoreRing');
   ring.style.setProperty('--pct', pct+'%');
   document.getElementById('scoreNum').textContent = score+'/'+totalQ;
+  // Show student identity
+  document.getElementById('score-identity').innerHTML =
+    `<span style="color:var(--muted);font-size:0.8rem">👤 </span><strong style="color:var(--white)">${studentName}</strong>` +
+    `<span style="color:var(--muted);font-size:0.85rem;margin-left:10px">Kelas ${studentKelas}</span>`;
   const [label,msg] = pct===100
     ? ['🏆 Sempurna!','Luar biasa! Kamu menguasai semua materi topologi jaringan!']
     : pct>=80
@@ -1245,7 +1316,7 @@ function showScore(){
 }
 
 function restartQuiz(){
-  score=0; currentQ=1; answered=new Array(totalQ+1).fill(false);
+  score=0; currentQ=1; answered=new Array(totalQ+1).fill(false); quizAnswers=[];
   document.getElementById('quiz-container').style.display='block';
   document.getElementById('score-screen').classList.remove('show');
   for(let i=1;i<=totalQ;i++){
@@ -1257,6 +1328,109 @@ function restartQuiz(){
     const nb=document.getElementById('next'+i);
     if(nb) nb.style.display='none';
   }
+}
+
+// ══════════════════════════════════════
+//  SAVE RESULT
+// ══════════════════════════════════════
+function saveResult(format){
+  const now = new Date();
+  const timestamp = now.toLocaleString('id-ID');
+  const pct = Math.round((score/totalQ)*100);
+  const answers = [];
+  for(let i=1;i<=totalQ;i++){
+    if(quizAnswers[i]){
+      answers.push({no:i, ...quizAnswers[i]});
+    }
+  }
+
+  if(format === 'json'){
+    const data = {
+      nama: studentName,
+      kelas: studentKelas,
+      tanggal: timestamp,
+      nilai: score + '/' + totalQ,
+      persentase: pct + '%',
+      detail_jawaban: answers
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    downloadBlob(blob, `hasil_kuis_${studentName.replace(/\s+/g,'_')}.json`);
+
+  } else if(format === 'txt'){
+    let txt = '='.repeat(50) + '\n';
+    txt += '  HASIL KUIS TOPOLOGI JARINGAN\n';
+    txt += '='.repeat(50) + '\n';
+    txt += `Nama    : ${studentName}\n`;
+    txt += `Kelas   : ${studentKelas}\n`;
+    txt += `Tanggal : ${timestamp}\n`;
+    txt += `Nilai   : ${score}/${totalQ} (${pct}%)\n`;
+    txt += '-'.repeat(50) + '\n';
+    txt += 'DETAIL JAWABAN:\n';
+    txt += '-'.repeat(50) + '\n';
+    answers.forEach(a => {
+      txt += `\nNo. ${a.no}\n`;
+      txt += `Soal    : ${a.soal}\n`;
+      txt += `Jawaban : ${a.jawaban}\n`;
+      txt += `Status  : ${a.benar ? '✓ Benar' : '✗ Salah'}\n`;
+    });
+    txt += '\n' + '='.repeat(50);
+    const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+    downloadBlob(blob, `hasil_kuis_${studentName.replace(/\s+/g,'_')}.txt`);
+
+  } else if(format === 'xlsx'){
+    // Build XLSX manually using SheetJS-like format as base64
+    // Use simple CSV then rename or use a proper approach
+    // We'll create a proper XLSX using the xlsx library via CDN
+    buildXLSX();
+  }
+}
+
+function buildXLSX(){
+  // Load SheetJS dynamically
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = function(){
+    const now = new Date().toLocaleString('id-ID');
+    const pct = Math.round((score/totalQ)*100);
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Ringkasan
+    const summary = [
+      ['HASIL KUIS TOPOLOGI JARINGAN', '', ''],
+      ['', '', ''],
+      ['Nama', studentName, ''],
+      ['Kelas', studentKelas, ''],
+      ['Tanggal', now, ''],
+      ['Nilai', score + '/' + totalQ, ''],
+      ['Persentase', pct + '%', ''],
+    ];
+    const ws1 = XLSX.utils.aoa_to_sheet(summary);
+    ws1['!cols'] = [{wch:18},{wch:30},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Ringkasan');
+
+    // Sheet 2: Detail Jawaban
+    const header = ['No', 'Pertanyaan', 'Jawaban', 'Status'];
+    const rows = [header];
+    for(let i=1;i<=totalQ;i++){
+      if(quizAnswers[i]){
+        rows.push([i, quizAnswers[i].soal, quizAnswers[i].jawaban, quizAnswers[i].benar ? 'Benar' : 'Salah']);
+      }
+    }
+    const ws2 = XLSX.utils.aoa_to_sheet(rows);
+    ws2['!cols'] = [{wch:5},{wch:60},{wch:40},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Detail Jawaban');
+
+    XLSX.writeFile(wb, `hasil_kuis_${studentName.replace(/\s+/g,'_')}.xlsx`);
+  };
+  document.head.appendChild(script);
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // INIT
