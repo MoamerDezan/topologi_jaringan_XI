@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologi Jaringan — Kelas XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050810;
+  --bg2: #0a0f1e;
+  --bg3: #0f1628;
+  --cyan: #00d4ff;
+  --cyan2: #00a8cc;
+  --green: #00ff88;
+  --green2: #00cc6a;
+  --red: #ff3355;
+  --amber: #ffaa00;
+  --purple: #8855ff;
+  --text: #e0eeff;
+  --text2: #7a9bc4;
+  --border: rgba(0,212,255,0.2);
+  --border2: rgba(0,212,255,0.08);
+  --glow: 0 0 20px rgba(0,212,255,0.3);
+  --glow-green: 0 0 20px rgba(0,255,136,0.3);
+  --glow-red: 0 0 20px rgba(255,51,85,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,212,255,0.015) 40px,rgba(0,212,255,0.015) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,212,255,0.015) 40px,rgba(0,212,255,0.015) 41px);pointer-events:none;z-index:0}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:var(--cyan);border-radius:50%;animation:float linear infinite;opacity:0}
+@keyframes float{0%{transform:translateY(100vh) translateX(0);opacity:0}10%{opacity:0.6}90%{opacity:0.2}100%{transform:translateY(-10vh) translateX(30px);opacity:0}}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:block}
+.screen.active.flex-screen{display:flex}
+
+/* LOGIN */
+#s-login{align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-box{width:100%;max-width:440px}
+.login-logo{text-align:center;margin-bottom:2.5rem}
+.login-logo h1{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:var(--cyan);text-shadow:var(--glow);letter-spacing:3px;line-height:1.2}
+.login-logo p{color:var(--text2);font-size:1rem;margin-top:0.5rem;letter-spacing:2px}
+.hex-icon{width:72px;height:72px;margin:0 auto 1.5rem;position:relative}
+.hex-icon svg{filter:drop-shadow(0 0 12px var(--cyan))}
+.glass-card{background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:12px;padding:2rem;backdrop-filter:blur(20px);box-shadow:0 0 40px rgba(0,212,255,0.08)}
+.field-label{font-size:0.75rem;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.5rem;display:block}
+.cyber-select,.cyber-input{width:100%;background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:1rem;padding:0.75rem 1rem;border-radius:6px;margin-bottom:1.25rem;transition:all 0.2s;appearance:none;-webkit-appearance:none}
+.cyber-select:focus,.cyber-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 12px rgba(0,212,255,0.2);background:rgba(0,212,255,0.07)}
+.cyber-select option{background:#0a0f1e;color:var(--text)}
+.btn-cyber{width:100%;padding:1rem;background:transparent;border:1px solid var(--cyan);color:var(--cyan);font-family:'Orbitron',monospace;font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;border-radius:6px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.btn-cyber::before{content:'';position:absolute;inset:0;background:var(--cyan);transform:translateX(-100%);transition:transform 0.3s;z-index:-1}
+.btn-cyber:hover{color:#000;text-shadow:none;box-shadow:var(--glow)}
+.btn-cyber:hover::before{transform:translateX(0)}
+.btn-teacher-link{width:100%;text-align:center;margin-top:1rem;background:none;border:none;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:0.9rem;cursor:pointer;letter-spacing:1px;transition:color 0.2s}
+.btn-teacher-link:hover{color:var(--cyan)}
+.err-msg{color:var(--red);font-size:0.85rem;margin-top:0.5rem;display:none;text-align:center}
+
+/* TOPBAR */
+.topbar{background:rgba(5,8,16,0.95);border-bottom:1px solid var(--border2);padding:0.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.topbar-brand{font-family:'Orbitron',monospace;font-size:0.9rem;color:var(--cyan);letter-spacing:2px}
+.topbar-user{font-size:0.85rem;color:var(--text2)}
+.topbar-user span{color:var(--text)}
+.topbar-right{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+.xp-bar-wrap{display:flex;align-items:center;gap:0.5rem}
+.xp-label{font-size:0.75rem;color:var(--amber);font-family:'Orbitron',monospace;letter-spacing:1px}
+.xp-bar{width:100px;height:6px;background:rgba(255,170,0,0.15);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--amber),#ff6600);border-radius:3px;transition:width 0.5s ease}
+.btn-sm{padding:0.4rem 1rem;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;letter-spacing:1px}
+.btn-sm:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-sm.primary{border-color:var(--green);color:var(--green)}
+.btn-sm.primary:hover{background:rgba(0,255,136,0.1)}
+.btn-sm.danger{border-color:var(--red);color:var(--red)}
+
+/* MAIN NAV */
+.main-nav{display:flex;gap:0;border-bottom:1px solid var(--border2);background:rgba(10,15,30,0.6);overflow-x:auto}
+.nav-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:1rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s;white-space:nowrap;position:relative;border-bottom:2px solid transparent}
+.nav-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.nav-btn:hover{color:var(--text)}
+.nav-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--green);color:#000;border-radius:50%;font-size:0.65rem;font-weight:700;margin-left:6px;vertical-align:middle}
+
+/* CONTENT */
+.content{padding:1.5rem;max-width:1100px;margin:0 auto}
+
+/* PETA MATERI */
+.map-title{font-family:'Orbitron',monospace;font-size:1rem;color:var(--cyan);letter-spacing:2px;margin-bottom:1.5rem;text-transform:uppercase}
+.map-subtitle{font-size:0.95rem;color:var(--text2);margin-bottom:2rem;line-height:1.6}
+.topo-map{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.25rem;margin-bottom:2rem}
+.map-node{background:rgba(10,15,30,0.8);border:1px solid var(--border2);border-radius:10px;padding:1.25rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.map-node::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.05),transparent);opacity:0;transition:opacity 0.3s}
+.map-node:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-3px)}
+.map-node:hover::before{opacity:1}
+.map-node.unlocked{border-color:rgba(0,212,255,0.3)}
+.map-node.completed{border-color:var(--green);box-shadow:var(--glow-green)}
+.map-node.completed .node-status{color:var(--green)}
+.node-icon{width:48px;height:48px;margin-bottom:0.75rem}
+.node-title{font-family:'Orbitron',monospace;font-size:0.8rem;color:var(--cyan);letter-spacing:1px;margin-bottom:0.4rem}
+.node-desc{font-size:0.85rem;color:var(--text2);line-height:1.4}
+.node-status{font-size:0.75rem;color:var(--text2);margin-top:0.75rem;letter-spacing:1px}
+.node-xp{font-size:0.7rem;color:var(--amber);margin-top:0.3rem}
+
+/* DETAIL PANEL */
+.detail-panel{background:rgba(10,15,30,0.9);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1rem;animation:slideIn 0.3s ease;display:none}
+.detail-panel.show{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem}
+.detail-title{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--cyan)}
+.detail-close{background:none;border:1px solid var(--border);color:var(--text2);padding:0.3rem 0.75rem;border-radius:5px;cursor:pointer;font-size:0.85rem;transition:all 0.2s}
+.detail-close:hover{border-color:var(--red);color:var(--red)}
+.detail-body{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:600px){.detail-body{grid-template-columns:1fr}}
+.detail-desc{font-size:0.95rem;color:var(--text2);line-height:1.7;margin-bottom:1rem;grid-column:1/-1}
+.pros-box,.cons-box{background:rgba(0,0,0,0.3);border-radius:8px;padding:1rem}
+.pros-box{border-left:3px solid var(--green)}
+.cons-box{border-left:3px solid var(--red)}
+.box-title{font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem;font-weight:600}
+.pros-box .box-title{color:var(--green)}
+.cons-box .box-title{color:var(--red)}
+.pros-box li,.cons-box li{font-size:0.9rem;color:var(--text2);margin-bottom:0.4rem;padding-left:0.75rem;position:relative;list-style:none}
+.pros-box li::before{content:'+';position:absolute;left:0;color:var(--green)}
+.cons-box li::before{content:'−';position:absolute;left:0;color:var(--red)}
+.detail-example{grid-column:1/-1;background:rgba(0,212,255,0.05);border:1px solid var(--border2);border-radius:6px;padding:0.75rem 1rem;font-size:0.85rem;color:var(--text2)}
+.detail-example strong{color:var(--cyan)}
+.btn-mark-read{margin-top:1rem;padding:0.6rem 1.5rem;background:rgba(0,255,136,0.08);border:1px solid var(--green);color:var(--green);border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:0.9rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s}
+.btn-mark-read:hover{background:rgba(0,255,136,0.15)}
+.btn-mark-read:disabled{opacity:0.5;cursor:default}
+
+/* VISUALISASI */
+.sim-controls{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem}
+.sim-select{background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.95rem;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;appearance:none;transition:all 0.2s}
+.sim-select:focus{outline:none;border-color:var(--cyan)}
+.sim-select option{background:#0a0f1e}
+.btn-sim{padding:0.5rem 1.25rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;letter-spacing:1px}
+.btn-sim:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-sim.active-btn{border-color:var(--green);color:var(--green);background:rgba(0,255,136,0.08)}
+.btn-sim.danger-btn{border-color:var(--red);color:var(--red)}
+.btn-sim.danger-btn.active-btn{background:rgba(255,51,85,0.1)}
+.sim-canvas-wrap{background:rgba(5,8,16,0.9);border:1px solid var(--border);border-radius:10px;padding:1rem;position:relative;overflow:hidden}
+#sim-svg{width:100%;display:block}
+.sim-legend{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:0.75rem}
+.legend-item{display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.sim-log{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-top:0.75rem;min-height:70px;font-size:0.95rem;color:var(--text);font-family:'Rajdhani',sans-serif;line-height:1.6}
+.sim-hint{font-size:0.85rem;color:var(--text2);margin-top:0.5rem;line-height:1.6;padding:0.5rem 0.75rem;background:rgba(255,170,0,0.04);border-left:2px solid rgba(255,170,0,0.3);border-radius:0 4px 4px 0}
+.crash-badge{display:inline-block;background:rgba(255,51,85,0.15);border:1px solid var(--red);color:var(--red);font-size:0.7rem;letter-spacing:1px;padding:0.2rem 0.6rem;border-radius:3px;margin-left:0.5rem;vertical-align:middle;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* KUIS */
+.quiz-wrap{max-width:700px;margin:0 auto}
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem}
+.quiz-timer{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--amber);letter-spacing:2px}
+.quiz-timer.danger{color:var(--red);animation:pulse 0.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.quiz-progress{height:4px;background:rgba(0,212,255,0.1);border-radius:2px;overflow:hidden;margin-bottom:1.5rem}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:2px;transition:width 0.4s ease}
+.q-card{background:rgba(10,15,30,0.9);border:1px solid var(--border);border-radius:12px;padding:1.5rem;animation:qSlide 0.3s ease}
+@keyframes qSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.q-type-badge{display:inline-block;padding:0.2rem 0.75rem;border-radius:3px;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;font-weight:600}
+.q-type-badge.mc{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)}
+.q-type-badge.tf{background:rgba(136,85,255,0.1);color:var(--purple);border:1px solid rgba(136,85,255,0.3)}
+.q-type-badge.drag{background:rgba(255,170,0,0.1);color:var(--amber);border:1px solid rgba(255,170,0,0.3)}
+.q-type-badge.scenario{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+.q-text{font-size:1.05rem;color:var(--text);line-height:1.7;margin-bottom:1.25rem}
+.opt{display:flex;align-items:flex-start;gap:0.75rem;padding:0.85rem 1rem;border:1px solid rgba(0,212,255,0.15);border-radius:8px;margin-bottom:0.6rem;cursor:pointer;transition:all 0.2s;font-size:0.95rem;color:var(--text2)}
+.opt:hover{border-color:var(--cyan);color:var(--text);background:rgba(0,212,255,0.05)}
+.opt.selected{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.08)}
+.opt.correct{border-color:var(--green);color:var(--green);background:rgba(0,255,136,0.08)}
+.opt.wrong{border-color:var(--red);color:var(--red);background:rgba(255,51,85,0.08)}
+.opt-key{width:22px;height:22px;border-radius:4px;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;font-family:'Orbitron',monospace}
+.tf-row{display:flex;gap:0.75rem}
+.tf-btn{flex:1;padding:1rem;border-radius:8px;border:1px solid rgba(0,212,255,0.15);background:transparent;cursor:pointer;font-size:1rem;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:1px;transition:all 0.2s;color:var(--text2)}
+.tf-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.tf-btn.selected{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.08)}
+.tf-btn.correct{border-color:var(--green);color:var(--green);background:rgba(0,255,136,0.08)}
+.tf-btn.wrong{border-color:var(--red);color:var(--red);background:rgba(255,51,85,0.08)}
+.feedback-box{padding:0.85rem 1rem;border-radius:8px;margin-top:1rem;font-size:0.9rem;line-height:1.6;display:none;animation:fadeIn 0.3s ease}
+.feedback-box.show{display:block}
+.feedback-box.correct{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);color:var(--green)}
+.feedback-box.wrong{background:rgba(255,51,85,0.08);border:1px solid rgba(255,51,85,0.3);color:#ff8899}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* DRAG */
+.drag-pool{display:flex;flex-wrap:wrap;gap:0.5rem;padding:0.75rem;background:rgba(0,0,0,0.3);border:1px dashed rgba(0,212,255,0.2);border-radius:8px;min-height:48px;margin-bottom:1rem;transition:all 0.2s}
+.drag-pool.over{border-color:var(--cyan);background:rgba(0,212,255,0.05)}
+.drag-chip{padding:0.4rem 0.9rem;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);border-radius:20px;font-size:0.85rem;color:var(--cyan);cursor:grab;user-select:none;transition:all 0.2s}
+.drag-chip:hover{background:rgba(0,212,255,0.15)}
+.drag-chip:active{cursor:grabbing;opacity:0.7}
+.match-grid{display:grid;gap:0.6rem}
+.match-row{display:grid;grid-template-columns:1fr 30px 1fr;gap:0.5rem;align-items:center}
+.match-label{background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.85rem;color:var(--text2)}
+.match-slot{min-height:36px;background:rgba(0,0,0,0.3);border:1px dashed rgba(0,212,255,0.2);border-radius:6px;padding:4px;display:flex;align-items:center;transition:all 0.2s}
+.match-slot.over{border-color:var(--cyan);background:rgba(0,212,255,0.05)}
+.match-arrow{text-align:center;color:var(--text2);font-size:0.9rem}
+/* QUIZ NAV */
+.quiz-nav{display:flex;gap:0.75rem;justify-content:space-between;margin-top:1.25rem;flex-wrap:wrap}
+.q-dots{display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:1rem}
+.q-dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-family:'Orbitron',monospace;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.q-dot.answered{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.1)}
+.q-dot.current{border-color:var(--amber);color:var(--amber);background:rgba(255,170,0,0.1)}
+
+/* RESULT */
+.result-wrap{max-width:600px;margin:0 auto;text-align:center;padding:2rem 1.5rem}
+.result-id-card{background:rgba(10,15,30,0.95);border:1px solid var(--cyan);border-radius:14px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.result-id-card::before{content:'NETWORK ENGINEER';position:absolute;top:1rem;right:1rem;font-family:'Orbitron',monospace;font-size:0.6rem;color:rgba(0,212,255,0.2);letter-spacing:2px}
+.result-score-ring{width:130px;height:130px;margin:0 auto 1.25rem;position:relative}
+.result-score-ring svg{transform:rotate(-90deg)}
+.result-score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.result-score-num span{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:var(--glow)}
+.result-score-num small{font-size:0.7rem;color:var(--text2);letter-spacing:1px}
+.result-name{font-family:'Orbitron',monospace;font-size:1rem;color:var(--text);margin-bottom:0.3rem}
+.result-class{font-size:0.9rem;color:var(--text2);letter-spacing:1px;margin-bottom:1.25rem}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.r-stat{background:rgba(0,0,0,0.3);border-radius:8px;padding:0.75rem}
+.r-stat .val{font-family:'Orbitron',monospace;font-size:1.2rem;color:var(--cyan)}
+.r-stat .lbl{font-size:0.75rem;color:var(--text2);margin-top:0.2rem;letter-spacing:1px}
+.badge-earned{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:6px;font-size:0.85rem;letter-spacing:1px;font-weight:600;margin-bottom:1rem}
+.badge-earned.gold{background:rgba(255,170,0,0.1);border:1px solid var(--amber);color:var(--amber)}
+.badge-earned.silver{background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan)}
+.badge-earned.bronze{background:rgba(255,51,85,0.1);border:1px solid var(--red);color:var(--red)}
+.result-msg{font-size:1rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
+.result-btns{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap}
+.btn-result{padding:0.75rem 1.75rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Rajdhani',sans-serif;font-size:0.95rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s}
+.btn-result:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-result.primary{border-color:var(--cyan);color:var(--cyan)}
+.review-section{margin-top:1.5rem;text-align:left}
+
+/* LEADERBOARD */
+.lb-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.lb-filter{background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.95rem;padding:0.5rem 1rem;border-radius:6px;appearance:none;transition:all 0.2s}
+.lb-filter:focus{outline:none;border-color:var(--cyan)}
+.lb-filter option{background:#0a0f1e}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{text-align:left;padding:0.6rem 0.75rem;font-size:0.75rem;letter-spacing:2px;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border)}
+.lb-table td{padding:0.75rem;font-size:0.9rem;border-bottom:1px solid var(--border2)}
+.lb-table tr:hover td{background:rgba(0,212,255,0.03)}
+.rank-1 td:first-child{color:var(--amber)}
+.rank-2 td:first-child{color:#c0c0c0}
+.rank-3 td:first-child{color:#cd7f32}
+.score-pill{display:inline-block;padding:0.2rem 0.6rem;border-radius:3px;font-size:0.8rem;font-family:'Orbitron',monospace}
+.score-a{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+.score-b{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)}
+.score-c{background:rgba(255,170,0,0.1);color:var(--amber);border:1px solid rgba(255,170,0,0.3)}
+.score-d{background:rgba(255,51,85,0.1);color:var(--red);border:1px solid rgba(255,51,85,0.3)}
+
+/* TEACHER */
+#s-teacher-login{align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.teacher-panel{padding:1.5rem;max-width:1100px;margin:0 auto}
+.teacher-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem}
+.t-stat{background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.t-stat .val{font-family:'Orbitron',monospace;font-size:1.6rem;color:var(--cyan)}
+.t-stat .lbl{font-size:0.8rem;color:var(--text2);margin-top:0.3rem;letter-spacing:1px}
+.t-filter{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.t-input{background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.9rem;padding:0.5rem 1rem;border-radius:6px;flex:1;min-width:150px}
+.t-input:focus{outline:none;border-color:var(--cyan)}
+.t-select{background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.9rem;padding:0.5rem 1rem;border-radius:6px;appearance:none;min-width:130px}
+.t-select:focus{outline:none;border-color:var(--cyan)}
+.t-select option{background:#0a0f1e}
+.t-table-wrap{overflow-x:auto}
+.t-table{width:100%;border-collapse:collapse;font-size:0.9rem}
+.t-table th{text-align:left;padding:0.6rem 0.75rem;font-size:0.7rem;letter-spacing:2px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;white-space:nowrap}
+.t-table td{padding:0.7rem 0.75rem;border-bottom:1px solid var(--border2);white-space:nowrap}
+.t-table tr:hover td{background:rgba(0,212,255,0.03)}
+.no-data{text-align:center;padding:3rem;color:var(--text2);font-size:0.95rem;letter-spacing:1px}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(10,15,30,0.95);border:1px solid var(--cyan);border-radius:8px;padding:0.75rem 1.5rem;font-size:0.9rem;color:var(--cyan);letter-spacing:1px;z-index:999;transition:transform 0.3s ease;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.success{border-color:var(--green);color:var(--green)}
+#toast.error{border-color:var(--red);color:var(--red)}
+
+/* EFFECTS */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;top:-10px;animation:confettiFall linear forwards}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+<div id="toast"></div>
+
+<!-- LOGIN -->
+<div id="s-login" class="screen active flex-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="hex-icon">
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <polygon points="36,4 66,20 66,52 36,68 6,52 6,20" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+          <polygon points="36,14 56,25 56,47 36,58 16,47 16,25" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="0.5"/>
+          <circle cx="36" cy="24" r="4" fill="#00d4ff"/>
+          <circle cx="52" cy="36" r="4" fill="#00d4ff"/>
+          <circle cx="44" cy="50" r="4" fill="#00d4ff"/>
+          <circle cx="28" cy="50" r="4" fill="#00d4ff"/>
+          <circle cx="20" cy="36" r="4" fill="#00d4ff"/>
+          <line x1="36" y1="24" x2="52" y2="36" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="52" y1="36" x2="44" y2="50" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="44" y1="50" x2="28" y2="50" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="28" y1="50" x2="20" y2="36" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="20" y1="36" x2="36" y2="24" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+        </svg>
+      </div>
+      <h1>NET TOPOLOGY</h1>
+      <p>KELAS XI — JARINGAN KOMPUTER</p>
+    </div>
+    <div class="glass-card">
+      <span class="field-label">Pilih Kelas</span>
+      <select class="cyber-select" id="inp-kelas" onchange="updateNameList()">
+        <option value="">— Pilih Kelas —</option>
+        <option value="XI-I">XI-I</option>
+        <option value="XI-J">XI-J</option>
+      </select>
+      <span class="field-label">Pilih Nama</span>
+      <select class="cyber-select" id="inp-nama">
+        <option value="">— Pilih kelas terlebih dahulu —</option>
+      </select>
+      <button class="btn-cyber" onclick="doLogin()">AKSES SISTEM</button>
+      <p class="err-msg" id="login-err">Pilih kelas dan nama terlebih dahulu!</p>
+    </div>
+    <button class="btn-teacher-link" onclick="showScreen('s-teacher-login')">[ AKSES PANEL GURU ]</button>
+  </div>
+</div>
+
+<!-- TEACHER LOGIN -->
+<div id="s-teacher-login" class="screen flex-screen">
+  <div style="max-width:380px;margin:0 auto;padding:2rem">
+    <div class="login-logo" style="margin-bottom:1.5rem">
+      <h1 style="font-size:1.2rem">PANEL GURU</h1>
+      <p>AKSES TERBATAS</p>
+    </div>
+    <div class="glass-card">
+      <span class="field-label">Password</span>
+      <input type="password" class="cyber-input" id="teacher-pass" placeholder="Masukkan password...">
+      <button class="btn-cyber" onclick="teacherLogin()">MASUK</button>
+      <p class="err-msg" id="pass-err" style="display:none">Password salah.</p>
+      <button class="btn-teacher-link" style="margin-top:1rem" onclick="showScreen('s-login')">Kembali ke login siswa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="s-main" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-brand">NET TOPOLOGY</span>
+      <span class="topbar-user">Halo, <span id="disp-nama">—</span> · <span id="disp-kelas">—</span></span>
+    </div>
+    <div class="topbar-right">
+      <div class="xp-bar-wrap">
+        <span class="xp-label" id="xp-label">0 XP</span>
+        <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      </div>
+      <button class="btn-sm primary" onclick="gotoQuiz()">MULAI KUIS</button>
+      <button class="btn-sm" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+  <div class="main-nav">
+    <button class="nav-btn active" onclick="showTab('materi',this)">PETA MATERI</button>
+    <button class="nav-btn" onclick="showTab('visual',this)">VISUALISASI</button>
+    <button class="nav-btn" onclick="showTab('perbandingan',this)">PERBANDINGAN</button>
+    <button class="nav-btn" onclick="showTab('leaderboard',this)">LEADERBOARD</button>
+  </div>
+
+  <!-- TAB MATERI -->
+  <div id="tab-materi" class="content">
+    <div class="map-title">PETA MATERI</div>
+    <div class="map-subtitle">Klik salah satu topologi di bawah untuk baca penjelasannya. Setelah paham, klik <strong>"Tandai Sudah Dipelajari"</strong> untuk dapat XP! Pelajari minimal 3 topologi sebelum mulai kuis ya.</div>
+    <div class="topo-map" id="topo-map"></div>
+    <div id="detail-panel" class="detail-panel"></div>
+  </div>
+
+  <!-- TAB VISUAL -->
+  <div id="tab-visual" class="content" style="display:none">
+    <div class="map-title">SIMULATOR JARINGAN</div>
+    <p style="font-size:0.95rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.6">Lihat langsung gimana data berpindah antar komputer! Pilih topologi → tekan <strong style="color:var(--cyan)">PLAY</strong> untuk animasi otomatis, atau <strong style="color:var(--amber)">STEP</strong> untuk maju satu langkah sambil baca penjelasannya. Aktifkan <strong style="color:var(--red)">Mode Kerusakan</strong> untuk eksperimen sendiri!</p>
+    <div class="sim-controls">
+      <div style="display:flex;align-items:center;gap:0.5rem;flex:1;min-width:180px">
+        <select class="sim-select" id="sim-topo" onchange="initSim()" style="flex:1">
+          <option value="star">Topologi Star</option>
+          <option value="bus">Topologi Bus</option>
+          <option value="ring">Topologi Ring</option>
+          <option value="mesh">Topologi Mesh</option>
+          <option value="tree">Topologi Tree</option>
+        </select>
+        <span style="font-family:'Orbitron',monospace;font-size:0.75rem;letter-spacing:2px;padding:0.4rem 0.75rem;border-radius:5px;border:1px solid;white-space:nowrap" id="sim-topo-label">STAR</span>
+      </div>
+      <button class="btn-sim" onclick="playSim()" id="btn-play">PLAY</button>
+      <button class="btn-sim" onclick="stepSim()" id="btn-step">STEP</button>
+      <button class="btn-sim" onclick="resetSim()">RESET</button>
+      <button class="btn-sim danger-btn" id="btn-sabotage" onclick="toggleSabotage()">MODE KERUSAKAN</button>
+    </div>
+    <div class="sim-canvas-wrap">
+      <svg id="sim-svg" viewBox="0 0 500 260"></svg>
+    </div>
+    <div class="sim-legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#00d4ff"></span>Node aktif</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#ffaa00"></span>Mengirim data</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#00ff88"></span>Menerima data</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#ff3355"></span>Node mati / gangguan</span>
+    </div>
+    <div class="sim-log" id="sim-log">Pilih topologi dan tekan PLAY untuk memulai simulasi...</div>
+    <div class="sim-hint" id="sim-hint"></div>
+  </div>
+
+  <!-- TAB PERBANDINGAN -->
+  <div id="tab-perbandingan" class="content" style="display:none">
+    <div class="map-title">PERBANDINGAN TOPOLOGI</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;min-width:600px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:0.75rem;text-align:left;color:var(--cyan);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Topologi</th>
+            <th style="padding:0.75rem;text-align:left;color:var(--cyan);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Biaya</th>
+            <th style="padding:0.75rem;text-align:left;color:var(--cyan);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Skalabilitas</th>
+            <th style="padding:0.75rem;text-align:left;color:var(--cyan);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Toleransi Gangguan</th>
+            <th style="padding:0.75rem;text-align:left;color:var(--cyan);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Contoh Nyata</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border2)">
+            <td style="padding:0.75rem;font-weight:600;color:var(--text)">Bus</td>
+            <td style="padding:0.75rem"><span class="score-a">Rendah</span></td>
+            <td style="padding:0.75rem"><span class="score-d">Terbatas</span></td>
+            <td style="padding:0.75rem"><span class="score-d">Rendah</span></td>
+            <td style="padding:0.75rem;color:var(--text2)">Lab komputer lama</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border2)">
+            <td style="padding:0.75rem;font-weight:600;color:var(--text)">Ring</td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem;color:var(--text2)">Token Ring IBM, FDDI</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border2)">
+            <td style="padding:0.75rem;font-weight:600;color:var(--text)">Star</td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem"><span class="score-a">Tinggi</span></td>
+            <td style="padding:0.75rem"><span class="score-a">Tinggi</span></td>
+            <td style="padding:0.75rem;color:var(--text2)">WiFi rumah, kantor, sekolah</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border2)">
+            <td style="padding:0.75rem;font-weight:600;color:var(--text)">Mesh</td>
+            <td style="padding:0.75rem"><span class="score-d">Sangat Tinggi</span></td>
+            <td style="padding:0.75rem"><span class="score-a">Tinggi</span></td>
+            <td style="padding:0.75rem"><span class="score-a">Sangat Tinggi</span></td>
+            <td style="padding:0.75rem;color:var(--text2)">Internet backbone, militer</td>
+          </tr>
+          <tr>
+            <td style="padding:0.75rem;font-weight:600;color:var(--text)">Tree</td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem"><span class="score-a">Tinggi</span></td>
+            <td style="padding:0.75rem"><span class="score-b">Sedang</span></td>
+            <td style="padding:0.75rem;color:var(--text2)">Kampus, gedung bertingkat</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1.5rem;background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:10px;padding:1.25rem">
+      <div class="map-title" style="margin-bottom:1rem;font-size:0.85rem">KAPAN MEMILIH TOPOLOGI INI?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">
+        <div style="border-left:2px solid var(--cyan);padding-left:0.75rem"><div style="font-size:0.8rem;color:var(--cyan);letter-spacing:1px;margin-bottom:0.3rem">BUS</div><div style="font-size:0.85rem;color:var(--text2);line-height:1.5">Jaringan kecil, anggaran terbatas, tidak kritis</div></div>
+        <div style="border-left:2px solid var(--purple);padding-left:0.75rem"><div style="font-size:0.8rem;color:var(--purple);letter-spacing:1px;margin-bottom:0.3rem">RING</div><div style="font-size:0.85rem;color:var(--text2);line-height:1.5">Butuh transmisi data deterministik tanpa tabrakan</div></div>
+        <div style="border-left:2px solid var(--green);padding-left:0.75rem"><div style="font-size:0.8rem;color:var(--green);letter-spacing:1px;margin-bottom:0.3rem">STAR</div><div style="font-size:0.85rem;color:var(--text2);line-height:1.5">Paling umum, mudah kelola, sekolah/kantor</div></div>
+        <div style="border-left:2px solid var(--amber);padding-left:0.75rem"><div style="font-size:0.8rem;color:var(--amber);letter-spacing:1px;margin-bottom:0.3rem">MESH</div><div style="font-size:0.85rem;color:var(--text2);line-height:1.5">Infrastruktur kritis, tidak boleh mati sama sekali</div></div>
+        <div style="border-left:2px solid var(--red);padding-left:0.75rem"><div style="font-size:0.8rem;color:var(--red);letter-spacing:1px;margin-bottom:0.3rem">TREE</div><div style="font-size:0.85rem;color:var(--text2);line-height:1.5">Organisasi besar dengan hierarki jelas</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB LEADERBOARD -->
+  <div id="tab-leaderboard" class="content" style="display:none">
+    <div class="lb-header">
+      <div class="map-title" style="margin:0">LEADERBOARD</div>
+      <select class="lb-filter" id="lb-filter" onchange="renderLeaderboard()">
+        <option value="">Semua Kelas</option>
+        <option value="XI-I">XI-I</option>
+        <option value="XI-J">XI-J</option>
+      </select>
+    </div>
+    <div style="background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="lb-table" id="lb-table">
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Nilai</th><th>Waktu</th><th>Status</th></tr></thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+      </div>
+      <div id="lb-empty" class="no-data" style="display:none">Belum ada yang mengerjakan kuis. Jadilah yang pertama!</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="s-quiz" class="screen">
+  <div class="topbar">
+    <span class="topbar-brand">KUIS TOPOLOGI</span>
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+      <span id="q-counter" style="font-size:0.85rem;color:var(--text2)"></span>
+      <span class="quiz-timer" id="q-timer">00:00</span>
+    </div>
+  </div>
+  <div style="padding:1.25rem;max-width:700px;margin:0 auto">
+    <div class="q-dots" id="q-dots"></div>
+    <div class="quiz-progress"><div class="quiz-progress-fill" id="q-progress" style="width:0%"></div></div>
+    <div id="q-container"></div>
+    <div class="quiz-nav">
+      <button class="btn-sim" onclick="prevQ()" id="btn-prev" style="display:none">SEBELUMNYA</button>
+      <div></div>
+      <div style="display:flex;gap:0.75rem">
+        <button class="btn-sim active-btn" onclick="nextQ()" id="btn-next">SELANJUTNYA</button>
+        <button class="btn-sim" style="border-color:var(--green);color:var(--green);display:none" onclick="submitQuiz()" id="btn-submit">KUMPULKAN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="screen">
+  <div class="topbar"><span class="topbar-brand">HASIL KUIS</span></div>
+  <div class="result-wrap">
+    <div class="result-id-card">
+      <div class="result-score-ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(0,212,255,0.1)" stroke-width="10"/>
+          <circle cx="65" cy="65" r="55" fill="none" stroke="#00d4ff" stroke-width="10" stroke-dasharray="345.4" id="score-arc" stroke-dashoffset="345.4" stroke-linecap="round" style="filter:drop-shadow(0 0 8px #00d4ff)"/>
+        </svg>
+        <div class="result-score-num"><span id="res-score">0</span><small>/ 100</small></div>
+      </div>
+      <div class="result-name" id="res-name"></div>
+      <div class="result-class" id="res-class"></div>
+      <div class="badge-earned" id="res-badge"></div>
+      <div class="result-stats">
+        <div class="r-stat"><div class="val" id="res-correct">0</div><div class="lbl">BENAR</div></div>
+        <div class="r-stat"><div class="val" id="res-wrong">0</div><div class="lbl">SALAH</div></div>
+        <div class="r-stat"><div class="val" id="res-time">—</div><div class="lbl">WAKTU</div></div>
+      </div>
+      <div class="result-msg" id="res-msg"></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn-result primary" onclick="backToMain()">KEMBALI KE MATERI</button>
+      <button class="btn-result" onclick="toggleReview()">LIHAT JAWABAN</button>
+    </div>
+    <div class="review-section" id="review-section" style="display:none"></div>
+  </div>
+</div>
+
+<!-- TEACHER PANEL -->
+<div id="s-teacher" class="screen">
+  <div class="topbar">
+    <span class="topbar-brand">PANEL GURU</span>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <button class="btn-sm primary" onclick="exportCSV()">EKSPOR CSV</button>
+      <button class="btn-sm danger" onclick="clearData()">HAPUS DATA</button>
+      <button class="btn-sm" onclick="showScreen('s-login')">KELUAR</button>
+    </div>
+  </div>
+  <div class="teacher-panel">
+    <div class="teacher-stats" id="t-stats"></div>
+    <div style="background:rgba(10,15,30,0.8);border:1px solid var(--border);border-radius:10px;padding:1.25rem">
+      <div class="map-title" style="margin-bottom:1rem;font-size:0.85rem">REKAP NILAI SISWA</div>
+      <div class="t-filter">
+        <input class="t-input" type="text" id="t-search" placeholder="Cari nama..." oninput="renderTeacher()">
+        <select class="t-select" id="t-class" onchange="renderTeacher()">
+          <option value="">Semua Kelas</option>
+          <option value="XI-I">XI-I</option>
+          <option value="XI-J">XI-J</option>
+        </select>
+      </div>
+      <div class="t-table-wrap">
+        <table class="t-table">
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Nilai</th><th>Benar</th><th>Waktu</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="t-body"></tbody>
+        </table>
+      </div>
+      <div id="t-empty" class="no-data" style="display:none">Belum ada data nilai siswa.</div>
+    </div>
+    <div style="margin-top:1rem;padding:0.75rem 1rem;background:rgba(255,170,0,0.05);border:1px solid rgba(255,170,0,0.2);border-radius:8px">
+      <p style="font-size:0.82rem;color:var(--text2)">Nilai otomatis terkirim ke Google Sheets. Password guru: <strong style="color:var(--amber)">guru123</strong> — ganti di baris kode <code style="color:var(--cyan)">TEACHER_PASS</code>.</p>
+      <p style="font-size:0.82rem;color:var(--text2);margin-top:0.4rem">Google Sheets URL: <strong style="color:var(--amber)">Ganti nilai <code style="color:var(--cyan)">SHEETS_URL</code> di script dengan URL Apps Script Anda.</strong></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEACHER_PASS = 'guru123';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzUZ2hP1kpsFr30pQ8Xfa5b-4kEaHneM5av5Uygz_2ZJXTbTr5Mdjlukm7moBeBZzzT/exec';
+
+const STUDENTS = {
+  'XI-I': ['AHMAD SOLAHUDIN','ALMIRA TRIDEWI','ANNIDA LATIFATUL HUDA','DWI ERLIANA PUSPITA','EKI AGUSTIANA','FEBRI MAULIDINI','GALUH HASBY FADILAH','HARIYRAA FITRIA ANWAR','INTAN NATASYA','KAYLA JULIANTI','M. RIFKI AL FAREZ','MANDA MAULIDIA','MUHAMAD BAYU EZA RADITYA','MUHAMAD GOPUR NAJRI RIANSYAH','MUHAMAD LUTFI','MUHAMMAD GILANG RAMADHAN','MUHAMMAD ZIDAN AMIRULLOH','MULAN ANJANI','NABILA FAZRIN','NAYANDA APRILIA','NIDA SALMA SABILA','NISRINA ZAHRA','NOVAL ADRIANSYAH PRATAMA','PENI','RAIHAN DHIYAULHAQ PERMANA','RAMA PATURACHMAN','RAMDAN HIDAYATUL MAULANA','RASSYA RAFAEL AKBAR','RAYI HANIF','RAYNALDI MAULIDAN','SAEPUWLOH','SINDI KHOERUNISA','SITI AISYAH','SITI FAUZIAH ZAHIRA SALSABILA','TAMIM DARORI','TENGKU ZAKIATUNUFUS'],
+  'XI-J': ['AHMAD SYAFIQ','ALZENA MAULIDASYITA','AMANDA GINA IFATUNISA','AZZAHRA FATIHA SALSABILA','ERNA ARIANI','FADLI NAHDIAN','FARDHAN ALFARIZI','FELISH VALERIE ALYA','GHEA FADLIAH RAHMAN','GHEYSAR FAIQA DILARA','IHDA HUMA SAYALIN','JANETA FITRI','KEYLA APRILIA','M. ZIQIRULLAH','MOCH. RIFKI ALFIANSYAH','MUHAMAD FAHRI RAMADHAN','MUHAMAD IBRAHIMOVIC','MUHAMAD SAYID HIKAM MURTADO','MUHAMMAD RIZKY RAMADHAN','MUTAWALI','MUTIARA NUR FADILAH','NABILA KONITA AZZAHRA','NIHA HAMIDAH FIRMANSYAH','NURAENI','NURKHOLIS DAWAM WANDIKA','NURSYIFA','RAHMAH PADILAH','RAIHAN PAKIHUDIN','RAYEN PRADIPTA','RIKO TAMPATI','SILMI FEBISARI','SINTA MAHARANI','SITI AULIA RAMADANI','SITI MEKASARI','TENGKU FAJAR','WINDI INTAN AGUSTINA']
+};
+
+const TOPO_DATA = {
+  bus:{name:'Bus',color:'#00d4ff',icon:'bus',
+    desc:'Bayangkan semua komputer ditancapkan ke satu kabel panjang seperti jemuran. Kalau ada komputer yang mau kirim data, sinyalnya merambat ke seluruh kabel dan semua komputer "dengar" — tapi hanya yang dituju yang merespons.',
+    pros:['Murah banget — kabelnya cuma satu','Mudah dipasang, cocok untuk jaringan kecil','Tidak butuh alat tambahan yang mahal'],
+    cons:['Kalau kabel utamanya putus, semua komputer langsung tidak bisa nyambung','Makin banyak yang pakai, makin lemot jaringannya','Susah dicari sumber masalahnya kalau ada gangguan'],
+    contoh:'Lab komputer jadul era 90-an. Sekarang sudah jarang dipakai karena kelemahannya banyak.'},
+  ring:{name:'Ring',color:'#8855ff',icon:'ring',
+    desc:'Komputer-komputer disambung melingkar seperti rantai. Data dikirim pakai sistem "giliran" — ada semacam tiket bernama <strong style="color:#8855ff">token</strong> yang beredar. Komputer baru boleh kirim data kalau sudah pegang tiket itu, lalu tiket diteruskan ke komputer berikutnya.',
+    pros:['Tidak ada tabrakan data karena sistemnya bergiliran','Kinerjanya stabil dan bisa diprediksi','Mudah dideteksi kalau ada yang rusak'],
+    cons:['Satu komputer rusak = seluruh jaringan bisa mati, karena jalurnya cuma satu lingkaran','Susah menambah atau mencabut komputer tanpa mengganggu jaringan','Lebih lambat dibanding Star untuk kebutuhan zaman sekarang'],
+    contoh:'Jaringan Token Ring IBM (populer tahun 80-90an). Sekarang sudah sangat jarang.'},
+  star:{name:'Star',color:'#00ff88',icon:'star',
+    desc:'Semua komputer nyambung ke satu alat di tengah yang disebut <strong style="color:#00ff88">switch</strong> (semacam "pengatur lalu lintas data"). Kalau komputer A mau kirim data ke komputer C, datanya dikirim ke switch dulu, lalu switch yang meneruskan langsung ke komputer C — bukan ke semua komputer.',
+    pros:['Kalau satu komputer rusak, yang lain tetap jalan normal','Gampang diperbaiki — tinggal cek kabel satu per satu','Mau tambah komputer baru? Tinggal colokkan ke switch'],
+    cons:['Kalau switch-nya yang rusak, semua komputer langsung tidak bisa terhubung','Butuh lebih banyak kabel karena setiap komputer punya kabel sendiri ke switch','Harga switch yang bagus lumayan mahal'],
+    contoh:'WiFi di rumah kamu, jaringan di sekolah, warnet, kantor — ini yang paling banyak dipakai sekarang!'},
+  mesh:{name:'Mesh',color:'#ffaa00',icon:'mesh',
+    desc:'Setiap komputer/router punya jalur langsung ke banyak komputer lain. Kalau satu jalur putus, data langsung cari jalan lain secara otomatis. Ada dua jenis: <strong style="color:#ffaa00">Full Mesh</strong> (semua saling terhubung langsung) dan <strong style="color:#ffaa00">Partial Mesh</strong> (sebagian saja yang saling terhubung langsung).',
+    pros:['Sangat susah mati total — selalu ada jalur cadangan','Tidak ada satu titik pun yang kalau rusak bikin semua mati','Paling aman dan paling andal dari semua topologi'],
+    cons:['Sangat mahal — kabelnya banyak banget','Sangat rumit untuk dipasang dan dikelola','Jarang dipakai untuk jaringan biasa karena biayanya tidak masuk akal'],
+    contoh:'Jaringan internet bawah laut antar negara, jaringan militer, pusat data (data center) skala besar.'},
+  tree:{name:'Tree',color:'#ff3355',icon:'tree',
+    desc:'Campuran antara topologi Star dan Bus. Bentuknya seperti pohon: ada <strong style="color:#ff3355">root (akar/pusat)</strong> di paling atas, lalu bercabang ke switch-switch yang lebih kecil, dan tiap switch cabang mengurus sekelompok komputer di bawahnya.',
+    pros:['Struktur jelas dan rapi — tahu persis siapa mengurus siapa','Mudah dikembangkan, tinggal tambah cabang baru','Kalau satu cabang rusak, cabang lain tetap aman'],
+    cons:['Sangat bergantung pada root (pusat) — kalau root rusak, semuanya kena','Lebih rumit dipasang dibanding Star biasa','Kalau kabel utama (backbone) putus, semua cabang di bawahnya ikut mati'],
+    contoh:'Jaringan di kampus besar, gedung bertingkat (tiap lantai punya switch sendiri), jaringan sekolah yang punya banyak ruangan.'}
+};
+
+const QUESTIONS = [
+  // ── SOAL 1–5: PENGENALAN TOPOLOGI ──
+  {id:1,type:'mc',
+    q:'Topologi mana yang cara kerjanya seperti jemuran — semua komputer ditancapkan ke satu kabel panjang yang sama?',
+    opts:['Ring — karena bentuknya melingkar','Bus — satu kabel untuk semua','Star — semua ke satu alat di tengah','Mesh — semua saling nyambung'],
+    ans:1,
+    exp:'Betul! Topologi Bus pakai satu kabel utama (disebut backbone = tulang punggung jaringan). Semua komputer disambungkan ke kabel itu. Kelemahannya: kalau kabelnya putus, semua komputer langsung terputus.'},
+  {id:2,type:'tf',
+    q:'Pada topologi Star, kalau switch (alat pengatur di tengah) rusak, maka SEMUA komputer tidak bisa saling kirim data — bahkan kalau komputernya sendiri masih menyala dan baik-baik saja.',
+    ans:true,
+    exp:'Benar! Switch itu ibarat "pengatur lalu lintas". Semua data harus lewat switch dulu sebelum sampai ke tujuan. Kalau switch mati, tidak ada satu pun data yang bisa jalan — meskipun semua komputer baik-baik saja.'},
+  {id:3,type:'mc',
+    q:'Perusahaan internet menghubungkan jaringannya antar kota. Mereka mau pastikan kalau satu jalur kabel putus, internet tetap jalan lewat jalur lain. Topologi mana yang cocok?',
+    opts:['Bus — murah dan simpel','Star — mudah dikelola','Ring — data berputar teratur','Mesh — selalu ada jalur cadangan'],
+    ans:3,
+    exp:'Mesh! Di topologi Mesh, setiap titik punya banyak jalur ke titik lain. Kalau satu jalur putus, data langsung otomatis cari jalan lain. Makanya internet backbone (jaringan utama internet) pakai topologi ini.'},
+  {id:4,type:'drag',
+    q:'Pasangkan setiap topologi dengan ciri khasnya! Seret kartu ke kolom yang sesuai:',
+    pairs:[['Bus','Satu kabel panjang untuk semua'],['Ring','Data bergiliran pakai "tiket" (token)'],['Star','Ada switch/hub di tengah sebagai pengatur'],['Mesh','Tiap titik punya banyak jalur cadangan'],['Tree','Struktur bercabang seperti pohon']],
+    exp:'Bagus! Tiap topologi punya ciri khas yang membedakannya. Hafal ciri khas ini supaya gampang menentukan topologi mana yang tepat untuk situasi tertentu.'},
+  {id:5,type:'tf',
+    q:'Di topologi Ring, ada sistem "token" — yaitu semacam tiket giliran. Hanya komputer yang pegang tiket itu yang boleh kirim data, jadi tidak ada dua komputer yang kirim data bersamaan.',
+    ans:true,
+    exp:'Benar! Token itu ibarat tiket giliran. Komputer A pegang token → kirim data → serahkan token ke komputer B → dst. Karena cuma satu yang kirim di satu waktu, tidak ada tabrakan data (dalam bahasa teknis disebut "collision").'},
+
+  // ── SOAL 6–10: KELEBIHAN & KELEMAHAN ──
+  {id:6,type:'mc',
+    q:'Topologi mana yang paling murah biayanya tapi paling tidak andal — satu kabel rusak bisa bikin semua komputer mati?',
+    opts:['Star','Mesh','Bus','Tree'],
+    ans:2,
+    exp:'Bus! Topologi Bus cuma butuh satu kabel untuk semua komputer, jadi biayanya paling murah. Tapi justru itu kelemahannya — kalau kabel satu-satunya itu rusak, seluruh jaringan langsung mati total.'},
+  {id:7,type:'tf',
+    q:'Topologi Mesh adalah topologi yang paling mahal karena setiap komputer harus punya kabel langsung ke SEMUA komputer lainnya.',
+    ans:true,
+    exp:'Benar! Di Full Mesh, setiap komputer terhubung langsung ke semua komputer lain. Kalau ada 10 komputer, butuh 45 kabel! Rumusnya: n×(n-1)÷2. Makanya Mesh sangat mahal dan hanya dipakai untuk infrastruktur yang benar-benar penting.'},
+  {id:8,type:'mc',
+    q:'Apa keunggulan UTAMA topologi Star dibanding topologi Bus?',
+    opts:['Star lebih murah karena kabelnya lebih sedikit','Star tidak butuh switch sehingga lebih hemat','Kalau satu komputer di Star rusak, komputer lain tetap bisa jalan normal','Star bisa mengirim data lebih cepat karena tidak perlu token'],
+    ans:2,
+    exp:'Betul! Di Star, setiap komputer punya kabel sendiri ke switch. Jadi kalau satu komputer rusak atau kabelnya dicabut, hanya komputer itu saja yang terdampak — yang lain tetap jalan normal. Di Bus, kalau satu titik rusak bisa bikin semua kena.'},
+  {id:9,type:'mc',
+    q:'Kelemahan terbesar topologi Ring adalah...',
+    opts:['Membutuhkan switch yang mahal di tengah jaringan','Satu komputer rusak bisa memutus komunikasi seluruh jaringan','Tidak bisa mengirim data dengan cepat karena banyak jalur','Biayanya sangat mahal karena banyak kabel yang dibutuhkan'],
+    ans:1,
+    exp:'Betul! Karena topologi Ring hanya punya SATU jalur berbentuk lingkaran, kalau satu komputer saja yang rusak, lingkaran itu terputus dan seluruh jaringan berhenti. Ini kelemahan yang sangat fatal untuk jaringan yang butuh keandalan tinggi.'},
+  {id:10,type:'tf',
+    q:'Topologi Tree cocok dipakai di gedung sekolah bertingkat — tiap lantai punya switch sendiri dan semua switch terhubung ke server pusat di lantai utama.',
+    ans:true,
+    exp:'Benar! Itulah gambaran sempurna topologi Tree — ada "akar" (server/switch pusat) di atas, lalu bercabang ke tiap lantai. Kalau jaringan di lantai 3 bermasalah, lantai lain tidak terdampak. Sangat cocok untuk gedung bertingkat!'},
+
+  // ── SOAL 11–15: SKENARIO & PENERAPAN ──
+  {id:11,type:'scenario',
+    q:'Pak Budi mau buka warnet dengan 25 komputer. Syaratnya: kalau 1 komputer rusak tidak boleh ganggu yang lain, mudah tambah komputer baru, dan budget pas-pasan. Topologi mana yang paling tepat?',
+    opts:['Bus — paling murah, kabel cuma satu','Ring — tidak ada tabrakan data, stabil','Star — kalau 1 rusak tidak ganggu lain, gampang dikembangkan','Mesh — paling kuat, tidak bisa mati total'],
+    ans:2,
+    exp:'Star! Alasannya: (1) Kalau 1 komputer rusak, tinggal cabut kabelnya — yang lain tetap jalan. (2) Mau tambah komputer baru? Tinggal colokkan ke switch. (3) Switch murah sudah tersedia di mana-mana. Mesh terlalu mahal untuk warnet!'},
+  {id:12,type:'mc',
+    q:'Di ujung kabel pada topologi Bus, dipasang alat kecil bernama TERMINATOR. Apa fungsinya?',
+    opts:['Memperkuat sinyal supaya jangkauannya lebih jauh','Menyerap sinyal di ujung kabel supaya tidak memantul balik','Menghubungkan jaringan Bus ke internet','Mengatur giliran komputer yang boleh kirim data'],
+    ans:1,
+    exp:'Terminator berfungsi menyerap sinyal di ujung kabel. Tanpa terminator, sinyal yang sampai di ujung kabel akan memantul balik dan bertabrakan dengan sinyal baru — jaringan jadi error. Ibarat ujung selang air yang disumbat supaya air tidak balik ke belakang.'},
+  {id:13,type:'tf',
+    q:'Di topologi Mesh penuh (semua saling terhubung), kalau ada 5 komputer, maka dibutuhkan tepat 10 koneksi kabel. Rumusnya: jumlah komputer × (jumlah komputer - 1) ÷ 2.',
+    ans:true,
+    exp:'Benar! Rumusnya: n × (n-1) ÷ 2. Untuk 5 komputer: 5 × 4 ÷ 2 = 10 kabel. Coba hitung: kalau 10 komputer? Butuh 45 kabel! Makanya Mesh sangat mahal dan hanya dipakai untuk jaringan yang benar-benar tidak boleh mati.'},
+  {id:14,type:'scenario',
+    q:'Bank besar punya server yang menyimpan data tabungan jutaan orang. Jaringan ini tidak boleh mati sama sekali — bahkan kalau ada bencana yang merusak satu jalur kabel sekalipun. Topologi apa yang wajib dipakai?',
+    opts:['Star — pakai switch yang mahal dan berkualitas','Tree — struktur rapi dan gampang dikelola','Bus — simpel dan mudah diperbaiki','Mesh — selalu ada jalur lain kalau satu jalur putus'],
+    ans:3,
+    exp:'Mesh! Data tabungan jutaan orang tidak boleh hilang. Dengan Mesh, kalau satu jalur putus karena gempa atau banjir sekalipun, data tetap bisa lewat jalur lain secara otomatis. Mahal? Iya. Tapi sebanding dengan risikonya kalau sampai mati.'},
+  {id:15,type:'mc',
+    q:'Sebuah sekolah punya 4 gedung. Tiap gedung punya jaringan Star sendiri, dan keempat gedung itu semua terhubung ke server pusat sekolah. Ini ciri khas topologi apa?',
+    opts:['Bus — ada kabel panjang antar gedung','Ring — gedung-gedungnya melingkar','Tree — jaringan bertingkat seperti pohon','Mesh — tiap gedung saling nyambung langsung'],
+    ans:2,
+    exp:'Tree! Topologi Tree itu seperti pohon — ada pusat (root/akar) di atas, lalu bercabang ke gedung-gedung yang masing-masing punya jaringan Star sendiri. Cocok untuk sekolah, kampus, atau gedung bertingkat.'},
+
+  // ── SOAL 16–20: PERBANDINGAN & ANALISIS ──
+  {id:16,type:'drag',
+    q:'Pasangkan setiap topologi dengan contoh penggunaannya di dunia nyata:',
+    pairs:[['Star','WiFi dan jaringan di rumah atau kantor'],['Bus','Lab komputer jadul era tahun 90-an'],['Mesh','Jaringan internet bawah laut antar negara'],['Tree','Jaringan di gedung sekolah atau kampus']],
+    exp:'Setiap topologi punya tempat yang paling cocok. Star mendominasi jaringan sehari-hari, Mesh untuk yang tidak boleh mati, dan Tree untuk gedung besar yang terstruktur.'},
+  {id:17,type:'tf',
+    q:'Topologi Star lebih boros kabel dibanding topologi Bus, karena setiap komputer butuh kabel tersendiri yang langsung menuju ke switch.',
+    ans:true,
+    exp:'Benar! Di Bus, semua komputer berbagi satu kabel — jadi hemat kabel. Di Star, tiap komputer punya kabel sendiri ke switch. Tapi "boros kabel" ini sepadan karena Star jauh lebih andal dan mudah diperbaiki.'},
+  {id:18,type:'mc',
+    q:'Kalau kamu jadi teknisi jaringan dan ada laporan "internet di satu meja mati tapi meja lain masih normal", jaringan tersebut kemungkinan besar memakai topologi...',
+    opts:['Bus — karena kerusakan menyebar ke semua','Ring — karena token tidak bisa beredar','Star — kerusakan hanya di satu titik','Mesh — karena ada jalur yang terputus'],
+    ans:2,
+    exp:'Star! Ciri khas Star adalah kerusakan yang terisolasi — kalau satu komputer atau kabelnya bermasalah, hanya titik itu yang mati, yang lain tetap normal. Kalau Bus yang rusak, biasanya semua langsung mati sekaligus.'},
+  {id:19,type:'mc',
+    q:'Topologi mana yang paling cocok untuk jaringan kecil di rumah dengan 3-5 perangkat (HP, laptop, TV, printer) yang semua terhubung ke router WiFi?',
+    opts:['Bus — kabel satu untuk semua','Ring — bergiliran pakai token','Star — semua ke router/switch di tengah','Mesh — semua saling terhubung langsung'],
+    ans:2,
+    exp:'Star! Router WiFi di rumahmu itu sebenarnya adalah switch/hub — semua perangkat terhubung ke router itu. Ini persis topologi Star. Makanya kalau router mati, semua perangkat tidak bisa internet, tapi kalau satu HP yang bermasalah, yang lain tetap oke.'},
+  {id:20,type:'tf',
+    q:'Topologi Ring lebih cocok dipakai di jaringan modern dibanding topologi Star karena sistem token-nya mencegah tabrakan data.',
+    ans:false,
+    exp:'Salah! Meskipun token mencegah tabrakan data, topologi Ring sudah jarang dipakai karena terlalu rentan — satu komputer rusak bisa bikin seluruh jaringan mati. Star jauh lebih populer karena lebih andal dan mudah dikembangkan.'},
+
+  // ── SOAL 21–25: PEMAHAMAN MENDALAM ──
+  {id:21,type:'scenario',
+    q:'Sebuah rumah sakit punya 3 lantai. Lantai 1 untuk pendaftaran, lantai 2 untuk rawat inap, lantai 3 untuk laboratorium. Mereka mau jaringan yang kalau lantai 2 bermasalah, lantai lain tetap bisa jalan. Topologi apa yang paling tepat?',
+    opts:['Bus — satu kabel lewat semua lantai','Ring — data bergiliran antar lantai','Star — satu switch besar untuk semua lantai','Tree — tiap lantai punya switch sendiri, terhubung ke server pusat'],
+    ans:3,
+    exp:'Tree! Dengan Tree, tiap lantai punya switch sendiri. Kalau switch lantai 2 rusak, lantai 1 dan 3 tidak terdampak karena mereka punya switch cabang masing-masing. Sangat cocok untuk gedung bertingkat seperti rumah sakit.'},
+  {id:22,type:'mc',
+    q:'Apa yang dimaksud dengan "tabrakan data" (collision) yang sering terjadi di topologi Bus?',
+    opts:['Kabel Bus sering putus karena terlalu panjang','Dua komputer kirim data bersamaan sehingga sinyalnya bertabrakan di kabel','Data yang dikirim tertukar ke komputer yang salah','Switch di Bus sering panas dan mati karena terlalu banyak data'],
+    ans:1,
+    exp:'Betul! Di Bus, semua komputer pakai kabel yang sama. Kalau dua komputer kirim data di waktu yang sama, sinyal mereka bertabrakan di kabel dan rusak — tidak ada yang bisa diterima. Ini disebut collision. Semakin banyak komputer, semakin sering tabrakan terjadi!'},
+  {id:23,type:'tf',
+    q:'Pada topologi Tree, kalau server pusat (root) rusak, maka SEMUA komputer di seluruh cabang tidak bisa saling berkomunikasi.',
+    ans:true,
+    exp:'Benar! Server pusat (root) adalah jantung dari topologi Tree. Semua komunikasi antar cabang harus lewat root. Kalau root rusak, cabang-cabang tidak bisa saling bicara meskipun switch cabang masing-masing masih hidup.'},
+  {id:24,type:'mc',
+    q:'Kenapa topologi Mesh disebut "tidak punya single point of failure"?',
+    opts:['Karena Mesh menggunakan kabel yang sangat kuat dan tidak mudah putus','Karena di Mesh tidak ada satu pun titik yang kalau rusak bisa bikin seluruh jaringan mati','Karena Mesh selalu punya teknisi siaga 24 jam','Karena switch di Mesh otomatis memperbaiki dirinya sendiri kalau rusak'],
+    ans:1,
+    exp:'"Single point of failure" artinya satu titik yang kalau rusak bikin semua mati. Di Bus, kabelnya itu single point of failure. Di Star, switchnya. Di Mesh — tidak ada! Karena setiap titik punya banyak jalur alternatif, tidak ada satu titik pun yang bisa bikin semua mati sekaligus.'},
+  {id:25,type:'scenario',
+    q:'Warung kopi mau pasang WiFi untuk pelanggan. Budget sangat terbatas, hanya butuh untuk 5-8 perangkat, dan tidak masalah kalau sesekali ada gangguan kecil. Topologi mana yang paling hemat dan cukup untuk kebutuhan ini?',
+    opts:['Mesh — paling andal dan tidak bisa mati','Tree — terstruktur dan mudah dikembangkan','Star — pakai satu router/switch untuk semua perangkat','Ring — sistem token mencegah tabrakan data'],
+    ans:2,
+    exp:'Star dengan satu router WiFi murah sudah lebih dari cukup! Mesh jauh terlalu mahal dan kompleks untuk warung kopi. Tree juga berlebihan. Star adalah pilihan paling praktis dan hemat untuk jaringan kecil seperti warung kopi.'},
+
+  // ── SOAL 26–30: TANTANGAN & ANALISIS KRITIS ──
+  {id:26,type:'drag',
+    q:'Urutkan topologi dari yang paling MURAH ke yang paling MAHAL biaya instalasinya:',
+    pairs:[['Paling murah','Bus'],['Murah-sedang','Star'],['Sedang','Ring'],['Sedang-mahal','Tree'],['Paling mahal','Mesh']],
+    exp:'Urutan biaya: Bus (1 kabel untuk semua) → Star (butuh switch + kabel per komputer) → Ring (kabel melingkar + card khusus) → Tree (banyak switch berjenjang) → Mesh (kabel terbanyak, koneksi berlipat ganda).'},
+  {id:27,type:'mc',
+    q:'Sebuah jaringan menggunakan topologi Ring dengan 8 komputer. Tiba-tiba komputer nomor 5 mati karena mati lampu. Apa yang terjadi pada komputer nomor 1, 2, 3, dan 4?',
+    opts:['Tidak ada masalah, mereka tetap bisa saling kirim data','Mereka juga ikut mati karena arus listrik terhubung','Mereka tidak bisa berkomunikasi karena lingkaran Ring terputus','Mereka otomatis beralih ke jalur cadangan melewati komputer 6, 7, 8'],
+    ans:2,
+    exp:'Mereka tidak bisa berkomunikasi! Token yang beredar akan terhenti di komputer nomor 5 yang mati — tidak bisa diteruskan. Karena Ring hanya punya satu jalur melingkar, putus di satu titik = putus semua. Tidak ada jalur cadangan di topologi Ring biasa.'},
+  {id:28,type:'tf',
+    q:'Topologi Star bisa "berubah" menjadi topologi Tree kalau kita menghubungkan beberapa switch Star ke satu switch utama yang lebih besar.',
+    ans:true,
+    exp:'Tepat sekali! Tree sebenarnya adalah "Star yang bertingkat". Kalau Star punya satu switch, Tree punya beberapa switch yang saling terhubung secara berjenjang. Inilah cara jaringan di sekolah atau kampus besar biasanya dibangun.'},
+  {id:29,type:'scenario',
+    q:'Gedung kantor 5 lantai mau upgrade jaringan. Saat ini pakai Bus yang sering bermasalah. Syarat baru: (1) kerusakan di satu lantai tidak mengganggu lantai lain, (2) mudah tambah komputer baru, (3) budget menengah. Topologi pengganti yang paling tepat?',
+    opts:['Ring — lebih teratur dan tidak ada tabrakan data','Mesh — paling andal meskipun mahal','Tree — tiap lantai terisolasi, mudah dikembangkan, biaya menengah','Star satu switch besar — semua lantai ke satu switch pusat'],
+    ans:2,
+    exp:'Tree! Dengan Tree, tiap lantai punya switch sendiri (terhubung ke switch utama). Kerusakan di lantai 3 tidak ganggu lantai lain ✓, mudah tambah komputer baru di tiap lantai ✓, dan biaya lebih masuk akal dari Mesh ✓. Jawaban yang tepat!'},
+  {id:30,type:'mc',
+    q:'Pernyataan mana yang SALAH tentang topologi jaringan?',
+    opts:['Topologi Bus menggunakan satu kabel utama yang dipakai bersama semua komputer','Topologi Star bergantung penuh pada switch — kalau switch mati semua mati','Topologi Ring punya banyak jalur cadangan sehingga sangat tahan kerusakan','Topologi Mesh adalah topologi yang paling mahal karena butuh banyak kabel'],
+    ans:2,
+    exp:'Yang SALAH adalah pilihan C! Topologi Ring TIDAK punya jalur cadangan — justru sebaliknya, Ring sangat rentan karena hanya punya satu jalur melingkar. Yang punya banyak jalur cadangan adalah topologi MESH, bukan Ring.'}
+];
+
+let user = {}, xp = 0, readTopics = [], quizAnswers = {}, dragState = {}, currentQ = 0;
+let timerInterval, startTime, simInterval, simStep = 0, sabotageMode = false, deadNodes = new Set();
+
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function load(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById(id);if(el){el.classList.add('active');}}
+
+function updateNameList(){
+  const kelas=document.getElementById('inp-kelas').value;
+  const sel=document.getElementById('inp-nama');
+  sel.innerHTML='<option value="">— Pilih Nama —</option>';
+  if(STUDENTS[kelas])STUDENTS[kelas].forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+}
+
+function doLogin(){
+  const k=document.getElementById('inp-kelas').value;
+  const n=document.getElementById('inp-nama').value;
+  if(!k||!n){document.getElementById('login-err').style.display='block';return}
+  document.getElementById('login-err').style.display='none';
+  user={nama:n,kelas:k};
+  document.getElementById('disp-nama').textContent=n.split(' ')[0];
+  document.getElementById('disp-kelas').textContent=k;
+  readTopics=load('read_'+n+'_'+k)||[];
+  xp=readTopics.length*50+(load('xp_'+n+'_'+k)||0);
+  updateXP();
+  renderTopoMap();
+  // Cek apakah sudah pernah mengerjakan kuis
+  const allResults=load('results')||[];
+  const existingResult=allResults.find(r=>r.nama===n&&r.kelas===k);
+  if(existingResult){
+    // Sudah pernah kuis — langsung tampilkan hasil lama
+    showScreen('s-main');
+    updateQuizButton(true, existingResult.score);
+    toast('Selamat datang kembali, '+n.split(' ')[0]+'! Kuis kamu sudah tercatat.','success');
+  } else {
+    showScreen('s-main');
+    updateQuizButton(false, null);
+  }
+}
+
+function doLogout(){user={};showScreen('s-login')}
+
+function updateXP(){
+  const maxXP=500;
+  document.getElementById('xp-label').textContent=xp+' XP';
+  document.getElementById('xp-fill').style.width=Math.min(100,Math.round(xp/maxXP*100))+'%';
+}
+
+function showTab(name,el){
+  ['materi','visual','perbandingan','leaderboard'].forEach(t=>{const d=document.getElementById('tab-'+t);if(d)d.style.display='none'});
+  document.getElementById('tab-'+name).style.display='block';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(name==='leaderboard')renderLeaderboard();
+  if(name==='visual'){simStep=0;simRunning=false;animating=false;deadNodes.clear();sabotageMode=false;initSim();}
+}
+
+// TOPO MAP
+function renderTopoMap(){
+  const map=document.getElementById('topo-map');
+  const icons={bus:'<path d="M4 8h16M4 8a2 2 0 01-2-2V5a1 1 0 011-1h16a1 1 0 011 1v1a2 2 0 01-2 2M4 8v8a2 2 0 002 2h12a2 2 0 002-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>',ring:'<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="4" r="2" fill="currentColor"/><circle cx="19.5" cy="8" r="2" fill="currentColor"/><circle cx="19.5" cy="16" r="2" fill="currentColor"/><circle cx="12" cy="20" r="2" fill="currentColor"/><circle cx="4.5" cy="16" r="2" fill="currentColor"/><circle cx="4.5" cy="8" r="2" fill="currentColor"/>',star:'<circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="4" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="20" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="20" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="4" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="12" y1="9" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="15" y1="12" x2="18" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/>',mesh:'<circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="20" cy="4" r="2" fill="currentColor"/><circle cx="20" cy="20" r="2" fill="currentColor"/><circle cx="4" cy="20" r="2" fill="currentColor"/><line x1="4" y1="4" x2="20" y2="4" stroke="currentColor" stroke-width="1.2"/><line x1="20" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="1.2"/><line x1="20" y1="20" x2="4" y2="20" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="20" x2="4" y2="4" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2,1"/><line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2,1"/>',tree:'<circle cx="12" cy="3" r="2" fill="currentColor"/><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/><circle cx="2" cy="21" r="1.5" fill="currentColor"/><circle cx="8" cy="21" r="1.5" fill="currentColor"/><circle cx="16" cy="21" r="1.5" fill="currentColor"/><circle cx="22" cy="21" r="1.5" fill="currentColor"/><line x1="12" y1="5" x2="5" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="12" y1="5" x2="19" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="14" x2="2" y2="19.5" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="14" x2="8" y2="19.5" stroke="currentColor" stroke-width="1.2"/><line x1="19" y1="14" x2="16" y2="19.5" stroke="currentColor" stroke-width="1.2"/><line x1="19" y1="14" x2="22" y2="19.5" stroke="currentColor" stroke-width="1.2"/>'};
+  map.innerHTML=Object.entries(TOPO_DATA).map(([key,d])=>{
+    const done=readTopics.includes(key);
+    return`<div class="map-node ${done?'completed':'unlocked'}" onclick="showDetail('${key}')">
+      <svg class="node-icon" viewBox="0 0 24 24" style="color:${d.color}"><svg xmlns="http://www.w3.org/2000/svg">${icons[key]||''}</svg></svg>
+      <div class="node-title">${d.name}</div>
+      <div class="node-desc">${d.desc.substring(0,60)}...</div>
+      <div class="node-status">${done?'SELESAI DIBACA':'BELUM DIBACA'}</div>
+      <div class="node-xp">+50 XP</div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(key){
+  const d=TOPO_DATA[key];
+  const panel=document.getElementById('detail-panel');
+  const done=readTopics.includes(key);
+  panel.className='detail-panel show';
+  panel.innerHTML=`
+    <div class="detail-header">
+      <div class="detail-title" style="color:${d.color}">TOPOLOGI ${d.name.toUpperCase()}</div>
+      <button class="detail-close" onclick="document.getElementById('detail-panel').className='detail-panel'">TUTUP</button>
+    </div>
+    <div class="detail-desc">${d.desc}</div>
+    <div class="detail-body">
+      <div class="pros-box"><div class="box-title">Kelebihan</div><ul>${d.pros.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+      <div class="cons-box"><div class="box-title">Kelemahan</div><ul>${d.cons.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+      <div class="detail-example" style="grid-column:1/-1"><strong>Contoh penggunaan nyata:</strong> ${d.contoh}</div>
+    </div>
+    <button class="btn-mark-read" ${done?'disabled':''} onclick="markRead('${key}',this)">${done?'SUDAH DIPELAJARI':'TANDAI SUDAH DIPELAJARI (+50 XP)'}</button>
+    <div style="margin-top:0.75rem">
+      <button style="background:none;border:1px solid var(--border);color:var(--text2);padding:0.4rem 1rem;border-radius:5px;cursor:pointer;font-family:Rajdhani,sans-serif;font-size:0.85rem" onclick="showTab('visual',null);document.getElementById('sim-topo').value='${key}';initSim();resetSim()">Lihat simulasi topologi ini →</button>
+    </div>`;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function markRead(key,btn){
+  if(readTopics.includes(key))return;
+  readTopics.push(key);
+  save('read_'+user.nama+'_'+user.kelas,readTopics);
+  xp+=50;save('xp_'+user.nama+'_'+user.kelas,xp);
+  updateXP();
+  btn.disabled=true;btn.textContent='SUDAH DIPELAJARI';
+  renderTopoMap();
+  toast('+50 XP! Topologi '+TOPO_DATA[key].name+' dipelajari.','success');
+}
+
+// SIMULATION
+const SIM_CONFIGS = {
+  star:{
+    nodes:[{x:250,y:130,r:16,c:'#ffaa00',label:'Switch',type:'switch'},{x:250,y:40,r:12,c:'#00d4ff',label:'PC-A'},{x:380,y:85,r:12,c:'#00d4ff',label:'PC-B'},{x:400,y:185,r:12,c:'#00d4ff',label:'PC-C'},{x:250,y:220,r:12,c:'#00d4ff',label:'PC-D'},{x:100,y:185,r:12,c:'#00d4ff',label:'PC-E'},{x:120,y:85,r:12,c:'#00d4ff',label:'PC-F'}],
+    edges:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]],
+    steps:[{from:1,to:0,msg:'PC-A mengirim data ke Switch...'},{from:0,to:3,msg:'Switch meneruskan data langsung ke PC-C!'},{from:3,to:0,msg:'PC-C membalas ke Switch...'},{from:0,to:1,msg:'Switch kirim balasan ke PC-A.'}],
+    sabotage:{node:0,msg:'Switch pusat mati! Semua PC tidak bisa berkomunikasi satu sama lain.'}
+  },
+  bus:{
+    nodes:[{x:60,y:130,r:12,c:'#00d4ff',label:'PC-A'},{x:150,y:130,r:12,c:'#00d4ff',label:'PC-B'},{x:250,y:130,r:12,c:'#00d4ff',label:'PC-C'},{x:350,y:130,r:12,c:'#00d4ff',label:'PC-D'},{x:440,y:130,r:12,c:'#00d4ff',label:'PC-E'}],
+    edges:[[0,1],[1,2],[2,3],[3,4]],
+    steps:[{from:0,to:1,msg:'PC-A broadcast data ke kabel...'},{from:1,to:2,msg:'Data merambat ke PC-B, C, D, E...'},{from:2,to:3,msg:'Semua menerima, tapi hanya PC-D yang merespons...'},{from:3,to:4,msg:'Data sampai di PC-D (tujuan)!'}],
+    sabotage:{node:2,msg:'PC-C mati dan memutus kabel backbone! Jaringan terbelah dua — PC-A & B tidak bisa ke PC-D & E.'}
+  },
+  ring:{
+    nodes:[{x:250,y:30,r:12,c:'#8855ff',label:'PC-A'},{x:400,y:105,r:12,c:'#8855ff',label:'PC-B'},{x:380,y:210,r:12,c:'#8855ff',label:'PC-C'},{x:250,y:250,r:12,c:'#8855ff',label:'PC-D'},{x:120,y:210,r:12,c:'#8855ff',label:'PC-E'},{x:100,y:105,r:12,c:'#8855ff',label:'PC-F'}],
+    edges:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],
+    steps:[{from:0,to:1,msg:'PC-A mendapat token! Mengirim data ke PC-B...'},{from:1,to:2,msg:'Token diteruskan, data melewati PC-B ke C...'},{from:2,to:3,msg:'Melewati PC-C, menuju PC-D...'},{from:3,to:0,msg:'PC-D tujuan! Token dikembalikan ke PC-A.'}],
+    sabotage:{node:2,msg:'PC-C mati! Token tidak bisa melewati PC-C. Ring terputus — seluruh jaringan terhenti.'}
+  },
+  mesh:{
+    nodes:[{x:150,y:70,r:12,c:'#ff3355',label:'Router-A'},{x:350,y:70,r:12,c:'#ff3355',label:'Router-B'},{x:420,y:190,r:12,c:'#ff3355',label:'Router-C'},{x:250,y:240,r:12,c:'#ff3355',label:'Router-D'},{x:80,y:190,r:12,c:'#ff3355',label:'Router-E'}],
+    edges:[[0,1],[1,2],[2,3],[3,4],[4,0],[0,2],[1,3],[0,3],[1,4],[2,4]],
+    steps:[{from:0,to:1,msg:'Router-A kirim via jalur utama A→B...'},{from:1,to:2,msg:'Melanjutkan B→C...'},{from:4,to:3,msg:'Jalur alternatif E→D tersedia!'},{from:3,to:2,msg:'Data tiba di Router-C via jalur alternatif juga!'}],
+    sabotage:{node:1,msg:'Router-B mati! Tapi tenang — data otomatis dialihkan ke jalur alternatif A→E→D→C. Jaringan tetap jalan!'}
+  },
+  tree:{
+    nodes:[{x:250,y:25,r:14,c:'#00d4ff',label:'Root',type:'switch'},{x:130,y:100,r:12,c:'#ffaa00',label:'SW-1',type:'switch'},{x:370,y:100,r:12,c:'#ffaa00',label:'SW-2',type:'switch'},{x:60,y:185,r:10,c:'#8855ff',label:'PC-A'},{x:130,y:185,r:10,c:'#8855ff',label:'PC-B'},{x:200,y:185,r:10,c:'#8855ff',label:'PC-C'},{x:300,y:185,r:10,c:'#8855ff',label:'PC-D'},{x:370,y:185,r:10,c:'#8855ff',label:'PC-E'},{x:440,y:185,r:10,c:'#8855ff',label:'PC-F'}],
+    edges:[[0,1],[0,2],[1,3],[1,4],[1,5],[2,6],[2,7],[2,8]],
+    steps:[{from:3,to:1,msg:'PC-A kirim ke SW-1...'},{from:1,to:0,msg:'SW-1 naikkan ke Root...'},{from:0,to:2,msg:'Root teruskan ke SW-2...'},{from:2,to:7,msg:'SW-2 kirim ke PC-E (tujuan)!'}],
+    sabotage:{node:1,msg:'SW-1 mati! PC-A, B, C di cabang kiri tidak bisa berkomunikasi. Tapi cabang SW-2 (PC-D, E, F) tetap aman!'}
+  }
+};
+
+let simCfg, simRunning=false, animating=false;
+
+const SIM_NARRATION = {
+  star:{
+    normal:[
+      'Di topologi Star, ada satu alat di tengah bernama SWITCH — tugasnya seperti "pengatur lalu lintas data". Semua komputer harus bicara lewat switch dulu.',
+      'PC-A mau kirim file ke PC-C. Data dikirim ke Switch dulu. PC-B, D, E, F tidak tahu ada kiriman — berbeda dengan Bus yang semua "dengar"!',
+      'Switch pintar: ia tahu persis di mana PC-C berada. Data langsung dikirim ke PC-C saja — tidak disebar ke semua. Ini namanya pengiriman "point-to-point".',
+      'PC-C terima data dan kirim balasan. Lagi-lagi lewat Switch dulu...',
+      'Switch teruskan balasan ke PC-A. Selesai! Perhatikan: hanya PC-A dan PC-C yang terlibat. PC lain tidak terganggu sama sekali. Inilah keunggulan Star!'
+    ],
+    sabotage:[
+      'Kamu sudah matikan salah satu titik. Tekan PLAY untuk lihat apa yang terjadi!',
+      'PC-A mencoba kirim data... tapi ada yang bermasalah di jalur!',
+      'Kalau SWITCH yang mati: semua PC langsung tidak bisa komunikasi satu sama lain — karena tidak ada yang mengatur lalu lintas data.',
+      'Tapi kalau PC BIASA yang mati: hanya PC itu yang terisolasi. PC lain tetap bisa saling kirim data seperti biasa!',
+      'Kesimpulan: Titik paling rentan di topologi Star adalah SWITCH. Kalau switch rusak, semua kena. Makanya di kantor besar, switch biasanya punya cadangan (backup).'
+    ]
+  },
+  bus:{
+    normal:[
+      'Di topologi Bus, semua komputer ditancapkan ke SATU kabel panjang. Bayangkan kabel ini seperti "jalanan umum" yang semua orang lewati.',
+      'PC-A mau kirim data ke PC-D. Sinyal dikirim ke kabel... dan SEMUA komputer langsung "mendengar" sinyal ini — berbeda dengan Star!',
+      'PC-B, C, D, E semuanya terima sinyal. Tapi mereka memeriksa: "Eh, ini buat aku atau bukan?" PC-B dan C menjawab "bukan punyaku" lalu mengabaikannya.',
+      'Hanya PC-D yang bilang "ini buat aku!" dan memproses datanya. Yang lain sudah membuang sinyal tadi.',
+      'Data sampai! Tapi coba bayangkan kalau 10 PC kirim data bersamaan... semua akan tabrakan di kabel yang sama. Itulah kelemahan Bus — makin ramai, makin kacau!'
+    ],
+    sabotage:[
+      'Kamu matikan sebuah PC di tengah kabel. Ini seperti simulasi kabel yang putus. Tekan PLAY!',
+      'PC-A mencoba kirim sinyal ke kabel... sinyal merambat... lalu BERHENTI di titik yang putus!',
+      'Jaringan TERBELAH DUA! PC di sebelah kiri tidak bisa berkomunikasi dengan PC di sebelah kanan. Mereka sekarang jadi dua jaringan terpisah yang tidak bisa saling bicara.',
+      'Inilah kelemahan FATAL topologi Bus: satu titik kerusakan bisa membelah seluruh jaringan.',
+      'Di ujung kabel Bus ada alat kecil bernama TERMINATOR — fungsinya menyerap sinyal supaya tidak mental balik. Tapi terminator tidak bisa mengatasi kabel yang putus di tengah!'
+    ]
+  },
+  ring:{
+    normal:[
+      'Di topologi Ring, komputer-komputer tersambung melingkar seperti rantai. Ada sistem giliran pakai "TOKEN" — yaitu sinyal khusus yang beredar mengelilingi lingkaran.',
+      'PC-A dapat TOKEN (tiket giliran)! Artinya PC-A boleh kirim data sekarang. Data + token dikirim ke PC-B di sebelahnya...',
+      'PC-B terima data, cek alamat tujuan: "Bukan punyaku." PC-B teruskan token + data ke PC-C. Token terus beredar searah jarum jam...',
+      'Melewati PC-C... terus ke PC-D... token bergerak searah, tidak bisa balik!',
+      'PC-D adalah tujuan! Data diterima. Token dikembalikan ke PC-A. Sistem ini rapi dan teratur — tidak ada tabrakan data karena cuma satu yang kirim di satu waktu.'
+    ],
+    sabotage:[
+      'Kamu matikan satu PC di Ring. Ini yang bikin Ring terkenal sebagai topologi paling rentan! Tekan PLAY...',
+      'Token bergerak... sampai di PC yang mati... TOKEN TIDAK BISA DITERUSKAN!',
+      'Seluruh lingkaran TERPUTUS. Karena jalurnya cuma satu (lingkaran), tidak ada jalan lain untuk data lewat.',
+      'Semua komputer berhenti bisa berkomunikasi — padahal yang rusak cuma SATU komputer! Ini kelemahan terbesar Ring.',
+      'Solusi zaman dulu: pakai "Dual Ring" — dua jalur lingkaran berlawanan arah, jadi kalau satu putus masih ada yang lain. Tapi tetap mahal dan rumit!'
+    ]
+  },
+  mesh:{
+    normal:[
+      'Topologi Mesh: setiap router punya koneksi langsung ke banyak router lain. Lihat betapa banyaknya jalur yang tersedia! Ini seperti jaring laba-laba.',
+      'Router-A mau kirim data ke Router-C. Ada banyak pilihan jalur! Misalnya lewat A→B→C...',
+      'Data meluncur lewat Router-B menuju Router-C. Tapi perhatikan — ada jalur lain juga yang bisa dipakai!',
+      'Secara bersamaan, jalur alternatif A→E→D→C juga tersedia sebagai cadangan. Data bisa datang dari dua arah!',
+      'Inilah kekuatan Mesh: SELALU ada jalan lain. Dipakai untuk jaringan yang benar-benar tidak boleh mati — seperti jaringan internet bawah laut antar negara!'
+    ],
+    sabotage:[
+      'Kamu matikan salah satu router. Sekarang lihat apa yang membuat Mesh berbeda dari topologi lain! Tekan PLAY...',
+      'Jalur utama terputus karena router mati... tapi sistem tidak panik!',
+      'Mesh OTOMATIS mencari jalur lain! Data dialihkan melewati router-router lain yang masih hidup.',
+      'Data tetap sampai ke tujuan lewat jalan memutar! Jaringan TETAP BERFUNGSI meskipun ada yang rusak.',
+      'Inilah alasan Mesh dipakai di infrastruktur penting: bank, militer, internet dunia. Mahal? Iya. Tapi sebanding karena benar-benar susah mati total!'
+    ]
+  },
+  tree:{
+    normal:[
+      'Topologi Tree seperti pohon: ada "akar" (Root/server pusat) di atas, lalu bercabang ke Switch-Switch yang lebih kecil, dan tiap switch mengurus komputernya masing-masing.',
+      'PC-A (di cabang kiri, diurus SW-1) mau kirim data ke PC-E (di cabang kanan, diurus SW-2). Data naik dulu ke SW-1...',
+      'SW-1 tidak tahu persis di mana PC-E berada. SW-1 "melaporkan" ke Root: "Ada data mau ke PC-E!"',
+      'Root tahu semua cabang. Root teruskan ke SW-2: "Ini ada kiriman buat salah satu PC-mu!"',
+      'SW-2 langsung kirim ke PC-E. Selesai! Perhatikan: data harus "naik dulu ke atas, baru turun ke bawah". Tidak bisa langsung antar cabang tanpa lewat Root.'
+    ],
+    sabotage:[
+      'Kamu matikan salah satu Switch cabang. Sekarang lihat keunggulan Tree soal isolasi kerusakan! Tekan PLAY...',
+      'Switch cabang mati... semua PC yang diurus switch itu langsung tidak bisa terhubung ke jaringan!',
+      'PC-A, B, C di bawah cabang yang mati semuanya terisolasi. Mereka tidak bisa kirim atau terima data.',
+      'TAPI! Lihat cabang sebelahnya — SW-2 dan PC-D, E, F sama sekali tidak terdampak! Mereka masih jalan normal.',
+      'Inilah keunggulan Tree: kerusakan terisolasi per cabang. Cocok untuk gedung bertingkat — kalau jaringan lantai 3 mati, lantai lain tetap jalan!'
+    ]
+  }
+};
+
+function initSim(){
+  const type=document.getElementById('sim-topo').value;
+  simCfg=JSON.parse(JSON.stringify(SIM_CONFIGS[type]));
+  deadNodes.clear();sabotageMode=false;simRunning=false;simStep=0;animating=false;
+  document.getElementById('btn-sabotage').classList.remove('active-btn');
+  document.getElementById('btn-play').textContent='PLAY';
+  updateSimSelector(type);
+  drawSimStatic();
+  setSimLog('normal',0,type);
+  const hints={star:'Coba matikan Switch (yang di tengah) — lihat semua PC langsung tidak bisa nyambung!',bus:'Coba matikan PC yang ada di TENGAH kabel — lihat jaringan jadi terbelah dua!',ring:'Matikan SATU PC saja — lihat betapa rentannya Ring kalau cuma satu titik yang rusak!',mesh:'Matikan Router-B — jaringan masih bisa jalan? Cek sendiri!',tree:'Matikan SW-1 atau SW-2 — lihat cabang mana yang terdampak dan mana yang aman!'};
+  document.getElementById('sim-hint').innerHTML=`<span style="color:var(--amber)">TANTANGAN BUAT KAMU:</span> ${hints[type]}`;
+}
+
+function updateSimSelector(active){
+  const sel=document.getElementById('sim-topo');
+  const topoColors={star:'#00ff88',bus:'#00d4ff',ring:'#8855ff',mesh:'#ff3355',tree:'#ffaa00'};
+  sel.style.borderColor=topoColors[active]||'var(--border)';
+  sel.style.color=topoColors[active]||'var(--text)';
+  sel.style.boxShadow=`0 0 10px ${topoColors[active]}44`;
+  const label=document.getElementById('sim-topo-label');
+  if(label){const names={star:'STAR',bus:'BUS',ring:'RING',mesh:'MESH',tree:'TREE'};label.textContent=names[active];label.style.color=topoColors[active];}
+}
+
+function setSimLog(mode,stepIdx,type){
+  const t=type||document.getElementById('sim-topo').value;
+  const narr=SIM_NARRATION[t];
+  const lines=mode==='sabotage'?narr.sabotage:narr.normal;
+  const idx=Math.min(stepIdx,lines.length-1);
+  const log=document.getElementById('sim-log');
+  const isErr=mode==='sabotage'&&stepIdx>0;
+  log.innerHTML=`<span style="color:${isErr?'#ff3355':'#00d4ff'};font-size:0.75rem;letter-spacing:1px;display:block;margin-bottom:4px">${mode==='sabotage'?'MODE KERUSAKAN':'SIMULASI NORMAL'} — LANGKAH ${stepIdx+1}/${lines.length}</span>${lines[idx]}`;
+}
+
+function drawSimStatic(){
+  const svg=document.getElementById('sim-svg');
+  let h='';
+  simCfg.edges.forEach(([a,b])=>{
+    const na=simCfg.nodes[a],nb=simCfg.nodes[b];
+    const dead=deadNodes.has(a)||deadNodes.has(b);
+    h+=`<line id="edge-${a}-${b}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" stroke="${dead?'rgba(255,51,85,0.4)':'rgba(0,212,255,0.2)'}" stroke-width="${dead?'1.5':'2'}" ${dead?'stroke-dasharray="4,3"':''}/>`;
+  });
+  simCfg.nodes.forEach((n,i)=>{
+    const dead=deadNodes.has(i);
+    h+=`<g id="snode-${i}" style="cursor:${sabotageMode?'pointer':'default'}" onclick="clickNode(${i})">
+      ${sabotageMode&&!dead?`<circle cx="${n.x}" cy="${n.y}" r="${n.r+6}" fill="rgba(255,51,85,0.06)" stroke="rgba(255,51,85,0.3)" stroke-width="1" stroke-dasharray="2,2"/>`:``}
+      <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${dead?'rgba(255,51,85,0.1)':n.c}" stroke="${dead?'#ff3355':n.c}" stroke-width="1.5" opacity="${dead?0.5:0.15}"/>
+      <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="none" stroke="${dead?'#ff3355':n.c}" stroke-width="${dead?2:1.5}"/>
+      ${dead?`<line x1="${n.x-6}" y1="${n.y-6}" x2="${n.x+6}" y2="${n.y+6}" stroke="#ff3355" stroke-width="2"/><line x1="${n.x+6}" y1="${n.y-6}" x2="${n.x-6}" y2="${n.y+6}" stroke="#ff3355" stroke-width="2"/>`:`<circle cx="${n.x}" cy="${n.y}" r="${n.r*0.4}" fill="${n.c}" opacity="0.7"/>`}
+      <text x="${n.x}" y="${n.y+n.r+14}" text-anchor="middle" font-size="11" fill="${dead?'#ff3355':n.c}" font-family="Rajdhani,sans-serif" font-weight="600">${n.label}</text>
+      ${dead?`<rect x="${n.x-14}" y="${n.y-n.r-18}" width="28" height="13" rx="3" fill="rgba(255,51,85,0.2)" stroke="rgba(255,51,85,0.5)" stroke-width="0.5"/><text x="${n.x}" y="${n.y-n.r-8}" text-anchor="middle" font-size="9" fill="#ff3355" font-family="Orbitron,monospace">MATI</text>`:''}
+      ${sabotageMode&&!dead?`<text x="${n.x}" y="${n.y-n.r-8}" text-anchor="middle" font-size="9" fill="rgba(255,51,85,0.6)" font-family="Rajdhani,sans-serif">klik</text>`:''}
+    </g>`;
+  });
+  h+=`<circle id="packet" r="7" fill="#00d4ff" stroke="#fff" stroke-width="1.5" cx="-20" cy="-20" opacity="0"/>`;
+  svg.innerHTML=h;
+}
+
+function clickNode(i){
+  if(!sabotageMode)return;
+  if(deadNodes.has(i))deadNodes.delete(i);else deadNodes.add(i);
+  simStep=0;simRunning=false;animating=false;
+  document.getElementById('btn-play').textContent='PLAY';
+  drawSimStatic();
+  const type=document.getElementById('sim-topo').value;
+  if(deadNodes.size>0){
+    setSimLog('sabotage',0,type);
+  } else {
+    setSimLog('normal',0,type);
+  }
+}
+
+function toggleSabotage(){
+  sabotageMode=!sabotageMode;
+  simStep=0;simRunning=false;animating=false;
+  document.getElementById('btn-play').textContent='PLAY';
+  document.getElementById('btn-sabotage').classList.toggle('active-btn',sabotageMode);
+  if(!sabotageMode)deadNodes.clear();
+  drawSimStatic();
+  const type=document.getElementById('sim-topo').value;
+  if(sabotageMode){
+    setSimLog('sabotage',0,type);
+    document.getElementById('sim-hint').innerHTML=`<span style="color:#ff3355">MODE KERUSAKAN AKTIF</span> — Klik titik mana saja yang mau kamu "matikan" (lingkaran merah putus-putus akan muncul). Setelah itu tekan PLAY atau STEP untuk lihat dampaknya!`;
+  } else {
+    setSimLog('normal',0,type);
+    const hints={star:'Coba matikan Switch (yang di tengah) — lihat semua PC langsung tidak bisa nyambung!',bus:'Coba matikan PC yang ada di TENGAH kabel — lihat jaringan jadi terbelah dua!',ring:'Matikan SATU PC saja — lihat betapa rentannya Ring kalau cuma satu titik yang rusak!',mesh:'Matikan Router-B — jaringan masih bisa jalan? Cek sendiri!',tree:'Matikan SW-1 atau SW-2 — lihat cabang mana yang terdampak dan mana yang aman!'};
+    document.getElementById('sim-hint').innerHTML=`<span style="color:var(--amber)">TANTANGAN BUAT KAMU:</span> ${hints[type]}`;
+  }
+}
+
+function resetSim(){
+  simRunning=false;animating=false;simStep=0;deadNodes.clear();sabotageMode=false;
+  document.getElementById('btn-sabotage').classList.remove('active-btn');
+  document.getElementById('btn-play').textContent='PLAY';
+  initSim();
+}
+
+function animatePacket(fromNode,toNode,onDone){
+  if(animating)return;
+  animating=true;
+  const p=document.getElementById('packet');
+  const fn=simCfg.nodes[fromNode],tn=simCfg.nodes[toNode];
+  const fromEl=document.getElementById('snode-'+fromNode)?.querySelector('circle:nth-child(2)');
+  if(fromEl)fromEl.setAttribute('stroke','#ffaa00');
+  p.setAttribute('cx',fn.x);p.setAttribute('cy',fn.y);p.setAttribute('opacity','1');
+  const edgeId=`edge-${Math.min(fromNode,toNode)}-${Math.max(fromNode,toNode)}`;
+  const edgeEl=document.getElementById(edgeId);
+  const totalSteps=25;let s=0;
+  const anim=setInterval(()=>{
+    s++;const t=s/totalSteps;
+    p.setAttribute('cx',fn.x+(tn.x-fn.x)*t);
+    p.setAttribute('cy',fn.y+(tn.y-fn.y)*t);
+    if(edgeEl)edgeEl.setAttribute('stroke','rgba(0,212,255,0.9)');
+    if(s>=totalSteps){
+      clearInterval(anim);
+      p.setAttribute('opacity','0');
+      const toEl=document.getElementById('snode-'+toNode)?.querySelector('circle:nth-child(2)');
+      if(toEl){toEl.setAttribute('stroke','#00ff88');setTimeout(()=>{if(toEl)toEl.setAttribute('stroke',simCfg.nodes[toNode].c)},700);}
+      if(edgeEl)setTimeout(()=>{if(edgeEl)edgeEl.setAttribute('stroke','rgba(0,212,255,0.2)')},500);
+      if(fromEl)setTimeout(()=>{if(fromEl)fromEl.setAttribute('stroke',simCfg.nodes[fromNode].c)},400);
+      animating=false;
+      if(onDone)setTimeout(onDone,350);
+    }
+  },16);
+}
+
+function getSabotageSteps(type){
+  const cfg=SIM_CONFIGS[type];
+  const narr=SIM_NARRATION[type].sabotage;
+  const validSteps=[];
+  cfg.steps.forEach((step,i)=>{
+    if(!deadNodes.has(step.from)&&!deadNodes.has(step.to)){
+      validSteps.push({...step,narrIdx:Math.min(i+1,narr.length-1)});
+    }
+  });
+  return validSteps;
+}
+
+function runStepAt(idx){
+  if(animating)return;
+  const type=document.getElementById('sim-topo').value;
+  const cfg=SIM_CONFIGS[type];
+  const mode=deadNodes.size>0?'sabotage':'normal';
+  const narr=SIM_NARRATION[type][mode];
+
+  if(mode==='sabotage'){
+    const validSteps=getSabotageSteps(type);
+    if(validSteps.length===0){
+      // all steps blocked
+      simRunning=false;
+      document.getElementById('btn-play').textContent='PLAY';
+      const narrIdx=Math.min(2,narr.length-1);
+      const log=document.getElementById('sim-log');
+      log.innerHTML=`<span style="color:#ff3355;font-size:0.75rem;letter-spacing:1px;display:block;margin-bottom:4px">MODE KERUSAKAN — JARINGAN TERHENTI</span><span style="color:#ff3355">${narr[narrIdx]}</span><br><span style="color:var(--text2);font-size:0.88rem">Tekan RESET untuk mengulang atau klik node untuk menghidupkannya kembali.</span>`;
+      simStep=0;return;
+    }
+    if(idx>=validSteps.length){
+      simRunning=false;
+      document.getElementById('btn-play').textContent='PLAY';
+      setSimLog('sabotage',narr.length-1,type);
+      simStep=0;return;
+    }
+    const step=validSteps[idx];
+    setSimLog('sabotage',step.narrIdx,type);
+    animatePacket(step.from,step.to,()=>{
+      simStep=idx+1;
+      if(simRunning)setTimeout(()=>runStepAt(simStep),500);
+    });
+  } else {
+    if(idx>=cfg.steps.length){
+      simRunning=false;
+      document.getElementById('btn-play').textContent='PLAY';
+      setSimLog('normal',narr.length-1,type);
+      simStep=0;return;
+    }
+    const step=cfg.steps[idx];
+    setSimLog('normal',idx+1,type);
+    animatePacket(step.from,step.to,()=>{
+      simStep=idx+1;
+      if(simRunning)setTimeout(()=>runStepAt(simStep),500);
+    });
+  }
+}
+
+function playSim(){
+  if(animating)return;
+  if(simRunning){
+    simRunning=false;
+    document.getElementById('btn-play').textContent='PLAY';
+    return;
+  }
+  simRunning=true;
+  document.getElementById('btn-play').textContent='PAUSE';
+  runStepAt(simStep);
+}
+
+function stepSim(){
+  if(animating)return;
+  simRunning=false;
+  document.getElementById('btn-play').textContent='PLAY';
+  runStepAt(simStep);
+}
+
+function updateQuizButton(done, score){
+  const btn=document.querySelector('.btn-sm.primary');
+  if(!btn)return;
+  if(done){
+    btn.textContent='NILAI KAMU: '+score;
+    btn.style.borderColor='var(--amber)';
+    btn.style.color='var(--amber)';
+    btn.onclick=()=>showExistingResult();
+  } else {
+    btn.textContent='MULAI KUIS';
+    btn.style.borderColor='';
+    btn.style.color='';
+    btn.onclick=()=>gotoQuiz();
+  }
+}
+
+function showExistingResult(){
+  const all=load('results')||[];
+  const rec=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+  if(rec)showResult(rec.score,rec.correct,rec.time,true);
+}
+
+// QUIZ
+function gotoQuiz(){
+  // Blokir kalau sudah pernah mengerjakan
+  const all=load('results')||[];
+  const done=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+  if(done){
+    toast('Kamu sudah mengerjakan kuis! Nilai kamu: '+done.score,'error');
+    showExistingResult();
+    return;
+  }
+  if(readTopics.length<3){if(!confirm('Kamu baru membaca '+readTopics.length+'/5 materi. Tetap lanjut kuis?'))return}
+  currentQ=0;quizAnswers={};dragState={};
+  clearInterval(timerInterval);startTime=Date.now();
+  timerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-startTime)/1000);
+    const m=Math.floor(s/60),sc=s%60;
+    const el=document.getElementById('q-timer');
+    el.textContent=(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc;
+    el.className='quiz-timer'+(s>600?' danger':'');
+  },1000);
+  showScreen('s-quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('q-progress').style.width=Math.round(currentQ/QUESTIONS.length*100)+'%';
+  document.getElementById('q-counter').textContent='Soal '+(currentQ+1)+' / '+QUESTIONS.length;
+  document.getElementById('btn-prev').style.display=currentQ>0?'inline-flex':'none';
+  document.getElementById('btn-next').style.display=currentQ<QUESTIONS.length-1?'inline-flex':'none';
+  document.getElementById('btn-submit').style.display=currentQ===QUESTIONS.length-1?'inline-flex':'none';
+  const dots=QUESTIONS.map((_,i)=>`<div class="q-dot ${i===currentQ?'current':quizAnswers[QUESTIONS[i].id]!==undefined?'answered':''}" onclick="jumpQ(${i})">${i+1}</div>`).join('');
+  document.getElementById('q-dots').innerHTML=dots;
+  const typeMap={mc:'PILIHAN GANDA',tf:'BENAR / SALAH',drag:'COCOKKAN',scenario:'STUDI KASUS'};
+  let html=`<div class="q-card"><div class="q-type-badge ${q.type}">${typeMap[q.type]}</div><div class="q-text">${q.q}</div>`;
+  const keys=['A','B','C','D','E'];
+  if(q.type==='mc'||q.type==='scenario'){
+    q.opts.forEach((o,i)=>{
+      const sel=quizAnswers[q.id]===i?'selected':'';
+      html+=`<div class="opt ${sel}" onclick="selectOpt(${q.id},${i},this)"><div class="opt-key">${keys[i]}</div>${o}</div>`;
+    });
+  } else if(q.type==='tf'){
+    const v=quizAnswers[q.id];
+    html+=`<div class="tf-row"><button class="tf-btn ${v===true?'selected':''}" onclick="selectTF(${q.id},true,this)">BENAR</button><button class="tf-btn ${v===false?'selected':''}" onclick="selectTF(${q.id},false,this)">SALAH</button></div>`;
+  } else if(q.type==='drag'){
+    if(!dragState[q.id])dragState[q.id]={placed:{}};
+    const placed=dragState[q.id].placed;
+    const used=Object.values(placed);
+    html+=`<div style="margin-bottom:0.75rem;font-size:0.85rem;color:var(--text2)">Seret kartu ke pasangan yang tepat:</div>
+    <div class="drag-pool" id="dp-pool" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropPool(event,${q.id})">`;
+    q.pairs.forEach(([item])=>{if(!used.includes(item))html+=`<div class="drag-chip" draggable="true" ondragstart="ds(event,'${item}')">${item}</div>`});
+    html+=`</div><div class="match-grid">`;
+    q.pairs.forEach(([item,label],i)=>{
+      const placed2=Object.keys(placed).find(k=>placed[k]===label)||'';
+      html+=`<div class="match-row"><div class="match-label">${label}</div><div class="match-arrow">→</div><div class="match-slot" id="ms-${i}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropSlot(event,'${label}',${q.id})">${placed2?`<div class="drag-chip" draggable="true" ondragstart="ds(event,'${placed2}')">${placed2}</div>`:''}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  html+='</div>';
+  document.getElementById('q-container').innerHTML=html;
+}
+
+function selectOpt(qid,idx,el){quizAnswers[qid]=idx;document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
+function selectTF(qid,val,el){quizAnswers[qid]=val;document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
+let draggedItem='';
+function ds(e,item){draggedItem=item;e.dataTransfer.effectAllowed='move'}
+function dropPool(e,qid){e.preventDefault();e.currentTarget.classList.remove('over');if(!draggedItem)return;if(dragState[qid])Object.keys(dragState[qid].placed).forEach(k=>{if(k===draggedItem)delete dragState[qid].placed[k]});delete quizAnswers[qid];renderQ()}
+function dropSlot(e,label,qid){
+  e.preventDefault();e.currentTarget.classList.remove('over');if(!draggedItem)return;
+  if(!dragState[qid])dragState[qid]={placed:{}};
+  const placed=dragState[qid].placed;
+  Object.keys(placed).forEach(k=>{if(placed[k]===label)delete placed[k]});
+  Object.keys(placed).forEach(k=>{if(k===draggedItem)delete placed[k]});
+  placed[draggedItem]=label;
+  const q=QUESTIONS.find(q=>q.id===qid);
+  const allCorrect=q.pairs.every(([item,lbl])=>placed[item]===lbl);
+  if(allCorrect)quizAnswers[qid]=1;
+  else delete quizAnswers[qid];
+  renderQ();
+}
+function nextQ(){if(currentQ<QUESTIONS.length-1){currentQ++;renderQ()}}
+function prevQ(){if(currentQ>0){currentQ--;renderQ()}}
+function jumpQ(i){currentQ=i;renderQ()}
+
+function submitQuiz(){
+  if(!confirm('Yakin ingin mengumpulkan jawaban sekarang?'))return;
+  clearInterval(timerInterval);
+  const elapsed=Math.floor((Date.now()-startTime)/1000);
+  const m=Math.floor(elapsed/60),s=elapsed%60;
+  const timeStr=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  let correct=0;
+  QUESTIONS.forEach(q=>{
+    const a=quizAnswers[q.id];
+    if(q.type==='drag'){if(a===1)correct++}
+    else if(a===q.ans)correct++;
+  });
+  const score=Math.round(correct/QUESTIONS.length*100);
+  xp+=score*2;save('xp_'+user.nama+'_'+user.kelas,xp);updateXP();
+  const rec={nama:user.nama,kelas:user.kelas,score,correct,total:QUESTIONS.length,time:timeStr,date:new Date().toLocaleDateString('id-ID')};
+  let all=load('results')||[];
+  const idx=all.findIndex(r=>r.nama===rec.nama&&r.kelas===rec.kelas);
+  if(idx>=0)all[idx]=rec;else all.push(rec);
+  save('results',all);
+  sendToSheets(rec);
+  updateQuizButton(true, score);
+  showResult(score,correct,timeStr,false);
+}
+
+async function sendToSheets(data){
+  if(SHEETS_URL==='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA')return;
+  try{await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)})}catch(e){}
+}
+
+function showResult(score,correct,timeStr,isReview=false){
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-name').textContent=user.nama;
+  document.getElementById('res-class').textContent=user.kelas+' · Topologi Jaringan';
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-wrong').textContent=QUESTIONS.length-correct;
+  document.getElementById('res-time').textContent=timeStr;
+  let badge,msg;
+  if(score>=90){badge='<span>NETWORK MASTER</span>';document.getElementById('res-badge').className='badge-earned gold'}
+  else if(score>=70){badge='<span>NETWORK ENGINEER</span>';document.getElementById('res-badge').className='badge-earned silver'}
+  else{badge='<span>NETWORK ROOKIE</span>';document.getElementById('res-badge').className='badge-earned bronze'}
+  document.getElementById('res-badge').innerHTML=badge;
+  if(isReview){
+    msg=score>=80?'Hasil kuis kamu sudah tersimpan. Tetap semangat belajar!':score>=60?'Hasil kuis kamu sudah tersimpan. Pelajari lagi bagian yang masih salah ya!':'Hasil kuis kamu sudah tersimpan. Jangan menyerah, pelajari materinya lagi!';
+  } else {
+    msg=score>=80?'Luar biasa! Kamu benar-benar menguasai materi topologi jaringan.':score>=60?'Lumayan! Beberapa konsep sudah paham, tapi ada yang perlu dipelajari ulang.':'Semangat! Baca ulang materi dengan teliti, terutama perbedaan antar topologi.';
+  }
+  // Tambah pesan 1 kali pengerjaan
+  const onceNote=`<div style="margin-top:0.75rem;padding:0.6rem 1rem;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.25);border-radius:6px;font-size:0.85rem;color:var(--amber)">Kuis hanya bisa dikerjakan 1 kali. Nilai ini sudah tercatat oleh guru.</div>`;
+  document.getElementById('res-msg').innerHTML=msg+onceNote;
+  document.getElementById('review-section').style.display='none';
+  showScreen('s-result');
+  setTimeout(()=>{
+    const arc=document.getElementById('score-arc');
+    const dashVal=345.4*(1-score/100);
+    arc.style.transition='stroke-dashoffset 1.5s ease';
+    arc.style.strokeDashoffset=dashVal;
+    if(score>=80)launchConfetti();
+  },200);
+}
+
+function launchConfetti(){
+  const wrap=document.createElement('div');wrap.className='confetti-wrap';document.body.appendChild(wrap);
+  const colors=['#00d4ff','#00ff88','#ffaa00','#8855ff','#ff3355'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;background:${colors[i%5]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;transform:rotate(${Math.random()*360}deg)`;
+    wrap.appendChild(el);
+  }
+  setTimeout(()=>wrap.remove(),4000);
+}
+
+function toggleReview(){
+  const sec=document.getElementById('review-section');
+  if(sec.style.display==='block'){sec.style.display='none';return}
+  const keys=['A','B','C','D'];
+  let html='<div style="margin-top:1.5rem">';
+  QUESTIONS.forEach((q,i)=>{
+    const a=quizAnswers[q.id];
+    let correct=q.type==='drag'?a===1:a===q.ans;
+    const typeMap={mc:'PILIHAN GANDA',tf:'BENAR/SALAH',drag:'COCOKKAN',scenario:'STUDI KASUS'};
+    html+=`<div class="q-card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem"><div class="q-type-badge ${q.type}">${typeMap[q.type]}</div><span style="font-size:0.85rem;color:${correct?'var(--green)':'var(--red)'};font-weight:600">${correct?'BENAR':'SALAH'}</span></div><div class="q-text" style="font-size:0.95rem">${q.q}</div>`;
+    if(q.type==='mc'||q.type==='scenario'){
+      q.opts.forEach((o,j)=>{let c='';if(j===q.ans)c='correct';else if(a===j)c='wrong';html+=`<div class="opt ${c}"><div class="opt-key">${keys[j]}</div>${o}</div>`});
+    } else if(q.type==='tf'){
+      html+=`<div class="tf-row"><button class="tf-btn ${q.ans===true?'correct':a===true?'wrong':''}">BENAR</button><button class="tf-btn ${q.ans===false?'correct':a===false?'wrong':''}">SALAH</button></div>`;
+    } else {html+=`<p style="font-size:0.9rem;color:var(--text2)">${correct?'Semua pasangan sudah benar!':'Ada pasangan yang belum tepat.'}</p>`}
+    html+=`<div class="feedback-box show ${correct?'correct':'wrong'}"><strong>${correct?'Tepat! ':'Penjelasan: '}</strong>${q.exp}</div></div>`;
+  });
+  html+='</div>';
+  sec.innerHTML=html;sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth'});
+}
+function backToMain(){
+  showScreen('s-main');
+  renderTopoMap();
+  const all=load('results')||[];
+  const done=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+  updateQuizButton(!!done, done?.score||null);
+}
+
+// LEADERBOARD
+function renderLeaderboard(){
+  const all=load('results')||[];
+  const f=document.getElementById('lb-filter').value;
+  const filtered=all.filter(r=>!f||r.kelas===f).sort((a,b)=>b.score-a.score);
+  const body=document.getElementById('lb-body');
+  const empty=document.getElementById('lb-empty');
+  if(!filtered.length){body.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  body.innerHTML=filtered.map((r,i)=>{
+    const sc=r.score>=80?'score-a':r.score>=65?'score-b':r.score>=50?'score-c':'score-d';
+    const st=r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL';
+    const me=user.nama&&r.nama===user.nama?'style="background:rgba(0,212,255,0.05)"':'';
+    return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Orbitron,monospace;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="score-pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${r.time}</td><td style="padding:0.75rem"><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${st}</span></td></tr>`;
+  }).join('');
+}
+
+// TEACHER
+function teacherLogin(){
+  const p=document.getElementById('teacher-pass').value;
+  if(p===TEACHER_PASS){document.getElementById('pass-err').style.display='none';renderTeacher();showScreen('s-teacher')}
+  else document.getElementById('pass-err').style.display='block';
+}
+function renderTeacher(){
+  const all=load('results')||[];
+  const srch=(document.getElementById('t-search')?.value||'').toLowerCase();
+  const cls=document.getElementById('t-class')?.value||'';
+  const f=all.filter(r=>(!srch||r.nama.toLowerCase().includes(srch))&&(!cls||r.kelas===cls)).sort((a,b)=>b.score-a.score);
+  const body=document.getElementById('t-body');
+  const empty=document.getElementById('t-empty');
+  if(!f.length){body.innerHTML='';empty.style.display='block'}
+  else{
+    empty.style.display='none';
+    body.innerHTML=f.map((r,i)=>{
+      const sc=r.score>=80?'score-a':r.score>=65?'score-b':r.score>=50?'score-c':'score-d';
+      return`<tr><td style="color:var(--text2)">${i+1}</td><td style="color:var(--text)">${r.nama}</td><td style="color:var(--text2)">${r.kelas}</td><td><span class="score-pill ${sc}">${r.score}</span></td><td style="color:var(--text2)">${r.correct}/${r.total}</td><td style="color:var(--text2)">${r.time}</td><td style="color:var(--text2)">${r.date||'—'}</td><td><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL'}</span></td><td><button onclick="resetStudent('${r.nama.replace(/'/g,"\\'")}','${r.kelas}')" style="background:none;border:1px solid rgba(255,51,85,0.4);color:#ff6677;padding:3px 10px;border-radius:4px;font-size:0.75rem;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:0.5px">Reset</button></td></tr>`;
+    }).join('');
+  }
+  const avg=f.length?Math.round(f.reduce((a,r)=>a+r.score,0)/f.length):0;
+  const lulus=f.filter(r=>r.score>=60).length;
+  const total=STUDENTS['XI-I'].length+STUDENTS['XI-J'].length;
+  document.getElementById('t-stats').innerHTML=`
+    <div class="t-stat"><div class="val" style="color:var(--cyan)">${f.length}<span style="font-size:0.9rem;color:var(--text2)">/${total}</span></div><div class="lbl">MENGERJAKAN</div></div>
+    <div class="t-stat"><div class="val" style="color:${avg>=70?'var(--green)':'var(--amber)'}">${avg}</div><div class="lbl">RATA-RATA</div></div>
+    <div class="t-stat"><div class="val" style="color:var(--green)">${lulus}</div><div class="lbl">LULUS (≥60)</div></div>
+    <div class="t-stat"><div class="val" style="color:var(--red)">${f.length-lulus}</div><div class="lbl">REMEDIAL</div></div>`;
+}
+function exportCSV(){
+  const all=load('results')||[];
+  if(!all.length){toast('Belum ada data!','error');return}
+  const rows=[['No','Nama','Kelas','Nilai','Benar','Total Soal','Waktu','Tanggal','Status'],...all.sort((a,b)=>b.score-a.score).map((r,i)=>[i+1,r.nama,r.kelas,r.score,r.correct,r.total,r.time,r.date||'',r.score>=80?'Lulus':r.score>=60?'Cukup':'Remedial'])];
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='rekap_nilai_topologi_jaringan.csv';a.click();
+  toast('CSV berhasil diunduh!','success');
+}
+function clearData(){if(!confirm('Hapus SEMUA data nilai? Tidak bisa dibatalkan.'))return;save('results',[]);renderTeacher();toast('Data dihapus.','error')}
+function resetStudent(nama,kelas){
+  if(!confirm('Reset nilai '+nama+'? Siswa ini bisa mengerjakan kuis lagi.'))return;
+  let all=load('results')||[];
+  all=all.filter(r=>!(r.nama===nama&&r.kelas===kelas));
+  save('results',all);
+  renderTeacher();
+  toast('Nilai '+nama.split(' ')[0]+' berhasil direset. Siswa bisa kuis lagi.','success');
+}
+
+function toast(msg,type=''){
+  const el=document.getElementById('toast');el.textContent=msg;el.className='show '+(type||'');
+  clearTimeout(window._toast);window._toast=setTimeout(()=>{el.className=''},2500);
+}
+
+// PARTICLES
+function initParticles(){
+  const wrap=document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');p.className='particle';
+    p.style.cssText=`left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s`;
+    wrap.appendChild(p);
+  }
+}
+initParticles();
+initSim();
+</script>
+</body>
+</html>
