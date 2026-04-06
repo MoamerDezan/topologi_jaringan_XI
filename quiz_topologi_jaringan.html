@@ -800,17 +800,30 @@ function doLogin(){
   xp=readTopics.length*50+(load('xp_'+n+'_'+k)||0);
   updateXP();
   renderTopoMap();
-  // Cek apakah sudah pernah mengerjakan kuis
-  const allResults=load('results')||[];
-  const existingResult=allResults.find(r=>r.nama===n&&r.kelas===k);
-  if(existingResult){
-    // Sudah pernah kuis — langsung tampilkan hasil lama
-    showScreen('s-main');
-    updateQuizButton(true, existingResult.score);
-    toast('Selamat datang kembali, '+n.split(' ')[0]+'! Kuis kamu sudah tercatat.','success');
+  showScreen('s-main');
+  updateQuizButton(false,null);
+  // Cek status kuis dari Sheets (async) - tidak blokir login
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll')
+      .then(r=>r.json())
+      .then(data=>{
+        const all=Array.isArray(data.results)?data.results:[];
+        const found=all.find(r=>r.nama===n&&r.kelas===k);
+        if(found){
+          updateQuizButton(true,found.score);
+          toast('Selamat datang kembali, '+n.split(' ')[0]+'! Nilai kamu: '+found.score,'success');
+        }
+      })
+      .catch(()=>{
+        // fallback localStorage
+        const local=load('results')||[];
+        const found=local.find(r=>r.nama===n&&r.kelas===k);
+        if(found){updateQuizButton(true,found.score);toast('Selamat datang kembali, '+n.split(' ')[0]+'!','success');}
+      });
   } else {
-    showScreen('s-main');
-    updateQuizButton(false, null);
+    const local=load('results')||[];
+    const found=local.find(r=>r.nama===n&&r.kelas===k);
+    if(found){updateQuizButton(true,found.score);toast('Selamat datang kembali, '+n.split(' ')[0]+'!','success');}
   }
 }
 
@@ -1219,20 +1232,33 @@ function updateQuizButton(done, score){
 }
 
 function showExistingResult(){
-  const all=load('results')||[];
-  const rec=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
-  if(rec)showResult(rec.score,rec.correct,rec.time,true);
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll')
+      .then(r=>r.json())
+      .then(data=>{
+        const all=Array.isArray(data.results)?data.results:[];
+        const rec=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+        if(rec)showResult(rec.score,rec.correct,rec.time,true);
+        else toast('Data nilai tidak ditemukan.','error');
+      })
+      .catch(()=>{
+        const local=load('results')||[];
+        const rec=local.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+        if(rec)showResult(rec.score,rec.correct,rec.time,true);
+      });
+  } else {
+    const local=load('results')||[];
+    const rec=local.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+    if(rec)showResult(rec.score,rec.correct,rec.time,true);
+  }
 }
 
 // QUIZ
 function gotoQuiz(){
-  // Blokir kalau sudah pernah mengerjakan
-  const all=load('results')||[];
-  const done=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
-  if(done){
-    toast('Kamu sudah mengerjakan kuis! Nilai kamu: '+done.score,'error');
-    showExistingResult();
-    return;
+  // Kalau tombol sudah berubah jadi "NILAI KAMU: X", berarti sudah selesai
+  const btn=document.querySelector('.btn-sm.primary');
+  if(btn&&btn.textContent.startsWith('NILAI')){
+    showExistingResult();return;
   }
   if(readTopics.length<3){if(!confirm('Kamu baru membaca '+readTopics.length+'/5 materi. Tetap lanjut kuis?'))return}
   currentQ=0;quizAnswers={};dragState={};
