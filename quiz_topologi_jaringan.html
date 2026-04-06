@@ -304,8 +304,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
           <line x1="20" y1="36" x2="36" y2="24" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
         </svg>
       </div>
-      <h1>NET TOPOLOGY</h1>
-      <p>KELAS XI — JARINGAN KOMPUTER</p>
+      <h1>INFORMATIKA MAN 2 BOGOR</h1>
+      <p>KELAS XI I KELAS XI J — JARINGAN KOMPUTER</p>
     </div>
     <div class="glass-card">
       <span class="field-label">Pilih Kelas</span>
@@ -639,7 +639,7 @@ const QUESTIONS = [
     exp:'Mesh! Di topologi Mesh, setiap titik punya banyak jalur ke titik lain. Kalau satu jalur putus, data langsung otomatis cari jalan lain. Makanya internet backbone (jaringan utama internet) pakai topologi ini.'},
   {id:4,type:'drag',
     q:'Pasangkan setiap topologi dengan ciri khasnya! Seret kartu ke kolom yang sesuai:',
-    pairs:[['Bus','Satu kabel panjang untuk semua'],['Ring','Data bergiliran pakai "tiket" (token)'],['Star','Ada switch/hub di tengah sebagai pengatur'],['Mesh','Tiap titik punya banyak jalur cadangan'],['Tree','Struktur bercabang seperti pohon']],
+    pairs:[['Bus','Satu kabel panjang untuk semua'],['Ring','Data bergiliran pakai sistem token'],['Star','Ada switch atau hub di tengah sebagai pengatur'],['Mesh','Tiap titik punya banyak jalur cadangan'],['Tree','Struktur bercabang seperti pohon']],
     exp:'Bagus! Tiap topologi punya ciri khas yang membedakannya. Hafal ciri khas ini supaya gampang menentukan topologi mana yang tepat untuk situasi tertentu.'},
   {id:5,type:'tf',
     q:'Di topologi Ring, ada sistem "token" — yaitu semacam tiket giliran. Hanya komputer yang pegang tiket itu yang boleh kirim data, jadi tidak ada dua komputer yang kirim data bersamaan.',
@@ -1274,11 +1274,18 @@ function renderQ(){
     const used=Object.values(placed);
     html+=`<div style="margin-bottom:0.75rem;font-size:0.85rem;color:var(--text2)">Seret kartu ke pasangan yang tepat:</div>
     <div class="drag-pool" id="dp-pool" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropPool(event,${q.id})">`;
-    q.pairs.forEach(([item])=>{if(!used.includes(item))html+=`<div class="drag-chip" draggable="true" ondragstart="ds(event,'${item}')">${item}</div>`});
+    q.pairs.forEach(([item])=>{
+      if(!used.includes(item)){
+        const safeItem=item.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        html+=`<div class="drag-chip" draggable="true" data-item="${safeItem}" ondragstart="ds(event,this.getAttribute('data-item'))">${item}</div>`;
+      }
+    });
     html+=`</div><div class="match-grid">`;
     q.pairs.forEach(([item,label],i)=>{
       const placed2=Object.keys(placed).find(k=>placed[k]===label)||'';
-      html+=`<div class="match-row"><div class="match-label">${label}</div><div class="match-arrow">→</div><div class="match-slot" id="ms-${i}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropSlot(event,'${label}',${q.id})">${placed2?`<div class="drag-chip" draggable="true" ondragstart="ds(event,'${placed2}')">${placed2}</div>`:''}</div></div>`;
+      const safeLabel=label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      const safePlaced2=placed2.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      html+=`<div class="match-row"><div class="match-label">${label}</div><div class="match-arrow">→</div><div class="match-slot" id="ms-${i}" data-label="${safeLabel}" data-qid="${q.id}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropSlotEl(event,this)">${placed2?`<div class="drag-chip" draggable="true" data-item="${safePlaced2}" ondragstart="ds(event,this.getAttribute('data-item'))">${placed2}</div>`:''}</div></div>`;
     });
     html+=`</div>`;
   }
@@ -1291,6 +1298,11 @@ function selectTF(qid,val,el){quizAnswers[qid]=val;document.querySelectorAll('.t
 let draggedItem='';
 function ds(e,item){draggedItem=item;e.dataTransfer.effectAllowed='move'}
 function dropPool(e,qid){e.preventDefault();e.currentTarget.classList.remove('over');if(!draggedItem)return;if(dragState[qid])Object.keys(dragState[qid].placed).forEach(k=>{if(k===draggedItem)delete dragState[qid].placed[k]});delete quizAnswers[qid];renderQ()}
+function dropSlotEl(e,el){
+  const label=el.getAttribute('data-label');
+  const qid=parseInt(el.getAttribute('data-qid'));
+  dropSlot(e,label,qid);
+}
 function dropSlot(e,label,qid){
   e.preventDefault();e.currentTarget.classList.remove('over');if(!draggedItem)return;
   if(!dragState[qid])dragState[qid]={placed:{}};
