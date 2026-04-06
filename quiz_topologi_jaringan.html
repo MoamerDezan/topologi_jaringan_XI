@@ -1619,6 +1619,8 @@ function formatTime(val){
   if(match)return match[0];
   return String(val);
 }
+
+function toast(msg,type=''){
   const el=document.getElementById('toast');el.textContent=msg;el.className='show '+(type||'');
   clearTimeout(window._toast);window._toast=setTimeout(()=>{el.className=''},2500);
 }
