@@ -304,8 +304,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
           <line x1="20" y1="36" x2="36" y2="24" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
         </svg>
       </div>
-      <h1>INFORMATIKA MAN 2 BOGOR</h1>
-      <p>KELAS XI I XI J — JARINGAN KOMPUTER</p>
+      <h1>NET TOPOLOGY</h1>
+      <p>KELAS XI — JARINGAN KOMPUTER</p>
     </div>
     <div class="glass-card">
       <span class="field-label">Pilih Kelas</span>
@@ -577,9 +577,9 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
       <div id="t-empty" class="no-data" style="display:none">Belum ada data nilai siswa.</div>
     </div>
-    <div style="margin-top:1rem;padding:0.75rem 1rem;background:rgba(255,170,0,0.05);border:1px solid rgba(255,170,0,0.2);border-radius:8px">
-      <p style="font-size:0.82rem;color:var(--text2)">Nilai otomatis terkirim ke Google Sheets. Password guru: <strong style="color:var(--amber)">guru123</strong> — ganti di baris kode <code style="color:var(--cyan)">TEACHER_PASS</code>.</p>
-      <p style="font-size:0.82rem;color:var(--text2);margin-top:0.4rem">Google Sheets URL: <strong style="color:var(--amber)">Ganti nilai <code style="color:var(--cyan)">SHEETS_URL</code> di script dengan URL Apps Script Anda.</strong></p>
+    <div style="margin-top:1rem;padding:0.75rem 1rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);border-radius:8px">
+      <p style="font-size:0.82rem;color:var(--text2)">Data diambil langsung dari <strong style="color:var(--cyan)">Google Sheets</strong> secara real-time. Password guru: <strong style="color:var(--amber)">guru123</strong></p>
+      <p style="font-size:0.82rem;color:var(--text2);margin-top:0.4rem">Apps Script: <code style="color:var(--cyan);font-size:0.75rem">...AKfycbzUZ2h.../exec</code> <span style="color:var(--green)">✓ Terhubung</span></p>
     </div>
   </div>
 </div>
@@ -1478,7 +1478,7 @@ function renderLeaderboardData(all, f){
     const sc=r.score>=80?'score-a':r.score>=65?'score-b':r.score>=50?'score-c':'score-d';
     const st=r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL';
     const me=user.nama&&r.nama===user.nama?'style="background:rgba(0,212,255,0.05)"':'';
-    return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Orbitron,monospace;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="score-pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${r.time||'—'}</td><td style="padding:0.75rem"><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${st}</span></td></tr>`;
+    return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Orbitron,monospace;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="score-pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${formatTime(r.time)}</td><td style="padding:0.75rem"><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${st}</span></td></tr>`;
   }).join('');
 }
 
@@ -1489,7 +1489,26 @@ function teacherLogin(){
   else document.getElementById('pass-err').style.display='block';
 }
 function renderTeacher(){
-  const all=load('results')||[];
+  const body=document.getElementById('t-body');
+  const empty=document.getElementById('t-empty');
+  body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text2);font-size:0.9rem;letter-spacing:1px">Memuat data dari Google Sheets...</td></tr>`;
+  empty.style.display='none';
+
+  fetch(SHEETS_URL+'?action=getAll')
+    .then(r=>r.json())
+    .then(data=>{
+      const all=Array.isArray(data.results)?data.results:[];
+      renderTeacherData(all);
+    })
+    .catch(()=>{
+      // fallback localStorage
+      const all=load('results')||[];
+      renderTeacherData(all);
+      toast('Gagal konek ke Sheets, tampilkan data lokal','error');
+    });
+}
+
+function renderTeacherData(all){
   const srch=(document.getElementById('t-search')?.value||'').toLowerCase();
   const cls=document.getElementById('t-class')?.value||'';
   const f=all.filter(r=>(!srch||r.nama.toLowerCase().includes(srch))&&(!cls||r.kelas===cls)).sort((a,b)=>b.score-a.score);
@@ -1500,7 +1519,8 @@ function renderTeacher(){
     empty.style.display='none';
     body.innerHTML=f.map((r,i)=>{
       const sc=r.score>=80?'score-a':r.score>=65?'score-b':r.score>=50?'score-c':'score-d';
-      return`<tr><td style="color:var(--text2)">${i+1}</td><td style="color:var(--text)">${r.nama}</td><td style="color:var(--text2)">${r.kelas}</td><td><span class="score-pill ${sc}">${r.score}</span></td><td style="color:var(--text2)">${r.correct}/${r.total}</td><td style="color:var(--text2)">${r.time}</td><td style="color:var(--text2)">${r.date||'—'}</td><td><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL'}</span></td><td><button onclick="resetStudent('${r.nama.replace(/'/g,"\\'")}','${r.kelas}')" style="background:none;border:1px solid rgba(255,51,85,0.4);color:#ff6677;padding:3px 10px;border-radius:4px;font-size:0.75rem;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:0.5px">Reset</button></td></tr>`;
+      const safeName=r.nama.replace(/'/g,"\\'");
+      return`<tr><td style="color:var(--text2)">${i+1}</td><td style="color:var(--text)">${r.nama}</td><td style="color:var(--text2)">${r.kelas}</td><td><span class="score-pill ${sc}">${r.score}</span></td><td style="color:var(--text2)">${r.correct}/${r.total}</td><td style="color:var(--text2)">${formatTime(r.time)}</td><td style="color:var(--text2)">${r.date||'—'}</td><td><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL'}</span></td><td><button onclick="resetStudent('${safeName}','${r.kelas}')" style="background:none;border:1px solid rgba(255,51,85,0.4);color:#ff6677;padding:3px 10px;border-radius:4px;font-size:0.75rem;cursor:pointer;font-family:Rajdhani,sans-serif;letter-spacing:0.5px">Reset</button></td></tr>`;
     }).join('');
   }
   const avg=f.length?Math.round(f.reduce((a,r)=>a+r.score,0)/f.length):0;
@@ -1511,26 +1531,68 @@ function renderTeacher(){
     <div class="t-stat"><div class="val" style="color:${avg>=70?'var(--green)':'var(--amber)'}">${avg}</div><div class="lbl">RATA-RATA</div></div>
     <div class="t-stat"><div class="val" style="color:var(--green)">${lulus}</div><div class="lbl">LULUS (≥60)</div></div>
     <div class="t-stat"><div class="val" style="color:var(--red)">${f.length-lulus}</div><div class="lbl">REMEDIAL</div></div>`;
+  // simpan cache lokal untuk export
+  save('results',f);
 }
+
 function exportCSV(){
-  const all=load('results')||[];
-  if(!all.length){toast('Belum ada data!','error');return}
-  const rows=[['No','Nama','Kelas','Nilai','Benar','Total Soal','Waktu','Tanggal','Status'],...all.sort((a,b)=>b.score-a.score).map((r,i)=>[i+1,r.nama,r.kelas,r.score,r.correct,r.total,r.time,r.date||'',r.score>=80?'Lulus':r.score>=60?'Cukup':'Remedial'])];
-  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='rekap_nilai_topologi_jaringan.csv';a.click();
-  toast('CSV berhasil diunduh!','success');
+  toast('Mengambil data dari Sheets...','');
+  fetch(SHEETS_URL+'?action=getAll')
+    .then(r=>r.json())
+    .then(data=>{
+      const all=Array.isArray(data.results)?data.results:(load('results')||[]);
+      if(!all.length){toast('Belum ada data!','error');return}
+      const rows=[['No','Nama','Kelas','Nilai','Benar','Total Soal','Waktu','Tanggal','Status'],
+        ...all.sort((a,b)=>b.score-a.score).map((r,i)=>[i+1,r.nama,r.kelas,r.score,r.correct,r.total,r.time||'',r.date||'',r.score>=80?'Lulus':r.score>=60?'Cukup':'Remedial'])];
+      const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+      const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='rekap_nilai_topologi_jaringan.csv';a.click();
+      toast('CSV berhasil diunduh!','success');
+    })
+    .catch(()=>{
+      const all=load('results')||[];
+      if(!all.length){toast('Belum ada data!','error');return}
+      const rows=[['No','Nama','Kelas','Nilai','Benar','Total Soal','Waktu','Tanggal','Status'],
+        ...all.sort((a,b)=>b.score-a.score).map((r,i)=>[i+1,r.nama,r.kelas,r.score,r.correct,r.total,r.time||'',r.date||'',r.score>=80?'Lulus':r.score>=60?'Cukup':'Remedial'])];
+      const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+      const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='rekap_nilai_topologi_jaringan.csv';a.click();
+      toast('CSV diunduh dari data lokal','success');
+    });
 }
-function clearData(){if(!confirm('Hapus SEMUA data nilai? Tidak bisa dibatalkan.'))return;save('results',[]);renderTeacher();toast('Data dihapus.','error')}
+
+function clearData(){
+  if(!confirm('Hapus SEMUA data nilai di Google Sheets? Tindakan ini tidak bisa dibatalkan.'))return;
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'clearAll'})})
+    .catch(()=>{});
+  save('results',[]);
+  setTimeout(()=>{renderTeacher();toast('Data dihapus.','error')},800);
+}
+
 function resetStudent(nama,kelas){
   if(!confirm('Reset nilai '+nama+'? Siswa ini bisa mengerjakan kuis lagi.'))return;
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'reset',nama,kelas})})
+    .catch(()=>{});
   let all=load('results')||[];
   all=all.filter(r=>!(r.nama===nama&&r.kelas===kelas));
   save('results',all);
-  renderTeacher();
-  toast('Nilai '+nama.split(' ')[0]+' berhasil direset. Siswa bisa kuis lagi.','success');
+  setTimeout(()=>{renderTeacher();toast('Nilai '+nama.split(' ')[0]+' direset. Siswa bisa kuis lagi.','success')},800);
 }
 
-function toast(msg,type=''){
+function formatTime(val){
+  if(!val||val==='—')return'—';
+  // Sudah format mm:ss yang benar
+  if(typeof val==='string'&&/^\d{1,2}:\d{2}$/.test(val.trim()))return val.trim();
+  // Google Sheets kadang kirim sebagai angka desimal (satuan hari)
+  // misal 0.001736 = 2 menit 30 detik
+  if(typeof val==='number'||(!isNaN(parseFloat(val))&&!String(val).includes(':'))){
+    const totalSec=Math.round(parseFloat(val)*86400);
+    const m=Math.floor(totalSec/60),s=totalSec%60;
+    return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  }
+  // Format lain — ambil bagian mm:ss saja
+  const match=String(val).match(/(\d{1,2}):(\d{2})/);
+  if(match)return match[0];
+  return String(val);
+}
   const el=document.getElementById('toast');el.textContent=msg;el.className='show '+(type||'');
   clearTimeout(window._toast);window._toast=setTimeout(()=>{el.className=''},2500);
 }
