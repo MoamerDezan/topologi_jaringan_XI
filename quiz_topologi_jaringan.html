@@ -305,7 +305,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         </svg>
       </div>
       <h1>INFORMATIKA MAN 2 BOGOR</h1>
-      <p>KELAS XI I KELAS XI J — JARINGAN KOMPUTER</p>
+      <p>KELAS XI I XI J — JARINGAN KOMPUTER</p>
     </div>
     <div class="glass-card">
       <span class="field-label">Pilih Kelas</span>
@@ -1349,6 +1349,18 @@ async function sendToSheets(data){
   try{await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)})}catch(e){}
 }
 
+async function checkDoneFromSheets(nama, kelas){
+  if(SHEETS_URL==='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA')return null;
+  try{
+    const r=await fetch(SHEETS_URL+'?action=getAll');
+    const data=await r.json();
+    if(Array.isArray(data.results)){
+      return data.results.find(r=>r.nama===nama&&r.kelas===kelas)||null;
+    }
+  }catch(e){}
+  return null;
+}
+
 function showResult(score,correct,timeStr,isReview=false){
   document.getElementById('res-score').textContent=score;
   document.getElementById('res-name').textContent=user.nama;
@@ -1422,18 +1434,51 @@ function backToMain(){
 
 // LEADERBOARD
 function renderLeaderboard(){
-  const all=load('results')||[];
   const f=document.getElementById('lb-filter').value;
-  const filtered=all.filter(r=>!f||r.kelas===f).sort((a,b)=>b.score-a.score);
   const body=document.getElementById('lb-body');
   const empty=document.getElementById('lb-empty');
+
+  // Tampilkan loading dulu
+  body.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text2);font-size:0.9rem;letter-spacing:1px">Memuat data...</td></tr>`;
+  empty.style.display='none';
+
+  // Gabungkan data lokal + dari Sheets
+  const localData=load('results')||[];
+
+  if(SHEETS_URL==='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    // Fallback: pakai data lokal saja
+    renderLeaderboardData(localData, f);
+    return;
+  }
+
+  // Fetch dari Apps Script
+  fetch(SHEETS_URL+'?action=getAll')
+    .then(r=>r.json())
+    .then(data=>{
+      const sheetsData=Array.isArray(data.results)?data.results:[];
+      // Gabungkan & deduplikasi — Sheets lebih prioritas
+      const merged={};
+      localData.forEach(r=>{merged[r.nama+'_'+r.kelas]=r});
+      sheetsData.forEach(r=>{merged[r.nama+'_'+r.kelas]=r});
+      renderLeaderboardData(Object.values(merged), f);
+    })
+    .catch(()=>{
+      // Kalau gagal fetch, pakai lokal
+      renderLeaderboardData(localData, f);
+    });
+}
+
+function renderLeaderboardData(all, f){
+  const body=document.getElementById('lb-body');
+  const empty=document.getElementById('lb-empty');
+  const filtered=all.filter(r=>!f||r.kelas===f).sort((a,b)=>b.score-a.score);
   if(!filtered.length){body.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
   body.innerHTML=filtered.map((r,i)=>{
     const sc=r.score>=80?'score-a':r.score>=65?'score-b':r.score>=50?'score-c':'score-d';
     const st=r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL';
     const me=user.nama&&r.nama===user.nama?'style="background:rgba(0,212,255,0.05)"':'';
-    return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Orbitron,monospace;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="score-pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${r.time}</td><td style="padding:0.75rem"><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${st}</span></td></tr>`;
+    return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Orbitron,monospace;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="score-pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${r.time||'—'}</td><td style="padding:0.75rem"><span class="score-pill ${sc}" style="font-family:Rajdhani,sans-serif;font-size:0.8rem">${st}</span></td></tr>`;
   }).join('');
 }
 
