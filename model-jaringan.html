@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Jaringan Komputer — Kelas XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04080f;--bg2:#080d1a;--bg3:#0c1224;
+  --violet:#7c3aed;--violet2:#6d28d9;--violet3:#a78bfa;
+  --pink:#ec4899;--pink2:#db2777;
+  --teal:#14b8a6;--teal2:#0d9488;
+  --amber:#f59e0b;--amber2:#d97706;
+  --green:#22c55e;--red:#ef4444;
+  --text:#f1f5ff;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(124,58,237,0.2);--border2:rgba(124,58,237,0.08);
+  --glow-v:0 0 30px rgba(124,58,237,0.4);
+  --glow-t:0 0 20px rgba(20,184,166,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ANIMATED BG */
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 80% 50% at 20% 20%,rgba(124,58,237,0.08) 0%,transparent 60%),
+  radial-gradient(ellipse 60% 40% at 80% 80%,rgba(20,184,166,0.06) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:pfloat linear infinite;opacity:0}
+@keyframes pfloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:0.5}90%{opacity:0.1}100%{transform:translateY(-5vh);opacity:0}}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:block}
+.screen.flex-screen.active{display:flex}
+
+/* LOGIN */
+#s-login{align-items:center;justify-content:center;padding:2rem}
+.login-wrap{width:100%;max-width:460px}
+.login-hero{text-align:center;margin-bottom:2rem}
+.logo-stack{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:1.5rem}
+.logo-layers{display:flex;flex-direction:column;gap:3px}
+.logo-layer{height:6px;border-radius:2px;animation:layerPulse 2s ease-in-out infinite}
+.logo-layer:nth-child(1){width:40px;background:var(--violet3);animation-delay:0s}
+.logo-layer:nth-child(2){width:32px;background:var(--teal);animation-delay:0.2s}
+.logo-layer:nth-child(3){width:24px;background:var(--pink);animation-delay:0.4s}
+.logo-layer:nth-child(4){width:32px;background:var(--amber);animation-delay:0.6s}
+.logo-layer:nth-child(5){width:40px;background:var(--green);animation-delay:0.8s}
+@keyframes layerPulse{0%,100%{opacity:0.6;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.05)}}
+.login-title{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.login-title span{background:linear-gradient(135deg,var(--violet3),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-sub{color:var(--text2);font-size:0.95rem;margin-top:0.5rem;letter-spacing:0.5px}
+.glass{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:16px;padding:2rem;backdrop-filter:blur(20px)}
+.field-label{font-size:0.75rem;font-weight:600;color:var(--violet3);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:0.5rem}
+.cyber-select,.cyber-input{width:100%;background:rgba(124,58,237,0.06);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1.25rem;transition:all 0.2s;appearance:none}
+.cyber-select:focus,.cyber-input:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px rgba(124,58,237,0.15)}
+.cyber-select option{background:#080d1a}
+.btn-primary{width:100%;padding:1rem;background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;border:none;border-radius:8px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 20px rgba(124,58,237,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,0.4)}
+.btn-link{width:100%;text-align:center;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;margin-top:1rem;transition:color 0.2s;letter-spacing:0.5px}
+.btn-link:hover{color:var(--violet3)}
+.err{color:var(--red);font-size:0.85rem;text-align:center;margin-top:0.5rem;display:none}
+
+/* TOPBAR */
+.topbar{background:rgba(4,8,15,0.9);border-bottom:1px solid var(--border2);padding:0.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.topbar-brand{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,var(--violet3),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
+.topbar-user{font-size:0.85rem;color:var(--text2)}
+.topbar-user strong{color:var(--text)}
+.xp-wrap{display:flex;align-items:center;gap:8px}
+.xp-txt{font-family:'Syne',sans-serif;font-size:0.75rem;color:var(--amber);font-weight:700}
+.xp-track{width:90px;height:5px;background:rgba(245,158,11,0.15);border-radius:3px;overflow:hidden}
+.xp-bar{height:100%;background:linear-gradient(90deg,var(--amber),var(--pink));border-radius:3px;transition:width 0.6s ease}
+.btn-sm{padding:0.4rem 1rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s}
+.btn-sm:hover{border-color:var(--violet3);color:var(--violet3)}
+.btn-sm.quiz-btn{border-color:var(--violet);color:var(--violet3);background:rgba(124,58,237,0.08)}
+.btn-sm.quiz-btn:hover{background:rgba(124,58,237,0.15)}
+
+/* NAV */
+.main-nav{display:flex;border-bottom:1px solid var(--border2);background:rgba(8,13,26,0.6);overflow-x:auto}
+.nav-btn{padding:0.9rem 1.25rem;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;border-bottom:2px solid transparent;letter-spacing:0.3px}
+.nav-btn.active{color:var(--violet3);border-bottom-color:var(--violet3)}
+.nav-btn:hover{color:var(--text)}
+
+/* CONTENT */
+.content{padding:1.5rem;max-width:1000px;margin:0 auto}
+.section-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.5rem}
+.section-sub{font-size:0.9rem;color:var(--text2);margin-bottom:1.75rem;line-height:1.6}
+
+/* OSI LAYERS */
+.osi-stack{display:flex;flex-direction:column;gap:6px;margin-bottom:2rem}
+.osi-layer{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:0;border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.25s;border:1px solid transparent}
+.osi-layer:hover{transform:translateX(4px)}
+.osi-layer.active-layer{transform:translateX(8px);border-color:currentColor;box-shadow:0 0 20px currentColor}
+.layer-num{display:flex;align-items:center;justify-content:center;height:100%;min-height:52px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff}
+.layer-body{padding:0.6rem 1rem;background:rgba(8,13,26,0.7)}
+.layer-name{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;margin-bottom:1px}
+.layer-en{font-size:0.75rem;color:var(--text2);letter-spacing:0.5px}
+.layer-badge{padding:0 1rem;height:100%;display:flex;align-items:center;background:rgba(0,0,0,0.3);font-size:0.75rem;color:rgba(255,255,255,0.5);font-weight:500;white-space:nowrap}
+
+/* LAYER DETAIL */
+.layer-detail{background:rgba(8,13,26,0.9);border-radius:12px;padding:1.5rem;margin-top:0.75rem;display:none;animation:slideDown 0.3s ease;border:1px solid var(--border)}
+.layer-detail.show{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+@media(max-width:560px){.detail-grid{grid-template-columns:1fr}}
+.detail-box{background:rgba(0,0,0,0.3);border-radius:8px;padding:0.85rem 1rem}
+.detail-box-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.6rem;color:var(--text2)}
+.detail-box li{font-size:0.88rem;color:var(--text2);padding:2px 0 2px 1rem;position:relative;list-style:none;line-height:1.5}
+.detail-box li::before{content:'›';position:absolute;left:0;color:var(--violet3)}
+.detail-desc{font-size:0.93rem;color:var(--text2);line-height:1.7}
+.pdu-badge{display:inline-block;padding:0.3rem 0.9rem;border-radius:20px;font-size:0.8rem;font-weight:600;margin-top:0.75rem;letter-spacing:0.5px}
+.device-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.5rem}
+.chip{padding:3px 10px;border-radius:4px;font-size:0.78rem;font-weight:500;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);color:var(--violet3)}
+.mark-btn{margin-top:1rem;padding:0.5rem 1.25rem;border-radius:6px;border:1px solid var(--teal);color:var(--teal);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.2s}
+.mark-btn:hover{background:rgba(20,184,166,0.1)}
+.mark-btn:disabled{opacity:0.4;cursor:default}
+.mark-btn.done{border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.08)}
+
+/* TCP/IP */
+.model-compare{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
+@media(max-width:600px){.model-compare{grid-template-columns:1fr}}
+.model-card{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.model-header{padding:1rem 1.25rem;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:1px}
+.model-layers-list{padding:0.75rem}
+.model-layer-item{padding:0.5rem 0.75rem;border-radius:6px;font-size:0.88rem;margin-bottom:4px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.model-layer-item:hover{border-color:currentColor;opacity:1!important}
+
+/* SIMULASI */
+.sim-scenario{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem}
+.sim-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;margin-bottom:0.5rem;color:var(--violet3)}
+.sim-desc{font-size:0.88rem;color:var(--text2);line-height:1.6;margin-bottom:1rem}
+.sim-flow{display:flex;flex-direction:column;gap:4px}
+.flow-step{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;font-size:0.85rem;opacity:0.3;transition:all 0.4s}
+.flow-step.active{opacity:1}
+.flow-step.done{opacity:0.7}
+.flow-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.flow-arrow{text-align:center;color:var(--text3);font-size:0.8rem;padding-left:22px}
+.sim-controls{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.btn-sim{padding:0.5rem 1.25rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.2s}
+.btn-sim:hover{border-color:var(--violet3);color:var(--violet3)}
+.btn-sim.primary{border-color:var(--violet);color:var(--violet3);background:rgba(124,58,237,0.1)}
+.btn-sim.primary:hover{background:rgba(124,58,237,0.2)}
+.flow-log{margin-top:0.75rem;padding:0.75rem 1rem;background:rgba(0,0,0,0.4);border-radius:6px;font-size:0.88rem;color:var(--teal);min-height:40px;line-height:1.6;border-left:2px solid var(--teal)}
+
+/* KUIS */
+.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem}
+.q-counter{font-size:0.85rem;color:var(--text2)}
+.q-timer{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--amber)}
+.q-timer.danger{color:var(--red);animation:blink 0.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.q-prog{height:3px;background:rgba(124,58,237,0.15);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.q-prog-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--pink));transition:width 0.4s}
+.q-dots{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:1.25rem}
+.q-dot{width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-family:'Syne',sans-serif;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.q-dot.answered{border-color:var(--violet);background:rgba(124,58,237,0.15);color:var(--violet3)}
+.q-dot.current{border-color:var(--amber);background:rgba(245,158,11,0.1);color:var(--amber)}
+.q-card{background:rgba(8,13,26,0.9);border:1px solid var(--border);border-radius:14px;padding:1.5rem;animation:qIn 0.3s ease}
+@keyframes qIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.q-type{display:inline-block;padding:0.2rem 0.75rem;border-radius:4px;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem}
+.q-type.mc{background:rgba(124,58,237,0.15);color:var(--violet3);border:1px solid rgba(124,58,237,0.3)}
+.q-type.tf{background:rgba(20,184,166,0.12);color:var(--teal);border:1px solid rgba(20,184,166,0.3)}
+.q-type.drag{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
+.q-type.scenario{background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.3)}
+.q-text{font-size:1rem;color:var(--text);line-height:1.7;margin-bottom:1.25rem}
+.opt{display:flex;align-items:flex-start;gap:0.75rem;padding:0.8rem 1rem;border:1px solid rgba(124,58,237,0.2);border-radius:8px;margin-bottom:0.5rem;cursor:pointer;transition:all 0.2s;font-size:0.9rem;color:var(--text2)}
+.opt:hover{border-color:var(--violet);color:var(--text);background:rgba(124,58,237,0.06)}
+.opt.selected{border-color:var(--violet);color:var(--violet3);background:rgba(124,58,237,0.1)}
+.opt.correct{border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.08)}
+.opt.wrong{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.08)}
+.opt-key{width:22px;height:22px;border-radius:4px;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-family:'Syne',sans-serif;flex-shrink:0}
+.tf-row{display:flex;gap:0.75rem}
+.tf-btn{flex:1;padding:0.9rem;border-radius:8px;border:1px solid rgba(124,58,237,0.2);background:transparent;font-size:0.95rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;color:var(--text2)}
+.tf-btn:hover{border-color:var(--violet3);color:var(--violet3)}
+.tf-btn.selected{border-color:var(--violet);color:var(--violet3);background:rgba(124,58,237,0.1)}
+.tf-btn.correct{border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.08)}
+.tf-btn.wrong{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.08)}
+.drag-pool{display:flex;flex-wrap:wrap;gap:6px;padding:0.75rem;background:rgba(0,0,0,0.3);border:1.5px dashed rgba(124,58,237,0.25);border-radius:8px;min-height:44px;margin-bottom:1rem;transition:all 0.2s}
+.drag-pool.over{border-color:var(--violet);background:rgba(124,58,237,0.06)}
+.drag-chip{padding:5px 12px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:6px;font-size:0.82rem;color:var(--violet3);cursor:grab;user-select:none;transition:all 0.2s}
+.drag-chip:hover{background:rgba(124,58,237,0.18)}
+.match-row{display:grid;grid-template-columns:1fr 24px 1fr;gap:6px;align-items:center;margin-bottom:6px}
+.match-label{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:0.83rem;color:var(--text2)}
+.match-slot{min-height:34px;background:rgba(0,0,0,0.3);border:1.5px dashed rgba(124,58,237,0.2);border-radius:6px;padding:3px;display:flex;align-items:center;transition:all 0.2s}
+.match-slot.over{border-color:var(--violet);background:rgba(124,58,237,0.05)}
+.match-arrow{text-align:center;color:var(--text3);font-size:0.85rem}
+.feedback{padding:0.85rem 1rem;border-radius:8px;margin-top:1rem;font-size:0.88rem;line-height:1.6;display:none}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);color:#86efac}
+.feedback.wrong{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#fca5a5}
+.quiz-nav{display:flex;justify-content:space-between;margin-top:1.25rem;flex-wrap:wrap;gap:0.5rem}
+
+/* RESULT */
+.result-wrap{max-width:580px;margin:0 auto;padding:2rem 1.5rem;text-align:center}
+.result-card{background:rgba(8,13,26,0.95);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+.score-ring{width:130px;height:130px;margin:0 auto 1.5rem;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num span{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--violet3),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-num small{font-size:0.7rem;color:var(--text2)}
+.result-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.25rem}
+.result-kelas{font-size:0.88rem;color:var(--text2);margin-bottom:1.25rem}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.r-stat{background:rgba(0,0,0,0.4);border-radius:8px;padding:0.75rem}
+.r-stat .val{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,var(--violet3),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.r-stat .lbl{font-size:0.72rem;color:var(--text2);margin-top:2px;letter-spacing:1px}
+.badge-row{margin-bottom:1rem}
+.badge-pill{display:inline-flex;align-items:center;gap:6px;padding:0.4rem 1.1rem;border-radius:20px;font-size:0.85rem;font-weight:700;letter-spacing:0.5px}
+.badge-gold{background:rgba(245,158,11,0.12);border:1px solid var(--amber);color:var(--amber)}
+.badge-silver{background:rgba(124,58,237,0.12);border:1px solid var(--violet3);color:var(--violet3)}
+.badge-bronze{background:rgba(239,68,68,0.1);border:1px solid var(--red);color:var(--red)}
+.result-msg{font-size:0.9rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem}
+.result-btns{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap}
+.btn-result{padding:0.7rem 1.5rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+.btn-result:hover{border-color:var(--violet3);color:var(--violet3)}
+.btn-result.primary{border-color:var(--violet);color:var(--violet3);background:rgba(124,58,237,0.08)}
+
+/* LEADERBOARD */
+.lb-wrap{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.lb-filters{display:flex;gap:0.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border2);flex-wrap:wrap}
+.lb-select{background:rgba(124,58,237,0.06);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.45rem 0.9rem;border-radius:6px;appearance:none;cursor:pointer}
+.lb-select option{background:#080d1a}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{text-align:left;padding:0.65rem 0.85rem;font-size:0.7rem;font-weight:600;letter-spacing:2px;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border)}
+.lb-table td{padding:0.7rem 0.85rem;font-size:0.88rem;border-bottom:1px solid var(--border2)}
+.lb-table tr:hover td{background:rgba(124,58,237,0.04)}
+.rank-1 td:first-child{color:var(--amber);font-weight:700}
+.rank-2 td:first-child{color:#c0c0c0;font-weight:700}
+.rank-3 td:first-child{color:#cd7f32;font-weight:700}
+.pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.78rem;font-weight:600}
+.pill-a{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.3)}
+.pill-b{background:rgba(124,58,237,0.1);color:var(--violet3);border:1px solid rgba(124,58,237,0.3)}
+.pill-c{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
+.pill-d{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.3)}
+.empty-msg{text-align:center;padding:3rem;color:var(--text2);font-size:0.9rem}
+
+/* TEACHER */
+#s-teacher-login{align-items:center;justify-content:center;padding:2rem}
+.t-panel{padding:1.5rem;max-width:1000px;margin:0 auto}
+.t-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
+.t-stat-card{background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.t-stat-card .val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
+.t-stat-card .lbl{font-size:0.75rem;color:var(--text2);letter-spacing:1px;margin-top:3px}
+.t-table-wrap{overflow-x:auto}
+.t-table{width:100%;border-collapse:collapse;font-size:0.88rem}
+.t-table th{text-align:left;padding:0.65rem 0.75rem;font-size:0.7rem;font-weight:600;letter-spacing:2px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;white-space:nowrap}
+.t-table td{padding:0.65rem 0.75rem;border-bottom:1px solid var(--border2);white-space:nowrap}
+.t-table tr:hover td{background:rgba(124,58,237,0.03)}
+.t-filter{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.t-input{background:rgba(124,58,237,0.06);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.5rem 0.9rem;border-radius:6px;flex:1;min-width:140px}
+.t-input:focus{outline:none;border-color:var(--violet)}
+.t-select{background:rgba(124,58,237,0.06);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.5rem 0.9rem;border-radius:6px;appearance:none;min-width:130px}
+.t-select option{background:#080d1a}
+.info-box{margin-top:1rem;padding:0.85rem 1rem;background:rgba(20,184,166,0.05);border:1px solid rgba(20,184,166,0.2);border-radius:8px;font-size:0.82rem;color:var(--text2);line-height:1.6}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(8,13,26,0.95);border:1px solid var(--violet);border-radius:8px;padding:0.7rem 1.5rem;font-size:0.88rem;color:var(--violet3);z-index:999;transition:transform 0.3s;pointer-events:none;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.success{border-color:var(--teal);color:var(--teal)}
+#toast.error{border-color:var(--red);color:#fca5a5}
+
+/* CONFETTI */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden}
+.cp{position:absolute;top:-10px;width:7px;height:7px;animation:cfAll linear forwards}
+@keyframes cfAll{to{transform:translateY(105vh) rotate(540deg);opacity:0}}
+</style>
+</head>
+<body>
+<div id="particles"></div>
+<div id="toast"></div>
+
+<!-- LOGIN -->
+<div id="s-login" class="screen active flex-screen">
+  <div class="login-wrap">
+    <div class="login-hero">
+      <div class="logo-stack">
+        <div class="logo-layers">
+          <div class="logo-layer"></div><div class="logo-layer"></div>
+          <div class="logo-layer"></div><div class="logo-layer"></div>
+          <div class="logo-layer"></div><div class="logo-layer"></div>
+          <div class="logo-layer"></div>
+        </div>
+      </div>
+      <h1 class="login-title">Model <span>Jaringan</span></h1>
+      <p class="login-sub">OSI & TCP/IP — Kelas XI Informatika — MAN 2 Bogor</p>
+    </div>
+    <div class="glass">
+      <span class="field-label">Pilih Kelas</span>
+      <select class="cyber-select" id="inp-kelas" onchange="updateNames()">
+        <option value="">— Pilih Kelas —</option>
+        <option value="XI-I">XI-I</option>
+        <option value="XI-J">XI-J</option>
+      </select>
+      <span class="field-label">Pilih Nama</span>
+      <select class="cyber-select" id="inp-nama">
+        <option value="">— Pilih kelas terlebih dahulu —</option>
+      </select>
+      <button class="btn-primary" onclick="doLogin()">MASUK</button>
+      <p class="err" id="login-err">Pilih kelas dan nama kamu dulu ya!</p>
+    </div>
+    <button class="btn-link" onclick="showScreen('s-teacher-login')">[ Akses Panel Guru ]</button>
+  </div>
+</div>
+
+<!-- TEACHER LOGIN -->
+<div id="s-teacher-login" class="screen flex-screen">
+  <div style="max-width:380px;width:100%;padding:2rem;margin:auto">
+    <div class="login-hero" style="margin-bottom:1.5rem">
+      <h1 class="login-title" style="font-size:1.4rem">Panel <span>Guru</span></h1>
+      <p class="login-sub">Akses terbatas</p>
+    </div>
+    <div class="glass">
+      <span class="field-label">Password</span>
+      <input type="password" class="cyber-input" id="teacher-pass" placeholder="Masukkan password...">
+      <button class="btn-primary" onclick="teacherLogin()">MASUK</button>
+      <p class="err" id="pass-err" style="display:none">Password salah.</p>
+      <button class="btn-link" onclick="showScreen('s-login')">Kembali</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="s-main" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <span class="topbar-brand">MODEL JARINGAN</span>
+      <span class="topbar-user">Halo, <strong id="disp-nama">—</strong> · <span id="disp-kelas">—</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+      <div class="xp-wrap">
+        <span class="xp-txt" id="xp-txt">0 XP</span>
+        <div class="xp-track"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
+      </div>
+      <button class="btn-sm quiz-btn" id="quiz-btn" onclick="gotoQuiz()">MULAI KUIS</button>
+      <button class="btn-sm" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+  <div class="main-nav">
+    <button class="nav-btn active" onclick="showTab('osi',this)">Model OSI</button>
+    <button class="nav-btn" onclick="showTab('tcpip',this)">TCP/IP</button>
+    <button class="nav-btn" onclick="showTab('compare',this)">Perbandingan</button>
+    <button class="nav-btn" onclick="showTab('sim',this)">Simulasi</button>
+    <button class="nav-btn" onclick="showTab('lb',this)">Leaderboard</button>
+  </div>
+
+  <!-- TAB OSI -->
+  <div id="tab-osi" class="content">
+    <div class="section-title" style="color:var(--violet3)">MODEL OSI — 7 LAPISAN</div>
+    <div class="section-sub">Klik setiap lapisan untuk lihat penjelasannya. Model OSI membagi komunikasi jaringan jadi 7 lapisan — masing-masing punya tugas sendiri-sendiri.</div>
+    <div class="osi-stack" id="osi-stack"></div>
+    <div id="osi-detail" class="layer-detail"></div>
+  </div>
+
+  <!-- TAB TCPIP -->
+  <div id="tab-tcpip" class="content" style="display:none">
+    <div class="section-title" style="color:var(--teal)">MODEL TCP/IP — 4 LAPISAN</div>
+    <div class="section-sub">TCP/IP adalah model yang dipakai internet sungguhan. Lebih simpel dari OSI — hanya 4 lapisan. Klik tiap lapisan untuk penjelasannya.</div>
+    <div class="osi-stack" id="tcpip-stack"></div>
+    <div id="tcpip-detail" class="layer-detail"></div>
+  </div>
+
+  <!-- TAB COMPARE -->
+  <div id="tab-compare" class="content" style="display:none">
+    <div class="section-title" style="color:var(--pink)">PERBANDINGAN OSI vs TCP/IP</div>
+    <div class="section-sub">OSI adalah model teoritis — dibuat untuk memahami konsep. TCP/IP adalah model praktis — yang benar-benar dipakai di internet.</div>
+    <div class="model-compare" id="model-compare"></div>
+    <div style="background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
+      <div class="section-title" style="font-size:0.85rem;margin-bottom:1rem;color:var(--text2)">PERBEDAAN UTAMA</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;min-width:480px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:0.6rem 0.75rem;text-align:left;color:var(--text2);font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Aspek</th>
+            <th style="padding:0.6rem 0.75rem;text-align:left;color:var(--violet3);font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">OSI</th>
+            <th style="padding:0.6rem 0.75rem;text-align:left;color:var(--teal);font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TCP/IP</th>
+          </tr></thead>
+          <tbody id="compare-table"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+      <div class="section-title" style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text2)">ANALOGI SEHARI-HARI</div>
+      <p style="font-size:0.9rem;color:var(--text2);line-height:1.7">Bayangkan kamu kirim surat ke teman di kota lain. <strong style="color:var(--text)">Model OSI</strong> itu seperti SOP lengkap di kantor pos — ada 7 divisi yang masing-masing mengurus bagian tertentu (nulis alamat, masukkan amplop, sortir, angkut, dll). <strong style="color:var(--text)">Model TCP/IP</strong> lebih seperti cara kerja nyata kurir modern — lebih simpel, 4 tahap saja, tapi yang penting surat sampai!</p>
+    </div>
+  </div>
+
+  <!-- TAB SIMULASI -->
+  <div id="tab-sim" class="content" style="display:none">
+    <div class="section-title" style="color:var(--amber)">SIMULASI KOMUNIKASI DATA</div>
+    <div class="section-sub">Lihat bagaimana data melewati setiap lapisan saat dikirim dan diterima. Pilih skenario lalu tekan Play!</div>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap">
+      <select class="lb-select" id="sim-scenario-sel" onchange="loadScenario()">
+        <option value="browse">Membuka website (browser)</option>
+        <option value="email">Mengirim email</option>
+        <option value="chat">Kirim pesan WhatsApp</option>
+      </select>
+      <button class="btn-sim primary" onclick="playSim()">PLAY</button>
+      <button class="btn-sim" onclick="resetSim()">RESET</button>
+    </div>
+    <div class="sim-scenario">
+      <div class="sim-title" id="sim-title"></div>
+      <div class="sim-desc" id="sim-desc"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div>
+          <div style="font-size:0.72rem;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:600">PENGIRIM (Enkapsulasi)</div>
+          <div class="sim-flow" id="sim-send"></div>
+        </div>
+        <div>
+          <div style="font-size:0.72rem;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:600">PENERIMA (Dekapsulasi)</div>
+          <div class="sim-flow" id="sim-recv"></div>
+        </div>
+      </div>
+      <div class="flow-log" id="sim-log">Pilih skenario dan tekan PLAY untuk memulai simulasi...</div>
+    </div>
+  </div>
+
+  <!-- TAB LEADERBOARD -->
+  <div id="tab-lb" class="content" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
+      <div class="section-title" style="color:var(--violet3);margin:0">LEADERBOARD</div>
+      <select class="lb-select" id="lb-filter" onchange="renderLB()">
+        <option value="">Semua Kelas</option>
+        <option value="XI-I">XI-I</option>
+        <option value="XI-J">XI-J</option>
+      </select>
+    </div>
+    <div class="lb-wrap">
+      <div style="overflow-x:auto">
+        <table class="lb-table">
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Nilai</th><th>Waktu</th><th>Status</th></tr></thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+      </div>
+      <div id="lb-empty" class="empty-msg" style="display:none">Belum ada yang mengerjakan kuis. Jadilah yang pertama!</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="s-quiz" class="screen">
+  <div class="topbar">
+    <span class="topbar-brand">KUIS MODEL JARINGAN</span>
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <span id="q-counter" class="q-counter"></span>
+      <span class="q-timer" id="q-timer">00:00</span>
+    </div>
+  </div>
+  <div style="padding:1.25rem;max-width:680px;margin:0 auto">
+    <div class="q-dots" id="q-dots"></div>
+    <div class="q-prog"><div class="q-prog-fill" id="q-prog" style="width:0%"></div></div>
+    <div id="q-container"></div>
+    <div class="quiz-nav">
+      <button class="btn-sim" id="btn-prev" onclick="prevQ()" style="display:none">SEBELUMNYA</button>
+      <div></div>
+      <div style="display:flex;gap:0.75rem">
+        <button class="btn-sim primary" id="btn-next" onclick="nextQ()">SELANJUTNYA</button>
+        <button class="btn-sim" style="border-color:var(--teal);color:var(--teal);display:none" id="btn-submit" onclick="submitQuiz()">KUMPULKAN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="screen">
+  <div class="topbar"><span class="topbar-brand">HASIL KUIS</span></div>
+  <div class="result-wrap">
+    <div class="result-card">
+      <div class="score-ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(124,58,237,0.12)" stroke-width="10"/>
+          <circle cx="65" cy="65" r="55" fill="none" stroke="url(#sg)" stroke-width="10" stroke-dasharray="345.4" id="score-arc" stroke-dashoffset="345.4" stroke-linecap="round"/>
+          <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#14b8a6"/></linearGradient></defs>
+        </svg>
+        <div class="score-num"><span id="res-score">0</span><small>/ 100</small></div>
+      </div>
+      <div class="result-name" id="res-name"></div>
+      <div class="result-kelas" id="res-kelas"></div>
+      <div class="badge-row"><span class="badge-pill" id="res-badge"></span></div>
+      <div class="result-stats">
+        <div class="r-stat"><div class="val" id="res-correct">0</div><div class="lbl">BENAR</div></div>
+        <div class="r-stat"><div class="val" id="res-wrong">0</div><div class="lbl">SALAH</div></div>
+        <div class="r-stat"><div class="val" id="res-time">—</div><div class="lbl">WAKTU</div></div>
+      </div>
+      <div class="result-msg" id="res-msg"></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn-result primary" onclick="backToMain()">KEMBALI KE MATERI</button>
+      <button class="btn-result" onclick="toggleReview()">LIHAT JAWABAN</button>
+    </div>
+    <div id="review-section" style="display:none;margin-top:1.5rem;text-align:left"></div>
+  </div>
+</div>
+
+<!-- TEACHER PANEL -->
+<div id="s-teacher" class="screen">
+  <div class="topbar">
+    <span class="topbar-brand">PANEL GURU — MODEL JARINGAN</span>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <button class="btn-sm" style="border-color:var(--teal);color:var(--teal)" onclick="exportCSV()">EKSPOR CSV</button>
+      <button class="btn-sm" style="border-color:var(--red);color:#fca5a5" onclick="clearData()">HAPUS DATA</button>
+      <button class="btn-sm" onclick="showScreen('s-login')">KELUAR</button>
+    </div>
+  </div>
+  <div class="t-panel">
+    <div class="t-stats" id="t-stats"></div>
+    <div style="background:rgba(8,13,26,0.8);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+      <div class="section-title" style="font-size:0.8rem;margin-bottom:1rem;color:var(--text2)">REKAP NILAI SISWA</div>
+      <div class="t-filter">
+        <input class="t-input" type="text" id="t-search" placeholder="Cari nama..." oninput="renderTeacher()">
+        <select class="t-select" id="t-class" onchange="renderTeacher()">
+          <option value="">Semua Kelas</option>
+          <option value="XI-I">XI-I</option>
+          <option value="XI-J">XI-J</option>
+        </select>
+      </div>
+      <div class="t-table-wrap">
+        <table class="t-table">
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Nilai</th><th>Benar</th><th>Waktu</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="t-body"></tbody>
+        </table>
+      </div>
+      <div id="t-empty" class="empty-msg" style="display:none">Belum ada data nilai siswa.</div>
+    </div>
+    <div class="info-box">
+      Data diambil dari <strong style="color:var(--teal)">Google Sheets</strong> secara real-time. Password guru: <strong style="color:var(--amber)">guru123</strong>
+      <br>Ganti <code style="color:var(--violet3)">SHEETS_URL</code> dan <code style="color:var(--violet3)">TEACHER_PASS</code> sesuai kebutuhan.
+    </div>
+  </div>
+</div>
+
+<script>
+const TEACHER_PASS='guru123';
+const SHEETS_URL="https://script.google.com/macros/s/AKfycbwN8cGN2Iyh6-NV1VMDV-_C6vsjuY0KgMckoveohWqmgzvSssoZw0F0xBZVQSvDWCqASA/exec"
+
+const STUDENTS={
+  'XI-I':['AHMAD SOLAHUDIN','ALMIRA TRIDEWI','ANNIDA LATIFATUL HUDA','DWI ERLIANA PUSPITA','EKI AGUSTIANA','FEBRI MAULIDINI','GALUH HASBY FADILAH','HARIYRAA FITRIA ANWAR','INTAN NATASYA','KAYLA JULIANTI','M. RIFKI AL FAREZ','MANDA MAULIDIA','MUHAMAD BAYU EZA RADITYA','MUHAMAD GOPUR NAJRI RIANSYAH','MUHAMAD LUTFI','MUHAMMAD GILANG RAMADHAN','MUHAMMAD ZIDAN AMIRULLOH','MULAN ANJANI','NABILA FAZRIN','NAYANDA APRILIA','NIDA SALMA SABILA','NISRINA ZAHRA','NOVAL ADRIANSYAH PRATAMA','PENI','RAIHAN DHIYAULHAQ PERMANA','RAMA PATURACHMAN','RAMDAN HIDAYATUL MAULANA','RASSYA RAFAEL AKBAR','RAYI HANIF','RAYNALDI MAULIDAN','SAEPUWLOH','SINDI KHOERUNISA','SITI AISYAH','SITI FAUZIAH ZAHIRA SALSABILA','TAMIM DARORI','TENGKU ZAKIATUNUFUS'],
+  'XI-J':['AHMAD SYAFIQ','ALZENA MAULIDASYITA','AMANDA GINA IFATUNISA','AZZAHRA FATIHA SALSABILA','ERNA ARIANI','FADLI NAHDIAN','FARDHAN ALFARIZI','FELISH VALERIE ALYA','GHEA FADLIAH RAHMAN','GHEYSAR FAIQA DILARA','IHDA HUMA SAYALIN','JANETA FITRI','KEYLA APRILIA','M. ZIQIRULLAH','MOCH. RIFKI ALFIANSYAH','MUHAMAD FAHRI RAMADHAN','MUHAMAD IBRAHIMOVIC','MUHAMAD SAYID HIKAM MURTADO','MUHAMMAD RIZKY RAMADHAN','MUTAWALI','MUTIARA NUR FADILAH','NABILA KONITA AZZAHRA','NIHA HAMIDAH FIRMANSYAH','NURAENI','NURKHOLIS DAWAM WANDIKA','NURSYIFA','RAHMAH PADILAH','RAIHAN PAKIHUDIN','RAYEN PRADIPTA','RIKO TAMPATI','SILMI FEBISARI','SINTA MAHARANI','SITI AULIA RAMADANI','SITI MEKASARI','TENGKU FAJAR','WINDI INTAN AGUSTINA']
+};
+
+// OSI DATA
+const OSI_LAYERS=[
+  {num:7,name:'Aplikasi',en:'Application Layer',color:'#7c3aed',pdu:'Data',
+    desc:'Lapisan paling dekat dengan pengguna. Ini adalah "pintu masuk" — tempat aplikasi seperti browser, email, WhatsApp berkomunikasi dengan jaringan.',
+    fungsi:['Menyediakan antarmuka antara aplikasi dan jaringan','Mengatur format data yang dipahami oleh aplikasi','Menangani autentikasi dan otorisasi pengguna'],
+    contoh:['HTTP/HTTPS (browsing web)','SMTP/POP3/IMAP (email)','FTP (transfer file)','DNS (penamaan domain)'],
+    devices:['Browser','Email Client','FTP Client'],
+    mnemonic:'All'},
+  {num:6,name:'Presentasi',en:'Presentation Layer',color:'#9333ea',pdu:'Data',
+    desc:'Lapisan yang "menerjemahkan" data — seperti penerjemah bahasa. Mengubah format data agar bisa dipahami oleh kedua pihak yang berkomunikasi.',
+    fungsi:['Enkripsi dan dekripsi data (keamanan)','Kompresi data agar lebih kecil','Konversi format (JPEG, MP3, ASCII, dll)'],
+    contoh:['SSL/TLS (enkripsi HTTPS)','JPEG, PNG, MP4 (format file)','ASCII, Unicode (encoding teks)'],
+    devices:['Gateway','Sistem Enkripsi'],
+    mnemonic:'People'},
+  {num:5,name:'Sesi',en:'Session Layer',color:'#a855f7',pdu:'Data',
+    desc:'Lapisan yang mengelola "sesi" komunikasi — seperti manajer pertemuan yang mengatur kapan mulai, kapan selesai, dan memastikan tidak ada yang bicara bersamaan.',
+    fungsi:['Membuka, mengelola, dan menutup sesi komunikasi','Sinkronisasi dan checkpointing data','Kontrol dialog antara dua pihak'],
+    contoh:['NetBIOS','RPC (Remote Procedure Call)','Session di aplikasi web (login session)'],
+    devices:['Gateway','Server Aplikasi'],
+    mnemonic:'Seem'},
+  {num:4,name:'Transportasi',en:'Transport Layer',color:'#ec4899',pdu:'Segmen',
+    desc:'Lapisan yang memastikan data sampai dengan benar dan lengkap — seperti jasa pengiriman yang bertanggung jawab paket sampai tidak rusak, tidak kurang.',
+    fungsi:['Memecah data jadi segmen-segmen kecil','Memastikan semua segmen sampai (error recovery)','Mengatur kecepatan pengiriman (flow control)','Menentukan port tujuan'],
+    contoh:['TCP — terpercaya, ada konfirmasi','UDP — cepat, tanpa konfirmasi','Port 80 (HTTP), Port 443 (HTTPS), Port 25 (SMTP)'],
+    devices:['Firewall','Load Balancer'],
+    mnemonic:'To'},
+  {num:3,name:'Jaringan',en:'Network Layer',color:'#f59e0b',pdu:'Paket',
+    desc:'Lapisan yang menentukan rute/jalan terbaik untuk data mencapai tujuan — seperti GPS yang memilih rute paling efisien dari kota A ke kota B.',
+    fungsi:['Pengalamatan logis (IP Address)','Routing — menentukan jalur terbaik','Fragmentasi paket jika terlalu besar'],
+    contoh:['IP (Internet Protocol)','ICMP (ping)','Routing Protocol: OSPF, BGP','IPv4 dan IPv6'],
+    devices:['Router','Layer 3 Switch'],
+    mnemonic:'Not'},
+  {num:2,name:'Data Link',en:'Data Link Layer',color:'#14b8a6',pdu:'Frame',
+    desc:'Lapisan yang mengemas data jadi "frame" dan memastikan pengiriman yang bebas error dalam satu jaringan lokal — seperti tukang pos di satu kelurahan.',
+    fungsi:['Pengalamatan fisik (MAC Address)','Deteksi dan koreksi error','Kontrol akses ke media (siapa yang boleh kirim)','Membuat dan menghancurkan frame'],
+    contoh:['Ethernet','WiFi (802.11)','MAC Address','ARP (Address Resolution Protocol)'],
+    devices:['Switch','Bridge','NIC/LAN Card'],
+    mnemonic:'Do'},
+  {num:1,name:'Fisik',en:'Physical Layer',color:'#22c55e',pdu:'Bit',
+    desc:'Lapisan paling dasar — mengurus pengiriman bit (0 dan 1) melalui media fisik. Tidak peduli isi datanya apa, tugasnya cuma kirim sinyal listrik/cahaya/gelombang radio.',
+    fungsi:['Transmisi bit melalui media fisik','Mendefinisikan karakteristik kabel, konektor','Mengatur kecepatan transmisi (bandwidth)','Konversi sinyal digital ke sinyal fisik'],
+    contoh:['Kabel UTP, Fiber Optik, Coaxial','Hub','Sinyal WiFi, Bluetooth','Konektor RJ-45'],
+    devices:['Hub','Repeater','Kabel','Modem'],
+    mnemonic:'Please'}
+];
+
+const TCPIP_LAYERS=[
+  {num:4,name:'Aplikasi',en:'Application Layer',color:'#7c3aed',
+    desc:'Gabungan lapisan Aplikasi + Presentasi + Sesi dari OSI. Semua protokol yang langsung berhubungan dengan aplikasi pengguna ada di sini.',
+    protokol:['HTTP/HTTPS','FTP','SMTP/POP3','DNS','SSH','Telnet'],
+    osi_map:'Setara dengan OSI Layer 5, 6, 7'},
+  {num:3,name:'Transport',en:'Transport Layer',color:'#ec4899',
+    desc:'Sama seperti OSI Layer 4. Menggunakan TCP untuk pengiriman yang terpercaya atau UDP untuk pengiriman yang cepat.',
+    protokol:['TCP (Transmission Control Protocol)','UDP (User Datagram Protocol)'],
+    osi_map:'Setara dengan OSI Layer 4'},
+  {num:2,name:'Internet',en:'Internet Layer',color:'#f59e0b',
+    desc:'Setara OSI Layer 3. Mengurus pengalamatan IP dan routing — menentukan rute data dari sumber ke tujuan.',
+    protokol:['IP (IPv4 dan IPv6)','ICMP','ARP','RARP'],
+    osi_map:'Setara dengan OSI Layer 3'},
+  {num:1,name:'Network Access',en:'Network Access Layer',color:'#14b8a6',
+    desc:'Gabungan OSI Layer 1 dan 2. Mengurus semua hal fisik — kabel, WiFi, MAC address, frame Ethernet.',
+    protokol:['Ethernet','WiFi (802.11)','Token Ring','Frame Relay'],
+    osi_map:'Setara dengan OSI Layer 1 dan 2'}
+];
+
+const COMPARE_DATA=[
+  {asp:'Jumlah lapisan',osi:'7 lapisan',tcpip:'4 lapisan'},
+  {asp:'Dikembangkan oleh',osi:'ISO (International Organization for Standardization)',tcpip:'ARPANET / DoD Amerika'},
+  {asp:'Tujuan utama',osi:'Model referensi teoritis untuk memahami konsep',tcpip:'Implementasi praktis untuk internet nyata'},
+  {asp:'Pendekatan',osi:'Protokol-independen (bisa pakai protokol apa saja)',tcpip:'Protokol spesifik (TCP dan IP)'},
+  {asp:'Fleksibilitas',osi:'Sangat fleksibel tapi kompleks',tcpip:'Lebih simpel dan langsung ke tujuan'},
+  {asp:'Penggunaan',osi:'Referensi akademis dan pembelajaran',tcpip:'Internet, jaringan komputer dunia nyata'},
+  {asp:'Lapisan Sesi & Presentasi',osi:'Ada sebagai lapisan terpisah',tcpip:'Digabung ke lapisan Aplikasi'}
+];
+
+const SIM_SCENARIOS={
+  browse:{
+    title:'Membuka Website www.google.com',
+    desc:'Kamu ketik "www.google.com" di browser. Lihat bagaimana data perjalanannya melalui setiap lapisan OSI dari browser kamu sampai ke server Google dan kembali!',
+    send:[
+      {layer:'7 - Aplikasi',msg:'Browser membuat request HTTP GET untuk www.google.com',color:'#7c3aed'},
+      {layer:'6 - Presentasi',msg:'Data dienkripsi pakai TLS/SSL (karena HTTPS)',color:'#9333ea'},
+      {layer:'5 - Sesi',msg:'Sesi koneksi dibuka antara browser dan server Google',color:'#a855f7'},
+      {layer:'4 - Transport',msg:'Data dipecah jadi segmen-segmen, pakai protokol TCP port 443',color:'#ec4899'},
+      {layer:'3 - Jaringan',msg:'Setiap segmen dibungkus paket dengan IP address tujuan: 142.250.x.x (Google)',color:'#f59e0b'},
+      {layer:'2 - Data Link',msg:'Paket dibungkus frame Ethernet dengan MAC address router terdekat',color:'#14b8a6'},
+      {layer:'1 - Fisik',msg:'Frame dikirim sebagai sinyal listrik melalui kabel atau gelombang WiFi',color:'#22c55e'}
+    ],
+    recv:[
+      {layer:'1 - Fisik',msg:'Server Google terima sinyal fisik dari jaringan',color:'#22c55e'},
+      {layer:'2 - Data Link',msg:'Sinyal dikumpulkan jadi frame, MAC address dicek',color:'#14b8a6'},
+      {layer:'3 - Jaringan',msg:'Frame dibuka, paket IP diproses, alamat IP dicek',color:'#f59e0b'},
+      {layer:'4 - Transport',msg:'Segmen TCP digabung kembali jadi data utuh',color:'#ec4899'},
+      {layer:'5 - Sesi',msg:'Sesi dikonfirmasi masih aktif dan valid',color:'#a855f7'},
+      {layer:'6 - Presentasi',msg:'Data didekripsi dari TLS/SSL',color:'#9333ea'},
+      {layer:'7 - Aplikasi',msg:'Server Google kirim halaman HTML kembali ke browser kamu',color:'#7c3aed'}
+    ]
+  },
+  email:{
+    title:'Mengirim Email ke Teman',
+    desc:'Kamu klik "Kirim" di aplikasi email. Begini perjalanan emailmu melewati 7 lapisan OSI!',
+    send:[
+      {layer:'7 - Aplikasi',msg:'Aplikasi email membuat pesan dengan protokol SMTP',color:'#7c3aed'},
+      {layer:'6 - Presentasi',msg:'Attachment file dikonversi ke format Base64, teks ke ASCII',color:'#9333ea'},
+      {layer:'5 - Sesi',msg:'Sesi SMTP dibuka dengan mail server',color:'#a855f7'},
+      {layer:'4 - Transport',msg:'Data email dipecah jadi segmen TCP, port 25 atau 587',color:'#ec4899'},
+      {layer:'3 - Jaringan',msg:'Paket IP dibuat menuju IP mail server tujuan',color:'#f59e0b'},
+      {layer:'2 - Data Link',msg:'Frame Ethernet dibuat untuk dikirim ke router',color:'#14b8a6'},
+      {layer:'1 - Fisik',msg:'Bit dikirim lewat kabel/WiFi ke mail server',color:'#22c55e'}
+    ],
+    recv:[
+      {layer:'1 - Fisik',msg:'Mail server penerima terima sinyal fisik',color:'#22c55e'},
+      {layer:'2 - Data Link',msg:'Frame dikumpulkan dan MAC address diverifikasi',color:'#14b8a6'},
+      {layer:'3 - Jaringan',msg:'IP address dicek — ini memang untuk kita!',color:'#f59e0b'},
+      {layer:'4 - Transport',msg:'Segmen-segmen TCP digabung jadi email utuh',color:'#ec4899'},
+      {layer:'5 - Sesi',msg:'Sesi SMTP ditutup setelah email diterima',color:'#a855f7'},
+      {layer:'6 - Presentasi',msg:'Base64 didekode kembali, attachment jadi file asli',color:'#9333ea'},
+      {layer:'7 - Aplikasi',msg:'Email masuk ke inbox — siap dibaca penerima!',color:'#7c3aed'}
+    ]
+  },
+  chat:{
+    title:'Kirim Pesan WhatsApp',
+    desc:'Kamu ketik pesan dan tekan kirim di WhatsApp. Data pesanmu melewati 7 lapisan ini sebelum sampai ke HP teman kamu!',
+    send:[
+      {layer:'7 - Aplikasi',msg:'WhatsApp membuat pesan teks, pakai protokol HTTPS ke server WA',color:'#7c3aed'},
+      {layer:'6 - Presentasi',msg:'Pesan dienkripsi end-to-end (E2E encryption) agar hanya kamu dan penerima bisa baca',color:'#9333ea'},
+      {layer:'5 - Sesi',msg:'Sesi koneksi ke server WhatsApp tetap terbuka (persistent connection)',color:'#a855f7'},
+      {layer:'4 - Transport',msg:'Data dipecah jadi segmen TCP, port 443',color:'#ec4899'},
+      {layer:'3 - Jaringan',msg:'Paket IP diarahkan ke server WhatsApp di Meta/Facebook',color:'#f59e0b'},
+      {layer:'2 - Data Link',msg:'Frame dikirim ke router WiFi atau tower BTS',color:'#14b8a6'},
+      {layer:'1 - Fisik',msg:'Sinyal WiFi atau 4G/5G memancarkan bit ke udara',color:'#22c55e'}
+    ],
+    recv:[
+      {layer:'1 - Fisik',msg:'HP penerima tangkap sinyal WiFi atau 4G dari server WA',color:'#22c55e'},
+      {layer:'2 - Data Link',msg:'Frame dikumpulkan dari sinyal yang diterima',color:'#14b8a6'},
+      {layer:'3 - Jaringan',msg:'Paket IP diproses — IP address HP penerima cocok!',color:'#f59e0b'},
+      {layer:'4 - Transport',msg:'Segmen TCP diurutkan dan digabung',color:'#ec4899'},
+      {layer:'5 - Sesi',msg:'Sesi WhatsApp aktif, notifikasi disiapkan',color:'#a855f7'},
+      {layer:'6 - Presentasi',msg:'Pesan didekripsi E2E — hanya HP penerima yang bisa baca',color:'#9333ea'},
+      {layer:'7 - Aplikasi',msg:'Notifikasi muncul, pesan tampil di chat WA — centang biru!',color:'#7c3aed'}
+    ]
+  }
+};
+
+const QUESTIONS=[
+  // ── PENGENALAN OSI ──
+  {id:1,type:'mc',q:'Model OSI dibagi menjadi berapa lapisan?',
+    opts:['4 lapisan','5 lapisan','7 lapisan','9 lapisan'],ans:2,
+    exp:'Model OSI (Open System Interconnection) terdiri dari 7 lapisan, dari bawah ke atas: Fisik, Data Link, Jaringan, Transportasi, Sesi, Presentasi, dan Aplikasi.'},
+  {id:2,type:'mc',q:'Lapisan OSI yang bertugas menentukan rute/jalur terbaik agar data sampai ke tujuan adalah lapisan...',
+    opts:['Data Link (lapisan 2)','Jaringan (lapisan 3)','Transportasi (lapisan 4)','Aplikasi (lapisan 7)'],ans:1,
+    exp:'Lapisan Jaringan (layer 3) bertugas melakukan routing — menentukan jalur terbaik dari pengirim ke penerima menggunakan IP Address. Perangkat yang bekerja di lapisan ini adalah Router.'},
+  {id:3,type:'tf',q:'Lapisan Fisik (Physical Layer) bertugas mengurus koneksi end-to-end antara dua komputer yang letaknya berjauhan di internet.',
+    ans:false,exp:'Salah! Lapisan Fisik hanya mengurus transmisi bit (0 dan 1) melalui media fisik seperti kabel dan sinyal radio. Yang mengurus koneksi end-to-end antar perangkat yang berjauhan adalah lapisan Transportasi (layer 4).'},
+  {id:4,type:'drag',q:'Pasangkan setiap lapisan OSI dengan PDU (unit data) yang digunakannya:',
+    pairs:[['Lapisan Fisik','Bit'],['Lapisan Data Link','Frame'],['Lapisan Jaringan','Paket'],['Lapisan Transport','Segmen']],
+    exp:'PDU (Protocol Data Unit) adalah nama untuk data di setiap lapisan: Bit (fisik), Frame (data link), Paket (jaringan), Segmen (transport), Data (sesi/presentasi/aplikasi).'},
+  {id:5,type:'mc',q:'Protokol HTTP dan HTTPS yang dipakai saat kamu browsing internet bekerja di lapisan OSI mana?',
+    opts:['Lapisan 1 - Fisik','Lapisan 3 - Jaringan','Lapisan 4 - Transport','Lapisan 7 - Aplikasi'],ans:3,
+    exp:'HTTP dan HTTPS adalah protokol aplikasi — mereka bekerja di Lapisan 7 (Aplikasi). Lapisan ini adalah tempat semua protokol yang langsung berinteraksi dengan pengguna dan aplikasi.'},
+  {id:6,type:'tf',q:'Switch adalah perangkat jaringan yang bekerja di Lapisan 2 (Data Link) dan menggunakan MAC Address untuk mengarahkan data.',
+    ans:true,exp:'Benar! Switch bekerja di Layer 2 (Data Link). Switch membaca MAC Address frame yang masuk, lalu meneruskan frame tersebut hanya ke port yang terhubung dengan perangkat tujuan — lebih cerdas dari Hub.'},
+  {id:7,type:'mc',q:'Apa fungsi utama lapisan Presentasi (Layer 6) dalam model OSI?',
+    opts:['Menentukan rute terbaik untuk pengiriman data','Memecah data jadi segmen-segmen kecil','Enkripsi, dekripsi, dan konversi format data','Membuka dan menutup sesi komunikasi'],ans:2,
+    exp:'Lapisan Presentasi mengurus "format" data — enkripsi/dekripsi (SSL/TLS), kompresi, dan konversi format (JPEG, ASCII, Unicode). Ia berfungsi seperti penerjemah agar data bisa dipahami oleh kedua pihak.'},
+  {id:8,type:'mc',q:'Protokol TCP berbeda dengan UDP karena TCP...',
+    opts:['Lebih cepat karena tidak ada konfirmasi penerimaan','Memastikan semua data sampai dengan benar (ada mekanisme konfirmasi)','Digunakan khusus untuk streaming video','Tidak memerlukan IP Address'],ans:1,
+    exp:'TCP (Transmission Control Protocol) memiliki mekanisme konfirmasi — pengirim tahu apakah data berhasil diterima. Jika ada yang hilang, TCP akan kirim ulang. UDP tidak ada konfirmasi, lebih cepat tapi kurang andal.'},
+  {id:9,type:'tf',q:'Router adalah perangkat yang bekerja di Lapisan 3 (Jaringan) dan menggunakan IP Address untuk menentukan ke mana data harus dikirim.',
+    ans:true,exp:'Benar! Router bekerja di Layer 3 (Network/Jaringan). Router membaca IP Address tujuan di setiap paket, lalu memutuskan jalur (route) terbaik untuk meneruskan paket tersebut menuju tujuan.'},
+  {id:10,type:'scenario',q:'Kamu mengirim file lewat email. File-nya dikompresi dan dienkripsi sebelum dikirim. Lapisan OSI mana yang bertanggung jawab atas kompresi dan enkripsi tersebut?',
+    opts:['Lapisan 4 - Transport','Lapisan 5 - Sesi','Lapisan 6 - Presentasi','Lapisan 7 - Aplikasi'],ans:2,
+    exp:'Lapisan Presentasi (Layer 6) bertanggung jawab atas enkripsi, dekripsi, dan kompresi data. Layer ini memastikan data dalam format yang bisa dipahami oleh kedua pihak dan aman saat dikirimkan.'},
+
+  // ── TCP/IP ──
+  {id:11,type:'mc',q:'Model TCP/IP terdiri dari berapa lapisan?',
+    opts:['3 lapisan','4 lapisan','5 lapisan','7 lapisan'],ans:1,
+    exp:'Model TCP/IP terdiri dari 4 lapisan: Network Access (Akses Jaringan), Internet, Transport, dan Application (Aplikasi). Lebih sederhana dari OSI yang punya 7 lapisan.'},
+  {id:12,type:'drag',q:'Pasangkan lapisan TCP/IP dengan lapisan OSI yang sesuai:',
+    pairs:[['Application (TCP/IP)','OSI Layer 5, 6, 7'],['Transport (TCP/IP)','OSI Layer 4'],['Internet (TCP/IP)','OSI Layer 3'],['Network Access (TCP/IP)','OSI Layer 1 dan 2']],
+    exp:'TCP/IP menyederhanakan OSI. Lapisan Application TCP/IP mencakup 3 lapisan atas OSI. Lapisan Network Access mencakup 2 lapisan bawah OSI. Layer Transport dan Internet setara langsung.'},
+  {id:13,type:'tf',q:'Model TCP/IP dikembangkan setelah model OSI dan dibuat berdasarkan model OSI sebagai referensinya.',
+    ans:false,exp:'Salah! TCP/IP justru dikembangkan LEBIH DULU oleh ARPANET (cikal bakal internet) pada tahun 1970-an. OSI dikembangkan kemudian oleh ISO sebagai model referensi yang lebih terstruktur. Jadi OSI yang belajar dari TCP/IP, bukan sebaliknya.'},
+  {id:14,type:'mc',q:'Lapisan Internet di model TCP/IP menggunakan protokol apa untuk pengalamatan dan routing?',
+    opts:['TCP dan UDP','HTTP dan HTTPS','IP (Internet Protocol)','Ethernet dan WiFi'],ans:2,
+    exp:'Lapisan Internet di TCP/IP menggunakan IP (Internet Protocol) sebagai protokol utama. IP bertanggung jawab atas pengalamatan (IP Address) dan routing paket data dari sumber ke tujuan.'},
+  {id:15,type:'mc',q:'Di model TCP/IP, protokol Ethernet dan WiFi termasuk ke dalam lapisan apa?',
+    opts:['Application','Transport','Internet','Network Access'],ans:3,
+    exp:'Ethernet dan WiFi adalah protokol untuk media fisik dan pengalamatan lokal (MAC Address) — ini termasuk lapisan Network Access (atau Link Layer) di TCP/IP, yang setara dengan Layer 1 dan 2 di OSI.'},
+
+  // ── PERBANDINGAN ──
+  {id:16,type:'tf',q:'Model OSI lebih banyak digunakan di jaringan nyata (internet) dibandingkan model TCP/IP.',
+    ans:false,exp:'Salah! Justru sebaliknya. TCP/IP adalah model yang dipakai di internet dan jaringan nyata. OSI lebih banyak digunakan sebagai model referensi untuk pembelajaran dan pemahaman konsep jaringan.'},
+  {id:17,type:'mc',q:'Perbedaan utama antara lapisan Aplikasi di OSI vs TCP/IP adalah...',
+    opts:['OSI tidak memiliki lapisan Aplikasi','Lapisan Aplikasi TCP/IP mencakup layer Sesi dan Presentasi dari OSI','TCP/IP punya lebih banyak protokol di lapisan Aplikasi','Tidak ada perbedaan, keduanya sama persis'],ans:1,
+    exp:'Di OSI ada 3 lapisan terpisah: Aplikasi (7), Presentasi (6), dan Sesi (5). Di TCP/IP, ketiga lapisan ini digabung menjadi satu lapisan Aplikasi. Ini yang membuat TCP/IP lebih simpel.'},
+  {id:18,type:'scenario',q:'Pak Guru minta kamu jelaskan cara kerja internet ke adik kelas. Lebih baik pakai model mana sebagai referensi penjelasan?',
+    opts:['TCP/IP — karena ini yang benar-benar dipakai internet','OSI — karena lebih detail dan mudah dipahami tahap demi tahap','Keduanya sama saja, tidak ada perbedaan','Tidak perlu model, cukup jelaskan langsung'],ans:1,
+    exp:'Untuk menjelaskan konsep secara bertahap dan mudah dipahami, OSI lebih cocok karena 7 lapisannya lebih detail dan jelas pemisahan tugasnya. Tapi untuk implementasi nyata internet, TCP/IP yang digunakan.'},
+  {id:19,type:'tf',q:'TCP/IP lebih fleksibel dari OSI karena bisa digunakan dengan berbagai jenis protokol di setiap lapisannya.',
+    ans:false,exp:'Justru sebaliknya! OSI yang lebih fleksibel karena dirancang protokol-independen (bisa pakai protokol apa saja). TCP/IP lebih spesifik karena dirancang khusus untuk protokol TCP dan IP.'},
+  {id:20,type:'mc',q:'Protokol DNS (Domain Name System) yang mengubah nama domain menjadi IP Address bekerja di lapisan apa pada model OSI?',
+    opts:['Lapisan 1 - Fisik','Lapisan 3 - Jaringan','Lapisan 4 - Transport','Lapisan 7 - Aplikasi'],ans:3,
+    exp:'DNS adalah protokol aplikasi yang langsung melayani kebutuhan aplikasi pengguna — mengubah nama domain (www.google.com) menjadi IP Address. Ini termasuk Lapisan 7 (Aplikasi) di OSI.'},
+
+  // ── PENERAPAN & ANALISIS ──
+  {id:21,type:'mc',q:'Ketika kamu membuka website, browser mengirim request HTTP. Di lapisan mana proses "memecah request itu jadi segmen-segmen kecil" terjadi?',
+    opts:['Lapisan 7 - Aplikasi','Lapisan 5 - Sesi','Lapisan 4 - Transport','Lapisan 2 - Data Link'],ans:2,
+    exp:'Proses pemecahan data menjadi segmen-segmen kecil terjadi di Lapisan 4 (Transport). TCP yang memecah data menjadi segmen-segmen, memberi nomor urut, dan memastikan semua segmen sampai dengan benar.'},
+  {id:22,type:'tf',q:'Pada proses enkapsulasi, data ditambahkan header di setiap lapisan saat dikirim — dan header tersebut dilepas satu per satu saat diterima (dekapsulasi).',
+    ans:true,exp:'Benar! Ini namanya enkapsulasi. Saat mengirim: Lapisan 7 tambah header aplikasi → Lapisan 4 tambah header TCP → Lapisan 3 tambah header IP → Lapisan 2 tambah header+trailer (frame). Saat menerima, proses terbalik (dekapsulasi).'},
+  {id:23,type:'scenario',q:'Kamu streaming YouTube tapi gambarnya sedikit blur/pixelated demi tetap lancar. Ini menunjukkan aplikasi menggunakan protokol?',
+    opts:['TCP — karena memastikan semua data sampai','UDP — karena kecepatan lebih penting dari kesempurnaan data','HTTP — karena YouTube website','DNS — karena butuh nama domain'],ans:1,
+    exp:'UDP (User Datagram Protocol)! Streaming video lebih mementingkan kelancaran (real-time) daripada kesempurnaan data. UDP tidak ada konfirmasi penerimaan — kalau ada paket hilang, ya dibiarkan saja (hasilnya gambar blur sesaat), tapi video tetap jalan tanpa buffering panjang.'},
+  {id:24,type:'mc',q:'IP Address termasuk pengalamatan di lapisan mana pada model OSI?',
+    opts:['Lapisan 1 - Fisik','Lapisan 2 - Data Link','Lapisan 3 - Jaringan','Lapisan 4 - Transport'],ans:2,
+    exp:'IP Address adalah pengalamatan logis yang bekerja di Lapisan 3 (Jaringan/Network). Sementara MAC Address adalah pengalamatan fisik yang bekerja di Lapisan 2 (Data Link). Perbedaannya: IP Address bisa berubah, MAC Address tetap dari pabrik.'},
+  {id:25,type:'tf',q:'Hub adalah perangkat yang lebih cerdas dari Switch karena Hub bisa menentukan ke mana data harus dikirim berdasarkan MAC Address.',
+    ans:false,exp:'Salah! Justru Switch yang lebih cerdas. Hub hanya menyebarkan data ke SEMUA port (broadcast) tanpa memilih tujuan. Switch lebih cerdas karena membaca MAC Address dan hanya mengirim data ke port yang dituju, lebih efisien.'},
+  {id:26,type:'mc',q:'Proses "enkapsulasi" dalam komunikasi jaringan artinya...',
+    opts:['Mengompres data agar ukurannya lebih kecil','Menambahkan header/informasi kontrol di setiap lapisan saat data dikirim','Memecah jaringan jadi segmen-segmen lebih kecil','Mengenkripsi data agar tidak bisa dibaca orang lain'],ans:1,
+    exp:'Enkapsulasi adalah proses penambahan header (dan kadang trailer) di setiap lapisan saat data melewatinya dari atas ke bawah. Setiap lapisan menambahkan informasi kontrolnya sendiri sebelum meneruskan ke lapisan di bawahnya.'},
+  {id:27,type:'scenario',q:'Koneksi internet kamu tiba-tiba putus. Kamu coba ping ke IP Address router (ping 192.168.1.1) dan berhasil. Artinya masalahnya ada di lapisan berapa atau lebih tinggi?',
+    opts:['Lapisan 1 dan 2 (Fisik dan Data Link)','Lapisan 3 ke atas (Jaringan dan di atasnya)','Lapisan 7 saja (Aplikasi)','Tidak bisa ditentukan'],ans:1,
+    exp:'Kalau ping ke router berhasil, artinya Lapisan 1 (kabel/WiFi OK), Lapisan 2 (koneksi lokal OK), dan Lapisan 3 (IP routing lokal OK). Masalahnya ada di Lapisan 3 ke atas — mungkin IP dari ISP bermasalah, DNS error, atau koneksi ke internet putus di router.'},
+  {id:28,type:'tf',q:'Protokol ARP (Address Resolution Protocol) bertugas mengubah IP Address menjadi MAC Address agar data bisa dikirim dalam jaringan lokal.',
+    ans:true,exp:'Benar! ARP bekerja di perbatasan Layer 2 dan Layer 3. Ketika kamu tahu IP Address tujuan tapi belum tahu MAC Address-nya, ARP mengirim broadcast ke seluruh jaringan lokal: "Siapa yang punya IP ini? Kasih tahu MAC address kamu!"'},
+  {id:29,type:'mc',q:'Port 443 adalah port standar untuk protokol HTTPS. Port number ini merupakan konsep dari lapisan OSI mana?',
+    opts:['Lapisan 2 - Data Link','Lapisan 3 - Jaringan','Lapisan 4 - Transport','Lapisan 6 - Presentasi'],ans:2,
+    exp:'Port number adalah konsep dari Lapisan 4 (Transport). Port digunakan untuk mengidentifikasi aplikasi/layanan mana yang harus menerima data. Port 80 untuk HTTP, 443 untuk HTTPS, 25 untuk SMTP, 53 untuk DNS, dll.'},
+  {id:30,type:'scenario',q:'Di antara pernyataan berikut, mana yang BENAR tentang perbedaan TCP dan UDP?',
+    opts:['TCP lebih cepat karena tidak perlu konfirmasi','UDP lebih andal karena punya mekanisme pengiriman ulang','TCP cocok untuk transfer file, UDP cocok untuk video streaming real-time','TCP dan UDP bekerja di lapisan yang berbeda dalam model OSI'],ans:2,
+    exp:'TCP cocok untuk transfer file, email, browsing (data harus lengkap dan benar). UDP cocok untuk video call, gaming, streaming (kecepatan lebih penting dari kesempurnaan). Keduanya sama-sama bekerja di Lapisan 4 (Transport) — bukan lapisan berbeda.'}
+];
+
+// STATE
+let user={},xp=0,readLayers=[],quizAnswers={},dragState={},currentQ=0;
+let timerInterval,startTime,simInterval,simStep=0,simRunning=false;
+let draggedItem='';
+
+function save(k,v){try{localStorage.setItem('osi_'+k,JSON.stringify(v))}catch(e){}}
+function load(k){try{const v=localStorage.getItem('osi_'+k);return v?JSON.parse(v):null}catch(e){return null}}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('active');
+}
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='show'+(type?' '+type:'');
+  clearTimeout(window._t);window._t=setTimeout(()=>{el.className=''},2500);
+}
+
+// LOGIN
+function updateNames(){
+  const k=document.getElementById('inp-kelas').value;
+  const sel=document.getElementById('inp-nama');
+  sel.innerHTML='<option value="">— Pilih Nama —</option>';
+  if(STUDENTS[k])STUDENTS[k].forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+}
+
+function doLogin(){
+  const k=document.getElementById('inp-kelas').value;
+  const n=document.getElementById('inp-nama').value;
+  if(!k||!n){document.getElementById('login-err').style.display='block';return}
+  document.getElementById('login-err').style.display='none';
+  user={nama:n,kelas:k};
+  document.getElementById('disp-nama').textContent=n.split(' ')[0];
+  document.getElementById('disp-kelas').textContent=k;
+  readLayers=load('read_'+n+'_'+k)||[];
+  xp=readLayers.length*40+(load('xp_'+n+'_'+k)||0);
+  updateXP();
+  renderOSI();
+  renderTCPIP();
+  renderCompare();
+  showScreen('s-main');
+  updateQuizBtn(false,null);
+  // cek dari Sheets
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll').then(r=>r.json()).then(data=>{
+      const all=Array.isArray(data.results)?data.results:[];
+      const found=all.find(r=>r.nama===n&&r.kelas===k);
+      if(found){updateQuizBtn(true,found.score);toast('Selamat datang, '+n.split(' ')[0]+'! Nilai kamu: '+found.score,'success');}
+    }).catch(()=>{
+      const local=load('results')||[];
+      const found=local.find(r=>r.nama===n&&r.kelas===k);
+      if(found)updateQuizBtn(true,found.score);
+    });
+  } else {
+    const local=load('results')||[];
+    const found=local.find(r=>r.nama===n&&r.kelas===k);
+    if(found)updateQuizBtn(true,found.score);
+  }
+}
+
+function doLogout(){user={};showScreen('s-login')}
+
+function updateXP(){
+  const max=600;
+  document.getElementById('xp-txt').textContent=xp+' XP';
+  document.getElementById('xp-bar').style.width=Math.min(100,Math.round(xp/max*100))+'%';
+}
+
+function updateQuizBtn(done,score){
+  const btn=document.getElementById('quiz-btn');
+  if(!btn)return;
+  if(done&&score!==null){
+    btn.textContent='NILAI: '+score;
+    btn.style.borderColor='var(--amber)';btn.style.color='var(--amber)';
+    btn.onclick=()=>showExistingResult();
+  } else {
+    btn.textContent='MULAI KUIS';
+    btn.style.borderColor='';btn.style.color='';
+    btn.onclick=()=>gotoQuiz();
+  }
+}
+
+function showTab(name,el){
+  ['osi','tcpip','compare','sim','lb'].forEach(t=>{
+    const d=document.getElementById('tab-'+t);
+    if(d)d.style.display='none';
+  });
+  document.getElementById('tab-'+name).style.display='block';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(name==='lb')renderLB();
+  if(name==='sim')loadScenario();
+}
+
+// OSI RENDER
+function renderOSI(){
+  const stack=document.getElementById('osi-stack');
+  stack.innerHTML=OSI_LAYERS.map(l=>`
+    <div class="osi-layer" id="osi-${l.num}" onclick="showOSIDetail(${l.num})" style="color:${l.color}">
+      <div class="layer-num" style="background:${l.color}">${l.num}</div>
+      <div class="layer-body">
+        <div class="layer-name" style="color:${l.color}">${l.name}</div>
+        <div class="layer-en">${l.en}</div>
+      </div>
+      <div class="layer-badge">${l.pdu} · ${l.mnemonic} ${readLayers.includes(l.num)?'✓':''}</div>
+    </div>`).join('');
+}
+
+let activeOSI=null;
+function showOSIDetail(num){
+  const l=OSI_LAYERS.find(x=>x.num===num);
+  const detail=document.getElementById('osi-detail');
+  if(activeOSI===num){
+    activeOSI=null;
+    document.querySelectorAll('.osi-layer').forEach(el=>el.classList.remove('active-layer'));
+    detail.classList.remove('show');return;
+  }
+  activeOSI=num;
+  document.querySelectorAll('.osi-layer').forEach(el=>el.classList.remove('active-layer'));
+  document.getElementById('osi-'+num).classList.add('active-layer');
+  const done=readLayers.includes(num);
+  detail.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem">
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:${l.color}">Layer ${l.num} — ${l.name}</div>
+      <button class="detail-box" onclick="document.getElementById('osi-detail').classList.remove('show');activeOSI=null;document.querySelectorAll('.osi-layer').forEach(e=>e.classList.remove('active-layer'))" style="cursor:pointer;padding:4px 12px;font-size:0.8rem;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text2)">Tutup</button>
+    </div>
+    <p class="detail-desc">${l.desc}</p>
+    <span class="pdu-badge" style="background:${l.color}22;color:${l.color};border:1px solid ${l.color}55">PDU: ${l.pdu}</span>
+    <div class="detail-grid">
+      <div class="detail-box"><div class="detail-box-title">Fungsi Utama</div><ul>${l.fungsi.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+      <div class="detail-box"><div class="detail-box-title">Contoh Protokol & Teknologi</div><ul>${l.contoh.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+    </div>
+    <div style="margin-top:0.75rem"><div style="font-size:0.72rem;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Perangkat yang Bekerja di Layer Ini</div>
+    <div class="device-chips">${l.devices.map(d=>`<span class="chip">${d}</span>`).join('')}</div></div>
+    <button class="mark-btn ${done?'done':''}" ${done?'disabled':''} onclick="markLayer(${num},this)">${done?'✓ Sudah Dipelajari':'Tandai Sudah Dipelajari (+40 XP)'}</button>`;
+  detail.classList.add('show');
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function markLayer(num,btn){
+  if(readLayers.includes(num))return;
+  readLayers.push(num);
+  save('read_'+user.nama+'_'+user.kelas,readLayers);
+  xp+=40;save('xp_'+user.nama+'_'+user.kelas,xp);
+  updateXP();
+  btn.disabled=true;btn.textContent='✓ Sudah Dipelajari';btn.className='mark-btn done';
+  renderOSI();
+  toast('+40 XP! Layer '+num+' dipelajari','success');
+}
+
+// TCP/IP RENDER
+function renderTCPIP(){
+  const stack=document.getElementById('tcpip-stack');
+  stack.innerHTML=TCPIP_LAYERS.map(l=>`
+    <div class="osi-layer" id="tcp-${l.num}" onclick="showTCPDetail(${l.num})" style="color:${l.color}">
+      <div class="layer-num" style="background:${l.color}">${l.num}</div>
+      <div class="layer-body">
+        <div class="layer-name" style="color:${l.color}">${l.name}</div>
+        <div class="layer-en">${l.en}</div>
+      </div>
+      <div class="layer-badge">${l.osi_map.split(' ').slice(0,3).join(' ')}...</div>
+    </div>`).join('');
+}
+
+let activeTCP=null;
+function showTCPDetail(num){
+  const l=TCPIP_LAYERS.find(x=>x.num===num);
+  const detail=document.getElementById('tcpip-detail');
+  if(activeTCP===num){activeTCP=null;detail.classList.remove('show');return;}
+  activeTCP=num;
+  detail.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem">
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:${l.color}">Layer ${l.num} — ${l.name}</div>
+      <button onclick="document.getElementById('tcpip-detail').classList.remove('show');activeTCP=null" style="cursor:pointer;padding:4px 12px;font-size:0.8rem;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text2)">Tutup</button>
+    </div>
+    <p class="detail-desc">${l.desc}</p>
+    <div style="margin-top:0.75rem;padding:0.5rem 0.75rem;background:rgba(124,58,237,0.07);border:1px solid var(--border);border-radius:6px;font-size:0.82rem;color:var(--text2)">Korespondensi OSI: <strong style="color:${l.color}">${l.osi_map}</strong></div>
+    <div class="detail-box" style="margin-top:0.75rem"><div class="detail-box-title">Protokol Utama</div><ul>${l.protokol.map(p=>`<li>${p}</li>`).join('')}</ul></div>`;
+  detail.classList.add('show');
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// COMPARE RENDER
+function renderCompare(){
+  // Visual mapping
+  const mc=document.getElementById('model-compare');
+  const osiColors=OSI_LAYERS.map(l=>l.color);
+  const tcpColors=TCPIP_LAYERS.map(l=>l.color);
+  mc.innerHTML=`
+    <div class="model-card">
+      <div class="model-header" style="background:rgba(124,58,237,0.1);color:var(--violet3);border-bottom:1px solid var(--border)">Model OSI (7 Lapisan)</div>
+      <div class="model-layers-list">${OSI_LAYERS.map((l,i)=>`<div class="model-layer-item" style="background:${l.color}18;color:${l.color};border-color:${l.color}33"><span style="opacity:0.6;font-size:0.75rem;margin-right:6px">${l.num}</span>${l.name} <span style="float:right;font-size:0.72rem;opacity:0.6">${l.pdu}</span></div>`).join('')}</div>
+    </div>
+    <div class="model-card">
+      <div class="model-header" style="background:rgba(20,184,166,0.1);color:var(--teal);border-bottom:1px solid var(--border)">Model TCP/IP (4 Lapisan)</div>
+      <div class="model-layers-list">
+        <div class="model-layer-item" style="background:#7c3aed18;color:#7c3aed;border-color:#7c3aed33;min-height:54px;display:flex;align-items:center">4 · Application <span style="float:right;font-size:0.72rem;opacity:0.6">≈ OSI 5,6,7</span></div>
+        <div class="model-layer-item" style="background:#ec489918;color:#ec4899;border-color:#ec489933;min-height:36px;display:flex;align-items:center">3 · Transport <span style="float:right;font-size:0.72rem;opacity:0.6">≈ OSI 4</span></div>
+        <div class="model-layer-item" style="background:#f59e0b18;color:#f59e0b;border-color:#f59e0b33;min-height:36px;display:flex;align-items:center">2 · Internet <span style="float:right;font-size:0.72rem;opacity:0.6">≈ OSI 3</span></div>
+        <div class="model-layer-item" style="background:#14b8a618;color:#14b8a6;border-color:#14b8a633;min-height:54px;display:flex;align-items:center">1 · Network Access <span style="float:right;font-size:0.72rem;opacity:0.6">≈ OSI 1,2</span></div>
+      </div>
+    </div>`;
+
+  // Table
+  const tbody=document.getElementById('compare-table');
+  tbody.innerHTML=COMPARE_DATA.map(r=>`<tr style="border-bottom:1px solid var(--border2)">
+    <td style="padding:0.65rem 0.75rem;color:var(--text2);font-size:0.82rem">${r.asp}</td>
+    <td style="padding:0.65rem 0.75rem;color:var(--text)">${r.osi}</td>
+    <td style="padding:0.65rem 0.75rem;color:var(--text)">${r.tcpip}</td>
+  </tr>`).join('');
+}
+
+// SIMULATION
+let simData=null,simStepIdx=0,simAnimRunning=false;
+function loadScenario(){
+  const key=document.getElementById('sim-scenario-sel').value;
+  simData=SIM_SCENARIOS[key];
+  simStepIdx=0;simRunning=false;simAnimRunning=false;
+  document.getElementById('sim-title').textContent=simData.title;
+  document.getElementById('sim-desc').textContent=simData.desc;
+  renderSimSteps();
+  document.getElementById('sim-log').textContent='Tekan PLAY untuk mulai, atau lihat step demi step bagaimana data melewati setiap lapisan.';
+}
+
+function renderSimSteps(){
+  const send=document.getElementById('sim-send');
+  const recv=document.getElementById('sim-recv');
+  send.innerHTML=simData.send.map((s,i)=>`
+    <div class="flow-step" id="ss-${i}">
+      <div class="flow-dot" style="background:${s.color}"></div>
+      <div><div style="font-size:0.75rem;font-weight:600;color:${s.color};letter-spacing:0.5px">${s.layer}</div>
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.4">${s.msg}</div></div>
+    </div>${i<simData.send.length-1?'<div class="flow-arrow">↓</div>':''}`).join('');
+  recv.innerHTML=simData.recv.map((s,i)=>`
+    <div class="flow-step" id="sr-${i}">
+      <div class="flow-dot" style="background:${s.color}"></div>
+      <div><div style="font-size:0.75rem;font-weight:600;color:${s.color};letter-spacing:0.5px">${s.layer}</div>
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.4">${s.msg}</div></div>
+    </div>${i<simData.recv.length-1?'<div class="flow-arrow">↓</div>':''}`).join('');
+}
+
+function playSim(){
+  if(simAnimRunning)return;
+  simRunning=true;
+  runSimStep(0,'send');
+}
+
+function runSimStep(idx,side){
+  if(!simRunning)return;
+  const data=side==='send'?simData.send:simData.recv;
+  if(idx>=data.length){
+    if(side==='send'){
+      document.getElementById('sim-log').textContent='Data sampai di jaringan! Sekarang server penerima mulai memproses dari lapisan bawah ke atas...';
+      setTimeout(()=>runSimStep(0,'recv'),800);
+    } else {
+      simRunning=false;
+      document.getElementById('sim-log').textContent='Selesai! Data berhasil diterima. Semua lapisan bekerja sama dengan sempurna.';
+    }
+    return;
+  }
+  const step=data[idx];
+  const elId=side==='send'?`ss-${idx}`:`sr-${idx}`;
+  if(idx>0){const prev=document.getElementById(side==='send'?`ss-${idx-1}`:`sr-${idx-1}`);if(prev)prev.classList.replace('active','done');}
+  const el=document.getElementById(elId);
+  if(el)el.classList.add('active');
+  document.getElementById('sim-log').innerHTML=`<span style="color:${step.color};font-size:0.75rem;font-weight:600;display:block;margin-bottom:3px">${side==='send'?'ENKAPSULASI':'DEKAPSULASI'} — ${step.layer}</span>${step.msg}`;
+  setTimeout(()=>runSimStep(idx+1,side),900);
+}
+
+function resetSim(){
+  simRunning=false;
+  document.querySelectorAll('.flow-step').forEach(el=>{el.classList.remove('active','done')});
+  document.getElementById('sim-log').textContent='Tekan PLAY untuk mulai simulasi.';
+}
+
+// QUIZ
+function gotoQuiz(){
+  const btn=document.getElementById('quiz-btn');
+  if(btn&&btn.textContent.startsWith('NILAI')){showExistingResult();return;}
+  currentQ=0;quizAnswers={};dragState={};
+  clearInterval(timerInterval);startTime=Date.now();
+  timerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-startTime)/1000);
+    const m=Math.floor(s/60),sc=s%60;
+    const el=document.getElementById('q-timer');
+    el.textContent=(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc;
+    el.className='q-timer'+(s>600?' danger':'');
+  },1000);
+  showScreen('s-quiz');renderQ();
+}
+
+function renderQ(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('q-prog').style.width=Math.round(currentQ/QUESTIONS.length*100)+'%';
+  document.getElementById('q-counter').textContent='Soal '+(currentQ+1)+' / '+QUESTIONS.length;
+  document.getElementById('btn-prev').style.display=currentQ>0?'inline-flex':'none';
+  document.getElementById('btn-next').style.display=currentQ<QUESTIONS.length-1?'inline-flex':'none';
+  document.getElementById('btn-submit').style.display=currentQ===QUESTIONS.length-1?'inline-flex':'none';
+  document.getElementById('q-dots').innerHTML=QUESTIONS.map((_,i)=>`<div class="q-dot ${i===currentQ?'current':quizAnswers[QUESTIONS[i].id]!==undefined?'answered':''}" onclick="jumpQ(${i})">${i+1}</div>`).join('');
+  const keys=['A','B','C','D'];
+  const typeMap={mc:'PILIHAN GANDA',tf:'BENAR / SALAH',drag:'COCOKKAN',scenario:'STUDI KASUS'};
+  let html=`<div class="q-card"><div class="q-type ${q.type}">${typeMap[q.type]}</div><div class="q-text">${q.q}</div>`;
+  if(q.type==='mc'||q.type==='scenario'){
+    q.opts.forEach((o,i)=>{
+      const sel=quizAnswers[q.id]===i?'selected':'';
+      html+=`<div class="opt ${sel}" onclick="selectOpt(${q.id},${i},this)"><div class="opt-key">${keys[i]}</div>${o}</div>`;
+    });
+  } else if(q.type==='tf'){
+    const v=quizAnswers[q.id];
+    html+=`<div class="tf-row"><button class="tf-btn ${v===true?'selected':''}" onclick="selectTF(${q.id},true,this)">BENAR</button><button class="tf-btn ${v===false?'selected':''}" onclick="selectTF(${q.id},false,this)">SALAH</button></div>`;
+  } else if(q.type==='drag'){
+    if(!dragState[q.id])dragState[q.id]={placed:{}};
+    const placed=dragState[q.id].placed;
+    const used=Object.values(placed);
+    html+=`<p style="font-size:0.83rem;color:var(--text2);margin-bottom:8px">Seret kartu ke kolom yang sesuai:</p>
+    <div class="drag-pool" id="dp-pool" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropPool(event,${q.id})">`;
+    q.pairs.forEach(([item])=>{
+      if(!used.includes(item)){
+        const safe=item.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        html+=`<div class="drag-chip" draggable="true" data-item="${safe}" ondragstart="ds(event,this.getAttribute('data-item'))">${item}</div>`;
+      }
+    });
+    html+=`</div><div style="display:flex;flex-direction:column;gap:6px">`;
+    q.pairs.forEach(([item,label],i)=>{
+      const p2=Object.keys(placed).find(k=>placed[k]===label)||'';
+      const safeLabel=label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      const safeP2=p2.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      html+=`<div class="match-row"><div class="match-label">${label}</div><div class="match-arrow">→</div><div class="match-slot" id="ms-${i}" data-label="${safeLabel}" data-qid="${q.id}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropSlotEl(event,this)">${p2?`<div class="drag-chip" draggable="true" data-item="${safeP2}" ondragstart="ds(event,this.getAttribute('data-item'))">${p2}</div>`:''}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  html+='</div>';
+  document.getElementById('q-container').innerHTML=html;
+}
+
+function selectOpt(qid,idx,el){quizAnswers[qid]=idx;document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
+function selectTF(qid,val,el){quizAnswers[qid]=val;document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
+function ds(e,item){draggedItem=item;e.dataTransfer.effectAllowed='move'}
+function dropPool(e,qid){e.preventDefault();e.currentTarget.classList.remove('over');if(!draggedItem)return;if(dragState[qid])Object.keys(dragState[qid].placed).forEach(k=>{if(k===draggedItem)delete dragState[qid].placed[k]});delete quizAnswers[qid];renderQ()}
+function dropSlotEl(e,el){
+  e.preventDefault();el.classList.remove('over');
+  const label=el.getAttribute('data-label');
+  const qid=parseInt(el.getAttribute('data-qid'));
+  if(!draggedItem)return;
+  if(!dragState[qid])dragState[qid]={placed:{}};
+  const placed=dragState[qid].placed;
+  Object.keys(placed).forEach(k=>{if(placed[k]===label)delete placed[k]});
+  Object.keys(placed).forEach(k=>{if(k===draggedItem)delete placed[k]});
+  placed[draggedItem]=label;
+  const q=QUESTIONS.find(q=>q.id===qid);
+  const allOk=q.pairs.every(([item,lbl])=>placed[item]===lbl);
+  if(allOk)quizAnswers[qid]=1;else delete quizAnswers[qid];
+  renderQ();
+}
+function nextQ(){if(currentQ<QUESTIONS.length-1){currentQ++;renderQ()}}
+function prevQ(){if(currentQ>0){currentQ--;renderQ()}}
+function jumpQ(i){currentQ=i;renderQ()}
+
+function submitQuiz(){
+  if(!confirm('Yakin ingin mengumpulkan jawaban?'))return;
+  clearInterval(timerInterval);
+  const elapsed=Math.floor((Date.now()-startTime)/1000);
+  const m=Math.floor(elapsed/60),s=elapsed%60;
+  const timeStr=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  let correct=0;
+  QUESTIONS.forEach(q=>{const a=quizAnswers[q.id];if(q.type==='drag'){if(a===1)correct++}else if(a===q.ans)correct++;});
+  const score=Math.round(correct/QUESTIONS.length*100);
+  xp+=score*2;save('xp_'+user.nama+'_'+user.kelas,xp);updateXP();
+  const rec={nama:user.nama,kelas:user.kelas,score,correct,total:QUESTIONS.length,time:timeStr,date:new Date().toLocaleDateString('id-ID')};
+  let all=load('results')||[];
+  const idx=all.findIndex(r=>r.nama===rec.nama&&r.kelas===rec.kelas);
+  if(idx>=0)all[idx]=rec;else all.push(rec);
+  save('results',all);
+  sendToSheets(rec);
+  updateQuizBtn(true,score);
+  showResult(score,correct,timeStr,false);
+}
+
+async function sendToSheets(data){
+  if(SHEETS_URL==='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA')return;
+  try{await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)})}catch(e){}
+}
+
+function showResult(score,correct,timeStr,isReview=false){
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-name').textContent=user.nama;
+  document.getElementById('res-kelas').textContent=user.kelas+' · Model Jaringan Komputer';
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-wrong').textContent=QUESTIONS.length-correct;
+  document.getElementById('res-time').textContent=formatTime(timeStr);
+  const badge=document.getElementById('res-badge');
+  if(score>=90){badge.textContent='OSI MASTER';badge.className='badge-pill badge-gold'}
+  else if(score>=70){badge.textContent='NETWORK ENGINEER';badge.className='badge-pill badge-silver'}
+  else{badge.textContent='NETWORK ROOKIE';badge.className='badge-pill badge-bronze'}
+  const msgs={ok:'Luar biasa! Kamu sudah benar-benar paham Model OSI dan TCP/IP.',mid:'Lumayan! Sebagian besar sudah paham, tapi ada beberapa lapisan yang perlu dipelajari ulang.',low:'Semangat! Pelajari lagi setiap lapisan OSI dan perbedaannya dengan TCP/IP ya.'};
+  const note=`<div style="margin-top:0.75rem;padding:0.6rem 1rem;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:6px;font-size:0.83rem;color:var(--violet3)">Kuis hanya bisa dikerjakan 1 kali. Nilai sudah tercatat.</div>`;
+  document.getElementById('res-msg').innerHTML=(score>=80?msgs.ok:score>=60?msgs.mid:msgs.low)+note;
+  document.getElementById('review-section').style.display='none';
+  showScreen('s-result');
+  setTimeout(()=>{
+    const arc=document.getElementById('score-arc');
+    arc.style.transition='stroke-dashoffset 1.5s ease';
+    arc.style.strokeDashoffset=345.4*(1-score/100);
+    if(score>=80)confetti();
+  },200);
+}
+
+function showExistingResult(){
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll').then(r=>r.json()).then(data=>{
+      const all=Array.isArray(data.results)?data.results:[];
+      const rec=all.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+      if(rec)showResult(rec.score,rec.correct,rec.time,true);
+      else toast('Data tidak ditemukan','error');
+    }).catch(()=>{const local=load('results')||[];const rec=local.find(r=>r.nama===user.nama&&r.kelas===user.kelas);if(rec)showResult(rec.score,rec.correct,rec.time,true);});
+  } else {
+    const local=load('results')||[];
+    const rec=local.find(r=>r.nama===user.nama&&r.kelas===user.kelas);
+    if(rec)showResult(rec.score,rec.correct,rec.time,true);
+  }
+}
+
+function toggleReview(){
+  const sec=document.getElementById('review-section');
+  if(sec.style.display==='block'){sec.style.display='none';return}
+  const keys=['A','B','C','D'];
+  const typeMap={mc:'PILIHAN GANDA',tf:'BENAR/SALAH',drag:'COCOKKAN',scenario:'STUDI KASUS'};
+  let html='';
+  QUESTIONS.forEach((q,i)=>{
+    const a=quizAnswers[q.id];
+    const ok=q.type==='drag'?a===1:a===q.ans;
+    html+=`<div class="q-card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem"><span class="q-type ${q.type}">${typeMap[q.type]}</span><span style="font-size:0.85rem;font-weight:600;color:${ok?'var(--green)':'var(--red)'}">${ok?'BENAR':'SALAH'}</span></div><div class="q-text" style="font-size:0.9rem">${q.q}</div>`;
+    if(q.type==='mc'||q.type==='scenario'){q.opts.forEach((o,j)=>{let c='';if(j===q.ans)c='correct';else if(a===j)c='wrong';html+=`<div class="opt ${c}"><div class="opt-key">${keys[j]}</div>${o}</div>`})}
+    else if(q.type==='tf'){html+=`<div class="tf-row"><button class="tf-btn ${q.ans===true?'correct':a===true?'wrong':''}">BENAR</button><button class="tf-btn ${q.ans===false?'correct':a===false?'wrong':''}">SALAH</button></div>`}
+    else{html+=`<p style="font-size:0.88rem;color:var(--text2)">${ok?'Semua pasangan benar!':'Ada pasangan yang belum tepat.'}</p>`}
+    html+=`<div class="feedback show ${ok?'correct':'wrong'}"><strong>${ok?'Tepat! ':'Penjelasan: '}</strong>${q.exp}</div></div>`;
+  });
+  sec.innerHTML=html;sec.style.display='block';sec.scrollIntoView({behavior:'smooth'});
+}
+
+function backToMain(){showScreen('s-main')}
+
+// LEADERBOARD
+function renderLB(){
+  const f=document.getElementById('lb-filter').value;
+  const body=document.getElementById('lb-body');
+  const empty=document.getElementById('lb-empty');
+  body.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text2);font-size:0.88rem">Memuat data...</td></tr>`;
+  const showData=(all)=>{
+    const filtered=all.filter(r=>!f||r.kelas===f).sort((a,b)=>b.score-a.score);
+    if(!filtered.length){body.innerHTML='';empty.style.display='block';return}
+    empty.style.display='none';
+    body.innerHTML=filtered.map((r,i)=>{
+      const sc=r.score>=80?'pill-a':r.score>=65?'pill-b':r.score>=50?'pill-c':'pill-d';
+      const st=r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL';
+      const me=user.nama&&r.nama===user.nama?'style="background:rgba(124,58,237,0.06)"':'';
+      return`<tr class="${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':''}" ${me}><td style="font-family:Syne,sans-serif;font-size:0.85rem;padding:0.75rem">${i+1}</td><td style="padding:0.75rem;color:var(--text)">${r.nama}</td><td style="padding:0.75rem;color:var(--text2)">${r.kelas}</td><td style="padding:0.75rem"><span class="pill ${sc}">${r.score}</span></td><td style="padding:0.75rem;color:var(--text2);font-size:0.85rem">${formatTime(r.time)}</td><td style="padding:0.75rem"><span class="pill ${sc}" style="font-family:DM Sans,sans-serif">${st}</span></td></tr>`;
+    }).join('');
+  };
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll').then(r=>r.json()).then(data=>{showData(Array.isArray(data.results)?data.results:[])}).catch(()=>showData(load('results')||[]));
+  } else {showData(load('results')||[]);}
+}
+
+// TEACHER
+function teacherLogin(){
+  const p=document.getElementById('teacher-pass').value;
+  if(p===TEACHER_PASS){document.getElementById('pass-err').style.display='none';renderTeacher();showScreen('s-teacher')}
+  else document.getElementById('pass-err').style.display='block';
+}
+
+function renderTeacher(){
+  const body=document.getElementById('t-body');
+  const empty=document.getElementById('t-empty');
+  body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text2)">Memuat data...</td></tr>`;
+  const show=(all)=>{
+    const srch=(document.getElementById('t-search')?.value||'').toLowerCase();
+    const cls=document.getElementById('t-class')?.value||'';
+    const f=all.filter(r=>(!srch||r.nama.toLowerCase().includes(srch))&&(!cls||r.kelas===cls)).sort((a,b)=>b.score-a.score);
+    if(!f.length){body.innerHTML='';empty.style.display='block';document.getElementById('t-stats').innerHTML='';return}
+    empty.style.display='none';
+    body.innerHTML=f.map((r,i)=>{
+      const sc=r.score>=80?'pill-a':r.score>=65?'pill-b':r.score>=50?'pill-c':'pill-d';
+      const safe=r.nama.replace(/'/g,"\\'");
+      return`<tr><td style="color:var(--text2)">${i+1}</td><td style="color:var(--text)">${r.nama}</td><td style="color:var(--text2)">${r.kelas}</td><td><span class="pill ${sc}">${r.score}</span></td><td style="color:var(--text2)">${r.correct}/${r.total}</td><td style="color:var(--text2)">${formatTime(r.time)}</td><td style="color:var(--text2)">${r.date||'—'}</td><td><span class="pill ${sc}" style="font-family:DM Sans,sans-serif">${r.score>=80?'LULUS':r.score>=60?'CUKUP':'REMEDIAL'}</span></td><td><button onclick="resetStudent('${safe}','${r.kelas}')" style="background:none;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:3px 10px;border-radius:4px;font-size:0.75rem;cursor:pointer;font-family:DM Sans,sans-serif">Reset</button></td></tr>`;
+    }).join('');
+    const avg=Math.round(f.reduce((a,r)=>a+r.score,0)/f.length);
+    const lulus=f.filter(r=>r.score>=60).length;
+    const total=STUDENTS['XI-I'].length+STUDENTS['XI-J'].length;
+    document.getElementById('t-stats').innerHTML=`
+      <div class="t-stat-card"><div class="val" style="color:var(--teal)">${f.length}<span style="font-size:0.9rem;color:var(--text2)">/${total}</span></div><div class="lbl">MENGERJAKAN</div></div>
+      <div class="t-stat-card"><div class="val" style="color:${avg>=70?'var(--green)':'var(--amber)'}">${avg}</div><div class="lbl">RATA-RATA</div></div>
+      <div class="t-stat-card"><div class="val" style="color:var(--green)">${lulus}</div><div class="lbl">LULUS (≥60)</div></div>
+      <div class="t-stat-card"><div class="val" style="color:var(--red)">${f.length-lulus}</div><div class="lbl">REMEDIAL</div></div>`;
+    save('results',f);
+  };
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll').then(r=>r.json()).then(data=>{show(Array.isArray(data.results)?data.results:[])}).catch(()=>show(load('results')||[]));
+  } else {show(load('results')||[]);}
+}
+
+function exportCSV(){
+  toast('Mengambil data...','');
+  const doExport=(all)=>{
+    if(!all.length){toast('Belum ada data!','error');return}
+    const rows=[['No','Nama','Kelas','Nilai','Benar','Total','Waktu','Tanggal','Status'],...all.sort((a,b)=>b.score-a.score).map((r,i)=>[i+1,r.nama,r.kelas,r.score,r.correct,r.total,r.time||'',r.date||'',r.score>=80?'Lulus':r.score>=60?'Cukup':'Remedial'])];
+    const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='nilai_model_jaringan.csv';a.click();
+    toast('CSV diunduh!','success');
+  };
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA'){
+    fetch(SHEETS_URL+'?action=getAll').then(r=>r.json()).then(data=>doExport(Array.isArray(data.results)?data.results:[])).catch(()=>doExport(load('results')||[]));
+  } else doExport(load('results')||[]);
+}
+
+function clearData(){
+  if(!confirm('Hapus SEMUA data?'))return;
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA')fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'clearAll'})}).catch(()=>{});
+  save('results',[]);
+  setTimeout(()=>{renderTeacher();toast('Data dihapus','error')},600);
+}
+
+function resetStudent(nama,kelas){
+  if(!confirm('Reset nilai '+nama+'?'))return;
+  if(SHEETS_URL!=='GANTI_DENGAN_URL_APPS_SCRIPT_ANDA')fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'reset',nama,kelas})}).catch(()=>{});
+  let all=load('results')||[];
+  save('results',all.filter(r=>!(r.nama===nama&&r.kelas===kelas)));
+  setTimeout(()=>{renderTeacher();toast('Reset berhasil','success')},600);
+}
+
+function formatTime(val){
+  if(!val||val==='—')return'—';
+  if(typeof val==='string'&&/^\d{1,2}:\d{2}$/.test(val.trim()))return val.trim();
+  if(typeof val==='number'||(!isNaN(parseFloat(val))&&!String(val).includes(':'))){
+    const ts=Math.round(parseFloat(val)*86400);
+    const m=Math.floor(ts/60),s=ts%60;
+    return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  }
+  const match=String(val).match(/(\d{1,2}):(\d{2})/);
+  return match?match[0]:String(val);
+}
+
+function confetti(){
+  const wrap=document.createElement('div');wrap.className='confetti-wrap';document.body.appendChild(wrap);
+  const cols=['#7c3aed','#14b8a6','#ec4899','#f59e0b','#22c55e'];
+  for(let i=0;i<50;i++){
+    const el=document.createElement('div');el.className='cp';
+    el.style.cssText=`left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    wrap.appendChild(el);
+  }
+  setTimeout(()=>wrap.remove(),4000);
+}
+
+// PARTICLES
+(function(){
+  const wrap=document.getElementById('particles');
+  const cols=['#7c3aed','#14b8a6','#ec4899'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');p.className='particle';
+    const size=Math.random()*3+1;
+    p.style.cssText=`left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${cols[i%3]};animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*12}s`;
+    wrap.appendChild(p);
+  }
+})();
+
+// INIT
+loadScenario();
+</script>
+</body>
+</html>
